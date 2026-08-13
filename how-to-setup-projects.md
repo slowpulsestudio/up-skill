@@ -10,9 +10,7 @@ Up-Skill is a library of AI instruction files. When you start a new project, you
 
 ## Step 1 — Copy the `.github/` folder into your project
 
-Copy the entire `.github/` folder from this repo into the root of your new project. It contains all the prompt files already in the right place:
-
-Only include `migrate-to-iris-react.prompt.md` if you need to move from one platform to iris-react — otherwise delete it after copying.
+Copy the entire `.github/` folder from this repo into the root of your new project. It contains all the prompt files already in the right place.
 
 ---
 
@@ -31,10 +29,10 @@ This always pulls the latest versions from GitHub, so any improvements made to U
 ## Step 3 — Question time
 
 The AI will ask you these questions in order:
-1. Which platform this project uses
-2. Which workflow skills apply
-3. Follow-up questions for specific skills:
-   - **`platform/iris-shell`** — which product loads by default (Active Roles, On-Demand Services, Identity Manager, or Safeguard)
+1. What is the project/app name
+2. Which platform this project uses
+3. Which workflow skills apply
+4. Follow-up questions for specific skills:
    - **`workflow/git`** — GitHub repo URL
    - **`workflow/figma-mcp`** — Figma file URL
    - **`workflow/image-generation`** — which image generation provider
@@ -44,8 +42,6 @@ The AI will ask you these questions in order:
 ```
 platform/ios
 platform/chrome-extension
-platform/iris-react
-platform/iris-shell
 platform/python-mac
 platform/python-website
 platform/python-cli
@@ -59,7 +55,6 @@ workflow/general
 workflow/git
 workflow/architecture
 workflow/testing
-workflow/iris-react-migrate
 workflow/figma-mcp
 workflow/vercel-publish
 workflow/vercel-password
@@ -70,8 +65,6 @@ workflow/image-generation
 |---|---|
 | `platform/ios` | Swift iOS app |
 | `platform/chrome-extension` | Chrome browser extension |
-| `platform/iris-react` | React + Vite app using the Iris-UI design system |
-| `platform/iris-shell` | Multi-product shell app built on Iris UI |
 | `platform/python-mac` | Python desktop app for Mac |
 | `platform/python-website` | Python web app (FastAPI etc.) |
 | `platform/python-cli` | Python local script/CLI tool |
@@ -80,7 +73,6 @@ workflow/image-generation
 | `workflow/git` | Source control rules |
 | `workflow/architecture` | General code structure rules |
 | `workflow/testing` | Testing standards |
-| `workflow/iris-react-migrate` | Migrating an existing app to Iris-UI |
 | `workflow/figma-mcp` | If the project uses Figma for design |
 | `workflow/vercel-publish` | If the project deploys to Vercel |
 | `workflow/vercel-password` | Password gate for Vercel preview deployments |

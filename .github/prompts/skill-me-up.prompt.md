@@ -29,8 +29,6 @@ Check whether a `.skills` file exists in the root of this project.
 1. *"Which platform does this project use? Pick one:"*
    - `platform/ios` — Swift iOS app
    - `platform/chrome-extension` — Chrome browser extension
-   - `platform/iris-react` — React + Vite app using the Iris-UI design system
-   - `platform/iris-shell` — multi-product shell app built on Iris UI
    - `platform/python-mac` — Python desktop app for Mac
    - `platform/python-website` — Python web app (FastAPI etc.)
    - `platform/python-cli` — Python local script/CLI tool
@@ -40,24 +38,12 @@ Check whether a `.skills` file exists in the root of this project.
    - `workflow/git` — source control rules
    - `workflow/architecture` — general code structure rules
    - `workflow/testing` — testing standards
-   - `workflow/iris-react-migrate` — migrating an existing app to Iris-UI
    - `workflow/figma-mcp` — if the project uses Figma
    - `workflow/vercel-publish` — if the project deploys to Vercel
    - `workflow/vercel-password` — password gate for Vercel preview deployments
    - `workflow/image-generation` — if the project calls an AI image-generation API
 
 3. For each of the following selected skills, ask a follow-up question:
-
-   - **`platform/iris-shell`** — *"Which product should load by default when the app opens? Pick one:"*
-     - Active Roles
-     - On-Demand Services
-     - Identity Manager
-     - Safeguard
-
-     Once confirmed, update the following three files in `src/iris-shell/` to reflect the chosen default:
-     - `src/lib/router.ts` — set `const DEFAULT` to the correct hash (`#/insights` for Active Roles, `#/services` for On-Demand Services, `#/identity` for Identity Manager, `#/safeguard` for Safeguard)
-     - `src/lib/verticals.ts` — set `defaultRoute` on the matching vertical record to the same hash
-     - `src/lib/productMenu.tsx` — ensure the matching product entry is first in the list and its `route` matches
 
    - **`workflow/git`** — *"What is the GitHub repo URL for this project?"*
    - **`workflow/figma-mcp`** — *"What is the Figma file URL for this project?"* Give the user two options:

@@ -2,10 +2,18 @@
 
 ---
 
+**Always use the remote MCP server**
+All Figma MCP tool calls must go through the remote MCP server (`https://mcp.figma.com/mcp`). This is a hard requirement — never use a local/desktop MCP server. The write-to-canvas skills are not available on the desktop MCP server, and this assumption applies to every other MCP call in this skill as well.
+
+**A failed response looks like:**
+- Configuring or falling back to a local/desktop MCP server
+- Assuming the Figma desktop app must be running for MCP connectivity
+- Treating a "desktop app not running" message as a blocker instead of using the remote server
+
+---
+
 **Write to canvas goes code → Figma, not the other way**
 The write-to-canvas skills place real design frames onto the Figma canvas from running code. They do not generate code. Use the `figma-mcp` skill for the reverse direction (reading from Figma to implement code).
-
-The remote MCP server (`https://mcp.figma.com/mcp`) is required. The write-to-canvas skills are not available on the desktop MCP server.
 
 ---
 

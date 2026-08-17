@@ -38,7 +38,8 @@ Check whether a `.skills` file exists in the root of this project.
    - `workflow/git` — source control rules
    - `workflow/architecture` — general code structure rules
    - `workflow/testing` — testing standards
-   - `workflow/figma-mcp` — if the project uses Figma
+   - `workflow/figma-mcp` — if the project uses Figma (design → code direction)
+   - `workflow/figma-write-to-canvas` — if the project uses Figma write-to-canvas / code → canvas skills
    - `workflow/vercel-publish` — if the project deploys to Vercel
    - `workflow/vercel-password` — password gate for Vercel preview deployments
    - `workflow/image-generation` — if the project calls an AI image-generation API

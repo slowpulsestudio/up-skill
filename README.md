@@ -19,6 +19,7 @@ skills/
     testing.md
     git.md
     figma-mcp.md
+    figma-write-to-canvas.md
     iris-ui.md
     vercel-publish.md
     image-generation.md

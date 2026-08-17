@@ -56,6 +56,7 @@ workflow/git
 workflow/architecture
 workflow/testing
 workflow/figma-mcp
+workflow/figma-write-to-canvas
 workflow/vercel-publish
 workflow/vercel-password
 workflow/image-generation
@@ -73,7 +74,8 @@ workflow/image-generation
 | `workflow/git` | Source control rules |
 | `workflow/architecture` | General code structure rules |
 | `workflow/testing` | Testing standards |
-| `workflow/figma-mcp` | If the project uses Figma for design |
+| `workflow/figma-mcp` | If the project uses Figma for design (design → code) |
+| `workflow/figma-write-to-canvas` | If the project uses Figma write-to-canvas / code → canvas skills |
 | `workflow/vercel-publish` | If the project deploys to Vercel |
 | `workflow/vercel-password` | Password gate for Vercel preview deployments |
 | `workflow/image-generation` | If the project calls an AI image-generation API |

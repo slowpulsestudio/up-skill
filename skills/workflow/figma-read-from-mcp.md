@@ -2,13 +2,22 @@
 
 ---
 
-**Always use the remote MCP server**
-All Figma MCP tool calls must go through the remote MCP server (`https://mcp.figma.com/mcp`). Never assume or configure a local/desktop MCP server. The Figma desktop app is not required and plays no role in MCP connectivity.
+**Verify the Figma MCP connection before relying on it**
+Connection is set up once during `/skill-me-up` (Figma's Dev Mode → MCP → Clients → **Get Figma integration** — never manual `mcp.json` edits or "Add MCP Server"). If both `figma-read-from-mcp` and `figma-write-to-canvas` are in use, that setup only happens once. Before doing any Figma MCP work in a session, confirm the connection still works with a real tool call (e.g. `get_metadata` on the file in `.figma-url`) rather than assuming it from a prior setup.
 
 **A failed response looks like:**
-- Configuring or falling back to a local/desktop MCP server instead of the remote one
-- Assuming the Figma desktop app must be open for MCP tools to work
-- Treating a "desktop app not running" message as a blocker — reconnect via the remote server instead
+- Giving manual `mcp.json` JSON snippets or "Add MCP Server" command-palette steps instead of pointing back to the Dev Mode → MCP → Clients flow
+- Assuming the connection still works without a real tool call, especially in a new session
+- Re-running the full connection walkthrough when it's already confirmed working
+
+---
+
+**Always use the remote MCP server**
+All Figma MCP work uses the remote server (`https://mcp.figma.com/mcp`). Never use the desktop MCP server. The desktop app does not need to be open.
+
+**A failed response looks like:**
+- Connecting to the desktop MCP server instead of the remote one
+- Assuming the desktop app must be open before Figma MCP tools will work
 
 ---
 
@@ -85,3 +94,16 @@ Before reporting a node's `width` or `height` as a fixed value, check its sizing
 **A failed response looks like:**
 - Updating `tokens.css` without also updating `DesignTokens.md`
 - Documenting a design token value without verifying it against Figma MCP first
+
+---
+
+**Post-build checklist: run this after building any screen from a connected Figma file, before calling it done**
+
+1. Build/type-check the change (e.g. `pnpm build`) before considering it done.
+2. Start (or reuse) a local dev server, open the new route in the browser tool, and screenshot-compare it against the Figma frame/node for a first self-check.
+3. Ask the user: *"Want me to commit and push this?"* — proceed only on an explicit yes.
+4. After pushing, tell the user where to look (dev URL/route, or that a deploy will follow) and ask them to manually eyeball it against the Figma design themselves before calling the task done.
+
+**A failed response looks like:**
+- Declaring a build "done" without running it through a dev server and comparing it to Figma
+- Committing or pushing without an explicit yes from the user

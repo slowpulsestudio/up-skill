@@ -34,7 +34,7 @@ The AI will ask you these questions in order:
 3. Which workflow skills apply
 4. Follow-up questions for specific skills:
    - **`workflow/git`** — GitHub repo URL
-   - **`workflow/figma-mcp`** — Figma file URL
+   - **`workflow/figma-read-from-mcp`** — Figma file URL
    - **`workflow/image-generation`** — which image generation provider
 
 **Platform — pick one:**
@@ -55,7 +55,7 @@ workflow/general
 workflow/git
 workflow/architecture
 workflow/testing
-workflow/figma-mcp
+workflow/figma-read-from-mcp
 workflow/figma-write-to-canvas
 workflow/vercel-publish
 workflow/vercel-password
@@ -74,7 +74,7 @@ workflow/image-generation
 | `workflow/git` | Source control rules |
 | `workflow/architecture` | General code structure rules |
 | `workflow/testing` | Testing standards |
-| `workflow/figma-mcp` | If the project uses Figma for design (design → code) |
+| `workflow/figma-read-from-mcp` | If the project uses Figma for design (design → code) |
 | `workflow/figma-write-to-canvas` | If the project uses Figma write-to-canvas / code → canvas skills |
 | `workflow/vercel-publish` | If the project deploys to Vercel |
 | `workflow/vercel-password` | Password gate for Vercel preview deployments |

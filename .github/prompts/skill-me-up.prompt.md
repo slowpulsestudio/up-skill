@@ -38,7 +38,7 @@ Check whether a `.skills` file exists in the root of this project.
    - `workflow/git` — source control rules
    - `workflow/architecture` — general code structure rules
    - `workflow/testing` — testing standards
-   - `workflow/figma-mcp` — if the project uses Figma (design → code direction)
+   - `workflow/figma-read-from-mcp` — if the project uses Figma (design → code direction)
    - `workflow/figma-write-to-canvas` — if the project uses Figma write-to-canvas / code → canvas skills
    - `workflow/vercel-publish` — if the project deploys to Vercel
    - `workflow/vercel-password` — password gate for Vercel preview deployments
@@ -47,10 +47,12 @@ Check whether a `.skills` file exists in the root of this project.
 3. For each of the following selected skills, ask a follow-up question:
 
    - **`workflow/git`** — *"What is the GitHub repo URL for this project?"*
-   - **`workflow/figma-mcp`** — *"What is the Figma file URL for this project?"* Give the user two options:
+   - **`workflow/figma-read-from-mcp`** or **`workflow/figma-write-to-canvas`** — *"What is the Figma file URL for this project?"* Give the user two options:
      - Paste the URL now — save it to `.figma-url` in the project root
      - *"I'll paste it in this chat when I have it"* — reply: *"No problem — paste the Figma URL in this chat whenever you're ready and I'll save it to `.figma-url`."* then continue setup. When the user later pastes a URL starting with `https://www.figma.com/`, write it to `.figma-url`.
    - **`workflow/image-generation`** — *"Which image generation provider does this project use?"* (e.g. OpenAI / DALL·E, Replicate, Stability AI)
+
+   Only ask one Figma file URL question even if both `workflow/figma-read-from-mcp` and `workflow/figma-write-to-canvas` were selected.
 
    Only ask follow-up questions for skills that were selected. Skip any that weren't.
 
@@ -80,6 +82,21 @@ If `workflow/git` is in the skills list, check whether a git remote is already c
 - If **no remote is set** and no URL was provided, ask: *"What is the GitHub repo URL for this project?"* then follow the steps above.
 
 Do not proceed to the next step until this is resolved.
+
+## Step 0c — Connect Figma MCP (if applicable)
+
+If `workflow/figma-read-from-mcp` or `workflow/figma-write-to-canvas` is in the skills list, the Figma MCP server must be connected before continuing. If both skills are selected, this only needs to happen once — do not repeat it.
+
+First check whether it's already connected: call `get_metadata` on the file in `.figma-url` (or a lightweight `use_figma` read). If real data comes back, the connection already works — skip the walkthrough below.
+
+If it does not work, walk the user through connecting via Figma's own UI. Never write or edit `mcp.json` by hand, never use VS Code's "Add MCP Server" command, and never consider a non-cloud/local server address:
+
+1. Open the Figma desktop app (or figma.com), open the target file, and switch to **Dev Mode**.
+2. Open the **MCP** panel and go to **Clients**.
+3. Next to **Visual Studio Code**, click **+** / **Get Figma integration**.
+4. Figma auto-installs the integration, opens VS Code, and completes the connection automatically — no config file, no copy-pasted URL, no command palette steps.
+
+After the walkthrough, call `get_metadata` again to confirm the connection now works before continuing to Step 1.
 
 ## Step 1 — Rebuild master-skills.md
 

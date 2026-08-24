@@ -6,7 +6,7 @@ Rules for managing prototypes that will be used in UX research sessions. The goa
 
 ## Frozen branches, not live imports
 
-When a prototype is selected for a research session, stamp the current state as a named branch and lock it. The prototype must not change after testing begins — not from ongoing development, not from Iris UI component updates, not from dependency bumps.
+When a prototype is selected for a research session, stamp the current state as a named branch and lock it. The prototype must not change after testing begins — not from ongoing development, not from component-library updates, not from dependency bumps.
 
 **Success looks like:**
 ```bash
@@ -14,18 +14,18 @@ When a prototype is selected for a research session, stamp the current state as 
 git checkout -b prototype/research-2024-08-13
 git push origin prototype/research-2024-08-13
 
-# Pin the Iris UI import to an exact commit hash in package.json
-# "iris-ui": "github:org/iris-ui#a3f9c12"
+# Pin the component-library import to an exact commit hash in package.json
+# "ui-library": "github:org/ui-library#a3f9c12"
 # Not a tag, not a range — a commit hash that cannot move
 ```
 
 **Failure looks like:**
 ```bash
 # BAD: using a semver range — will silently update on next install
-# "iris-ui": "^1.4.0"
+# "ui-library": "^1.4.0"
 
 # BAD: using a branch name — the branch tip moves
-# "iris-ui": "github:org/iris-ui#main"
+# "ui-library": "github:org/ui-library#main"
 
 # BAD: continuing to commit to the prototype branch after testing starts
 git checkout prototype/research-2024-08-13
@@ -36,14 +36,14 @@ git merge main  # pulls in changes that weren't tested
 
 ## No auto-refresh of component imports
 
-Iris UI component imports in a prototype branch must be pinned to an exact version or commit. Do not rely on a package manager resolving "latest" or a semver range during a research period — a silent component update can change behaviour between sessions.
+Component-library imports in a prototype branch must be pinned to an exact version or commit. Do not rely on a package manager resolving "latest" or a semver range during a research period — a silent component update can change behaviour between sessions.
 
 **Success looks like:**
 ```json
 // package.json — exact version, not a range
 {
   "dependencies": {
-    "@iris/components": "1.4.2"
+    "@org/components": "1.4.2"
   }
 }
 ```
@@ -51,10 +51,10 @@ Iris UI component imports in a prototype branch must be pinned to an exact versi
 **Failure looks like:**
 ```json
 // BAD: caret allows any patch/minor update
-{ "@iris/components": "^1.4.0" }
+{ "@org/components": "^1.4.0" }
 
 // BAD: tilde allows patch updates
-{ "@iris/components": "~1.4.0" }
+{ "@org/components": "~1.4.0" }
 ```
 
 ---
@@ -81,7 +81,7 @@ A frozen prototype branch exists for future reference — to replay exactly what
 
 - [ ] Branch created from a clean, known-good state **before** the session starts
 - [ ] Branch name includes date: `prototype/research-YYYY-MM-DD`
-- [ ] Iris UI and all component imports pinned to exact versions or commit hashes
+- [ ] All component-library imports pinned to exact versions or commit hashes
 - [ ] Branch pushed to remote immediately
 - [ ] No commits to the branch after the session begins
 - [ ] Main development branch continues independently

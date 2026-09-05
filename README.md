@@ -37,6 +37,57 @@ skills/
 
 Each file should cover **one topic only** and remain reusable across projects.
 
+## Setup Steps
+
+### 1. Fetch the initiation prompt
+
+Open your new project's folder in VS Code (an empty folder is fine) and paste this into the Copilot chat panel:
+
+```
+Fetch https://raw.githubusercontent.com/slowpulsestudio/up-skill/main/.github/prompts/skill-me-up.prompt.md and save it to .github/prompts/skill-me-up.prompt.md in this project.
+```
+
+This always pulls the latest version straight from GitHub — no need to clone or copy this repo.
+
+### 2. Run "Skill me up"
+
+In the same Copilot chat panel, run:
+
+```
+/skill-me-up
+```
+
+### 3. Answer the questions
+
+The AI asks real interactive questions (buttons/checkboxes), not plain text:
+
+- **Platform — single-select, pick exactly one:**
+
+  ```
+  platform/ios
+  platform/chrome-extension
+  platform/python-mac
+  platform/python-website
+  platform/python-cli
+  ```
+
+- **Workflow — multi-select checkboxes, `general`/`architecture`/`git` pre-checked as recommended defaults. Add or remove any others that apply:**
+
+  ```
+  workflow/general
+  workflow/architecture
+  workflow/git
+  workflow/testing
+  workflow/figma-read-from-mcp
+  workflow/figma-write-to-canvas
+  workflow/vercel-publish
+  workflow/vercel-password
+  workflow/image-generation
+  workflow/web-scraper
+  ```
+
+See [how-to-setup-projects.md](how-to-setup-projects.md) for the full walkthrough and a skill-by-skill reference table.
+
 ## Usage
 
 For each project:

@@ -35,7 +35,7 @@ A `ModuleNotFoundError` means a dependency wasn't installed in the venv before b
 ---
 
 **Venv and dependencies**
-The venv lives at `.venv/` in the project root. `pyinstaller` must be installed inside the venv, not globally. After installing any new package, always do a clean rebuild (delete both `dist/` and `build/`) so PyInstaller re-analyses imports from scratch.
+The venv lives at `.venv/` in the project root, using Homebrew-installed Python, not the macOS system default. `pyinstaller` must be installed inside the venv, not globally. Pin all dependencies in `requirements.txt`. After installing any new package, always do a clean rebuild (delete both `dist/` and `build/`) so PyInstaller re-analyses imports from scratch.
 
 ```zsh
 source .venv/bin/activate
@@ -43,8 +43,35 @@ pip install -r requirements.txt
 ```
 
 **A failed response looks like:**
-- Installing `pyinstaller` globally instead of into the venv
+- Installing `pyinstaller` (or any package) globally instead of into the venv
+- Using the system Python instead of a Homebrew-managed version
 - Skipping the clean rebuild after installing a new package — PyInstaller caches import analysis and will miss new dependencies
+
+---
+
+**Secrets**
+Load secrets via `python-dotenv` from a `.env` file. `.env` is gitignored; `.env.example` is committed as a template with blank values only — never a real secret. Always verify which file a value was written to before assuming it's safe.
+
+**A failed response looks like:**
+- Hardcoding an API key or secret directly in Python source
+- Committing a real secret value in `.env.example`
+
+---
+
+**Dict/kwargs merging**
+`dict.setdefault()` does NOT merge with caller-supplied values — it only fills in a key if it's absent, so a caller-supplied `headers`/`kwargs` dict silently replaces (rather than merges with) the defaults. Merge explicitly instead: `{**DEFAULTS, **overrides}`.
+
+**A failed response looks like:**
+- Using `kwargs.setdefault("headers", DEFAULT_HEADERS)` when a caller might also pass `headers` — this silently drops the defaults
+- Assuming a dict-valued default and a per-call override combine automatically
+
+---
+
+**Third-party API/model identifiers**
+Before hardcoding a model name or API version string, verify it's currently valid (e.g. a `list models` call) rather than trusting a name that may have been renamed or deprecated.
+
+**A failed response looks like:**
+- Hardcoding an API model name without verifying it's still a valid identifier
 
 ---
 
@@ -57,3 +84,98 @@ Commit messages must be short and imperative, e.g. `Fix YouTube: use android cli
 - Committing without a prior successful build and binary verification
 - Including `dist/` or `build/` files in a commit
 - Writing a vague or past-tense commit message
+
+---
+
+**UI design (native macOS feel)**
+A native Mac app is a system tool, not a website crammed into a window. Structure: draggable top bar (~50px, traffic lights integrated, keep it sparse) + optional sidebar (200-260px, only if there are 3+ nav destinations) + content area, which is the star — minimize chrome around it. Prefer a slide-out detail panel from the right over navigating to a new page, so the user keeps context.
+
+Window chrome: 10px corner radius, traffic lights top-left (12px circles, 8px spacing, red #FF5F57 / yellow #FEBC2E / green #28C840, all gray #CDCDCD when the window is inactive).
+
+```css
+.macos-window {
+  border-radius: 10px;
+  box-shadow: 0 0 0 0.5px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.08), 0 8px 30px rgba(0,0,0,0.12);
+}
+```
+
+**A failed response looks like:**
+- Cluttering the top bar (the window's draggable zone) with buttons
+- Adding a sidebar when there are fewer than 3 nav destinations
+- Navigating to a full new page for details instead of a slide-out panel
+- Floating traffic lights that don't feel integrated into the top bar/sidebar
+
+---
+
+**Light & dark mode**
+Never invert colors between modes — dark mode needs MORE separation between background levels, not less. Design each mode's palette independently, never pure black (#000000) backgrounds in dark mode (Apple uses dark grays). Hierarchy comes from background levels, not borders; borders are 0.5px and low-opacity.
+
+```css
+:root {
+  --bg-primary: #FFFFFF; --bg-secondary: #F5F5F7; --bg-tertiary: #E8E8ED;
+  --text-primary: #1D1D1F; --text-secondary: #6E6E73;
+  --accent: #007AFF;
+  --border: rgba(0,0,0,0.08);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #1C1C1E; --bg-secondary: #2C2C2E; --bg-tertiary: #3A3A3C;
+    --text-primary: #F5F5F7; --text-secondary: #98989D;
+    --accent: #0A84FF;
+    --border: rgba(255,255,255,0.08);
+  }
+}
+```
+
+**A failed response looks like:**
+- Generating dark mode by algorithmically inverting the light palette
+- Pure black (#000000) dark-mode backgrounds
+- Thick or dark borders instead of subtle 0.5px low-opacity ones
+
+---
+
+**Typography, spacing, vibrancy**
+Font stack: `-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif`. Body text is 13px (smaller than typical web sizing); large titles 26px bold.
+
+8px base grid: window padding 16-20px, section gap 24px, card gap 12-16px, button padding 6px 12px. Corner radii: window 10px, card 8px, button/input 6px, badge 4px.
+
+Sidebars, toolbars, and popovers use vibrancy, never a flat color:
+
+```css
+.sidebar {
+  background: rgba(246,246,246,0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+}
+```
+
+Never blur the main content area or a modal's own background (use a solid overlay for modals instead). Shadows are layered, not a single drop-shadow, and always include a `0 0 0 0.5px` edge — that subtle edge is what reads as "macOS" instead of "web app":
+
+```css
+box-shadow: 0 0 0 0.5px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.1);
+```
+
+**A failed response looks like:**
+- Body text sized like a website (15px+) instead of 13px
+- A flat, non-blurred sidebar/toolbar background
+- A single flat box-shadow instead of a layered shadow with the `0 0 0 0.5px` edge
+- Blurring the main content area or a modal's own background
+
+---
+
+**Interactions**
+Every primary action needs a keyboard shortcut, shown inline as a small `<kbd>`-style hint next to the action — not hidden in a menu only. Standard conventions: `⌘N` new, `⌘F` find, `⌘W` close, `⌘,` preferences, `⌘K`/`⌘Space` command palette, `Esc` dismiss.
+
+Every state change (panel open/close, hover, drag, toast) needs a transition — an interaction with no visual feedback reads as broken:
+
+```css
+--ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+--duration-fast: 150ms;   /* hover */
+--duration-normal: 250ms; /* panels */
+```
+
+Use optimistic UI for save/delete actions: update the UI immediately, show a toast, do the actual I/O in the background, and revert + show an error toast on failure.
+
+**A failed response looks like:**
+- A primary action with no keyboard shortcut or no visible shortcut hint
+- An instant state change (no transition) on hover, panel open, or drag
+- Blocking the UI on a network/disk write instead of optimistic update + background sync

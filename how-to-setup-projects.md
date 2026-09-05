@@ -8,9 +8,15 @@ Up-Skill is a library of AI instruction files. When you start a new project, you
 
 ---
 
-## Step 1 — Copy the `.github/` folder into your project
+## Step 1 — Fetch the initiation prompt
 
-Copy the entire `.github/` folder from this repo into the root of your new project. It contains all the prompt files already in the right place.
+Open your new project's folder in VS Code (an empty folder is fine) and paste this into the Copilot chat panel:
+
+```
+Fetch https://raw.githubusercontent.com/slowpulsestudio/up-skill/main/.github/prompts/skill-me-up.prompt.md and save it to .github/prompts/skill-me-up.prompt.md in this project.
+```
+
+This always pulls the latest version straight from GitHub — no need to clone or copy this repo.
 
 ---
 
@@ -28,10 +34,10 @@ This always pulls the latest versions from GitHub, so any improvements made to U
 
 ## Step 3 — Question time
 
-The AI will ask you these questions in order:
+The AI will ask you these as real interactive questions (buttons/checkboxes), not plain text:
 1. What is the project/app name
-2. Which platform this project uses
-3. Which workflow skills apply
+2. Which platform this project uses (single-select)
+3. Which workflow skills apply (multi-select checkboxes — `general`, `architecture`, and `git` are pre-checked as recommended defaults)
 4. Follow-up questions for specific skills:
    - **`workflow/git`** — GitHub repo URL
    - **`workflow/figma-read-from-mcp`** — Figma file URL
@@ -45,21 +51,21 @@ platform/chrome-extension
 platform/python-mac
 platform/python-website
 platform/python-cli
-platform/web-scraper
 ```
 
-**Workflow — `workflow/general` is always included. Add as many others as apply:**
+**Workflow — multi-select checkboxes, `general`/`architecture`/`git` pre-checked. Add or remove any others that apply:**
 
 ```
 workflow/general
-workflow/git
 workflow/architecture
+workflow/git
 workflow/testing
 workflow/figma-read-from-mcp
 workflow/figma-write-to-canvas
 workflow/vercel-publish
 workflow/vercel-password
 workflow/image-generation
+workflow/web-scraper
 ```
 
 | Skill | When to include |
@@ -69,16 +75,16 @@ workflow/image-generation
 | `platform/python-mac` | Python desktop app for Mac |
 | `platform/python-website` | Python web app (FastAPI etc.) |
 | `platform/python-cli` | Python local script/CLI tool |
-| `platform/web-scraper` | Python scraping project |
-| `workflow/general` | Core execution rules — always include |
-| `workflow/git` | Source control rules |
-| `workflow/architecture` | General code structure rules |
+| `workflow/general` | Core execution rules — pre-checked by default |
+| `workflow/architecture` | General code structure rules — pre-checked by default |
+| `workflow/git` | Source control rules — pre-checked by default |
 | `workflow/testing` | Testing standards |
 | `workflow/figma-read-from-mcp` | If the project uses Figma for design (design → code) |
 | `workflow/figma-write-to-canvas` | If the project uses Figma write-to-canvas / code → canvas skills |
 | `workflow/vercel-publish` | If the project deploys to Vercel |
 | `workflow/vercel-password` | Password gate for Vercel preview deployments |
 | `workflow/image-generation` | If the project calls an AI image-generation API |
+| `workflow/web-scraper` | If the project scrapes data from websites |
 
 ---
 

@@ -3,14 +3,34 @@
 ---
 
 **Environment setup**
-Use a project-local virtualenv at `.venv/` — never install packages globally. Pin all dependencies in `requirements.txt`. Use Homebrew-installed Python, not the macOS system default.
+Use a project-local virtualenv at `.venv/` — never install packages globally. Pin all dependencies in `requirements.txt`. Use Homebrew-installed Python, not the macOS system default (it's often outdated).
 
-This is a plain script-based tool, not a packaged/distributed app — run it directly with `python main.py`. Do not add PyInstaller or any bundling/packaging step unless the Designer explicitly asks for a distributable binary.
+```zsh
+source .venv/bin/activate
+pip install -r requirements.txt
+```
 
 **A failed response looks like:**
 - Installing packages globally instead of into `.venv/`
-- Adding PyInstaller, `.spec` files, or `.app` bundling when the project only needs to run as a script
 - Using the system Python instead of a Homebrew-managed version
+- Adding a new dependency without pinning it in `requirements.txt`
+
+---
+
+**Secrets**
+Load secrets via `python-dotenv` from a `.env` file. `.env` is gitignored; `.env.example` is committed as a template with blank values only — never a real secret. Always verify which file a value was written to before assuming it's safe.
+
+**A failed response looks like:**
+- Hardcoding an API key or secret directly in Python source
+- Committing a real secret value in `.env.example`
+
+---
+
+**Distribution model**
+This is a plain script-based tool, not a packaged/distributed app — run it directly with `python main.py`. Do not add PyInstaller or any bundling/packaging step unless the Designer explicitly asks for a distributable binary.
+
+**A failed response looks like:**
+- Adding PyInstaller, `.spec` files, or `.app` bundling when the project only needs to run as a script
 
 ---
 
@@ -20,15 +40,6 @@ Expose creative/tunable parameters (dimensions, counts, seeds, thresholds, featu
 **A failed response looks like:**
 - Hardcoding a tunable creative parameter directly in a function body instead of reading it from config
 - Adding a new parameter to config.yaml without wiring it up to actually change behaviour
-
----
-
-**Secrets**
-Secrets live in `.env`, loaded via `python-dotenv`. `.env` is gitignored. `.env.example` is committed as a template with blank values — never a real secret.
-
-**A failed response looks like:**
-- Hardcoding an API key in Python source
-- Committing a real secret value in `.env.example`
 
 ---
 
@@ -56,3 +67,20 @@ Validate outputs automatically wherever practical (dimensions, file counts, orde
 **A failed response looks like:**
 - Declaring a milestone done after only mocked/unit tests, without an end-to-end run
 - Leaving obvious structural checks (dimensions, ordering, missing files) to manual/visual inspection
+
+---
+
+**Dict/kwargs merging**
+`dict.setdefault()` does NOT merge with caller-supplied values — it only fills in a key if it's absent, so a caller-supplied `headers`/`kwargs` dict silently replaces (rather than merges with) the defaults. Merge explicitly instead: `{**DEFAULTS, **overrides}`.
+
+**A failed response looks like:**
+- Using `kwargs.setdefault("headers", DEFAULT_HEADERS)` when a caller might also pass `headers` — this silently drops the defaults
+- Assuming a dict-valued default and a per-call override combine automatically
+
+---
+
+**Third-party API/model identifiers**
+Before hardcoding a model name or API version string, verify it's currently valid (e.g. a `list models` call) rather than trusting a name that may have been renamed or deprecated.
+
+**A failed response looks like:**
+- Hardcoding an API model name without verifying it's still a valid identifier

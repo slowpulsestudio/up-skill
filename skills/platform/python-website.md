@@ -5,22 +5,32 @@
 **Environment setup**
 Use a project-local virtualenv at `.venv/` — never install packages globally. Pin all dependencies in `requirements.txt`. Use Homebrew-installed Python, not the macOS system default (it's often outdated).
 
-Prefer lightweight stacks for small/internal tools: SQLite over a client-server database, FastAPI + server-rendered templates + vanilla JS/CSS over a full frontend framework.
+```zsh
+source .venv/bin/activate
+pip install -r requirements.txt
+```
 
 **A failed response looks like:**
 - Installing packages globally instead of into `.venv/`
 - Using the system Python instead of a Homebrew-managed version
-- Reaching for a heavier stack (PostgreSQL, React, etc.) when SQLite and server-rendered templates are sufficient for the project's scale
+- Adding a new dependency without pinning it in `requirements.txt`
 
 ---
 
-**Secrets and environment**
-Secrets live in `.env`, loaded via `python-dotenv`. `.env` is gitignored. `.env.example` is committed as a template with blank values — never a real secret. Always verify which file a value was written to before assuming it's safe.
+**Secrets**
+Load secrets via `python-dotenv` from a `.env` file. `.env` is gitignored; `.env.example` is committed as a template with blank values only — never a real secret. Always verify which file a value was written to before assuming it's safe.
 
 **A failed response looks like:**
+- Hardcoding an API key or secret directly in Python source
 - Committing a real secret value in `.env.example`
-- Hardcoding a secret in source code
-- Echoing a secret value into chat or log output to confirm a fix — redact or move via file operations instead
+
+---
+
+**Stack choice**
+Prefer lightweight stacks for small/internal tools: SQLite over a client-server database, FastAPI + server-rendered templates + vanilla JS/CSS over a full frontend framework.
+
+**A failed response looks like:**
+- Reaching for a heavier stack (PostgreSQL, React, etc.) when SQLite and server-rendered templates are sufficient for the project's scale
 
 ---
 
@@ -77,11 +87,17 @@ Commit in small focused increments per feature or fix. Write multi-line commit m
 
 ---
 
-**Security: dict merging**
-Treat any dict-merging config or header logic with suspicion. `setdefault()` on a dict-valued kwarg does NOT merge with caller-supplied values — it skips entirely if the key is already present. Merge explicitly when defaults need to combine with per-call overrides.
-
-Before reusing a third-party API or model identifier, verify it is currently valid (e.g. via a `list models` call) rather than hardcoding a name that may have been renamed or deprecated.
+**Dict/kwargs merging**
+`dict.setdefault()` does NOT merge with caller-supplied values — it only fills in a key if it's absent, so a caller-supplied `headers`/`kwargs` dict silently replaces (rather than merges with) the defaults. Merge explicitly instead: `{**DEFAULTS, **overrides}`.
 
 **A failed response looks like:**
-- Using `setdefault()` to apply default headers when callers might also pass headers — this silently drops the defaults
-- Hardcoding an API model name without verifying it is still a valid identifier
+- Using `kwargs.setdefault("headers", DEFAULT_HEADERS)` when a caller might also pass `headers` — this silently drops the defaults
+- Assuming a dict-valued default and a per-call override combine automatically
+
+---
+
+**Third-party API/model identifiers**
+Before hardcoding a model name or API version string, verify it's currently valid (e.g. a `list models` call) rather than trusting a name that may have been renamed or deprecated.
+
+**A failed response looks like:**
+- Hardcoding an API model name without verifying it's still a valid identifier

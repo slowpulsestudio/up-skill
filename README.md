@@ -26,13 +26,13 @@ skills/
         vercel-publish.md
         vercel-password.md
         image-generation.md
+        web-scraper.md
     platform/
         ios.md
         chrome-extension.md
         python-mac.md
         python-website.md
         python-cli.md
-        web-scraper.md
 ```
 
 Each file should cover **one topic only** and remain reusable across projects.
@@ -41,12 +41,11 @@ Each file should cover **one topic only** and remain reusable across projects.
 
 For each project:
 
-1. Always start with `workflow/general.md` — it applies to every project.
-2. Select any additional skills from `skills/workflow/` that apply.
-3. From `skills/platform/`, pick **exactly one** to match the project's platform (e.g. `ios.md` for an iOS app, `python-mac.md` for a Mac desktop app). Never include more than one platform skill.
-4. Concatenate them, in order, into a single `master-skills.md`.
-5. Append any project-specific instructions.
-6. Point both `CLAUDE.md` and `.github/copilot-instructions.md` at the generated `master-skills.md`.
+1. From `skills/workflow/`, pick via a multi-select checklist — `general.md`, `architecture.md`, and `git.md` are pre-checked as recommended defaults. Add or remove any others that apply.
+2. From `skills/platform/`, pick **exactly one** via a single-select question to match the project's platform (e.g. `ios.md` for an iOS app, `python-mac.md` for a Mac desktop app). Never include more than one platform skill.
+3. Concatenate them, in order, into a single `master-skills.md`.
+4. Append any project-specific instructions.
+5. Point both `CLAUDE.md` and `.github/copilot-instructions.md` at the generated `master-skills.md`.
 
 The AI should consume only the generated file.
 

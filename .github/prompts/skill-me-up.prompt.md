@@ -24,25 +24,28 @@ Check whether a `.skills` file exists in the root of this project.
 
 **If `.skills` exists:** read it. It contains a list of skill names, one per line. Skip blank lines and any line starting with `#`.
 
-**If `.skills` does not exist:** ask the user the following questions one at a time, waiting for an answer before asking the next:
+**If `.skills` does not exist:** ask the user the following as real interactive questions (buttons/checkboxes via the ask-questions tool), not plain numbered lists in chat text. Ask the platform question and the workflow question separately, waiting for an answer before the next:
 
-1. *"Which platform does this project use? Pick one:"*
+1. **Platform** (single-select — pick exactly one):
    - `platform/ios` — Swift iOS app
    - `platform/chrome-extension` — Chrome browser extension
    - `platform/python-mac` — Python desktop app for Mac
    - `platform/python-website` — Python web app (FastAPI etc.)
    - `platform/python-cli` — Python local script/CLI tool
-   - `platform/web-scraper` — Python scraping project
 
-2. *"`workflow/general` is always included. Which of these workflow skills also apply? Pick as many as needed:"*
-   - `workflow/git` — source control rules
-   - `workflow/architecture` — general code structure rules
+2. **Workflow skills** (multi-select checkboxes — `workflow/general`, `workflow/architecture`, and `workflow/git` pre-checked as recommended defaults; the rest start unchecked):
+   - `workflow/general` — core execution rules (recommended, pre-checked)
+   - `workflow/architecture` — general code structure rules (recommended, pre-checked)
+   - `workflow/git` — source control rules (recommended, pre-checked)
    - `workflow/testing` — testing standards
+   - `workflow/web-scraper` — if the project scrapes data from websites
    - `workflow/figma-read-from-mcp` — if the project uses Figma (design → code direction)
    - `workflow/figma-write-to-canvas` — if the project uses Figma write-to-canvas / code → canvas skills
    - `workflow/vercel-publish` — if the project deploys to Vercel
    - `workflow/vercel-password` — password gate for Vercel preview deployments
    - `workflow/image-generation` — if the project calls an AI image-generation API
+
+   If no interactive question tool is available, fall back to asking both as plain numbered-list questions in chat, noting `workflow/general`, `workflow/architecture`, and `workflow/git` as the recommended defaults.
 
 3. For each of the following selected skills, ask a follow-up question:
 
@@ -56,7 +59,7 @@ Check whether a `.skills` file exists in the root of this project.
 
    Only ask follow-up questions for skills that were selected. Skip any that weren't.
 
-   Once all questions are answered, write the `.skills` file with the standard comment header followed by the chosen skills, one per line. Always include `workflow/general` as the first workflow entry:
+   Once all questions are answered, write the `.skills` file with the standard comment header followed by the chosen skills, one per line — the selected platform skill first, then the selected workflow skills in the order presented above (so `workflow/general` comes first among them if it's checked):
 
    ```
    # This file is only a pseudo-import list for the Up-Skill mechanism — like a

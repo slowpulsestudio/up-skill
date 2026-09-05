@@ -139,21 +139,21 @@ Check for the following three files and create them if they don't already exist:
 
 **`.github/copilot-instructions.md`**
 ```
-Read master-skills.md and prototype-specific-agent-instructions.md for your operating instructions.
+Read master-skills.md and project-specific-agent-instructions.md for your operating instructions.
 ```
 
 **`CLAUDE.md`**
 ```
-Read master-skills.md and prototype-specific-agent-instructions.md for your operating instructions.
+Read master-skills.md and project-specific-agent-instructions.md for your operating instructions.
 ```
 
-**`prototype-specific-agent-instructions.md`**
+**`project-specific-agent-instructions.md`**
 ```
-# Prototype-specific agent instructions
+# Project-specific agent instructions
 
-<!-- Add prototype-specific notes here — design decisions, constraints, what's
+<!-- Add project-specific notes here — design decisions, constraints, what's
      being tested, known issues, personas, edge cases, anything the AI should
-     know about this particular prototype that isn't covered by master-skills.md.
+     know about this particular project that isn't covered by master-skills.md.
      This file is never overwritten by /skill-me-up. -->
 ```
 
@@ -166,7 +166,7 @@ When done, report:
 - The total line count of the new `master-skills.md`
 - Any skills that failed to fetch (404 or network error)
 - Which bundled files were copied (grouped by skill), and any that were skipped due to conflicts
-- Whether `.github/copilot-instructions.md`, `CLAUDE.md`, and `prototype-specific-agent-instructions.md` were created or already existed
+- Whether `.github/copilot-instructions.md`, `CLAUDE.md`, and `project-specific-agent-instructions.md` were created or already existed
 
 ## Step 5 — Post-setup actions (ask in order, only if applicable)
 

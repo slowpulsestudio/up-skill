@@ -99,11 +99,14 @@ Window chrome: 10px corner radius, traffic lights top-left (12px circles, 8px sp
 }
 ```
 
+Never set `easy_drag=True` on macOS if the window content has any interactive drag controls (sliders, custom drag-to-reorder, etc.) — it hijacks mouse-drag at the native view level for the whole window, not just the titlebar. Use `easy_drag=False` and rely on the `.pywebview-drag-region` class on the titlebar element for drag-to-move instead.
+
 **A failed response looks like:**
 - Cluttering the top bar (the window's draggable zone) with buttons
 - Adding a sidebar when there are fewer than 3 nav destinations
 - Navigating to a full new page for details instead of a slide-out panel
 - Floating traffic lights that don't feel integrated into the top bar/sidebar
+- Setting `easy_drag=True` on a frameless pywebview window that also contains draggable/slider controls in its content
 
 ---
 
@@ -175,7 +178,20 @@ Every state change (panel open/close, hover, drag, toast) needs a transition —
 
 Use optimistic UI for save/delete actions: update the UI immediately, show a toast, do the actual I/O in the background, and revert + show an error toast on failure.
 
+Numeric inputs meant for frequent adjustment use a custom stepper, never bare native spin buttons — hide the native ones and flank the input with large (≥28px square) −/+ buttons. Native `<input type="number">` spin buttons are OS-rendered pseudo-elements ~12-14px tall, too small to reliably click and impossible to resize via CSS alone. This is a recurring bug class: any numeric field a user is expected to adjust frequently (batch size, count, quantity, intensity steps) should default to a custom large stepper control from the start, not get patched after a "the buttons are too small" bug report.
+
+```css
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.stepper { display: flex; border-radius: 6px; overflow: hidden; border: 0.5px solid var(--border); }
+.stepper-btn { width: 32px; font-size: 16px; font-weight: 600; border: none; cursor: pointer; }
+```
+
 **A failed response looks like:**
 - A primary action with no keyboard shortcut or no visible shortcut hint
 - An instant state change (no transition) on hover, panel open, or drag
 - Blocking the UI on a network/disk write instead of optimistic update + background sync
+- Shipping a frequently-adjusted numeric field with bare native spin buttons instead of a custom large stepper from the start

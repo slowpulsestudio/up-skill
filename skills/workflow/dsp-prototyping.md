@@ -35,3 +35,13 @@ Treat tuning as iterative rounds: Round 1 sweeps the full plausible range per pa
 **A failed response looks like:**
 - Inventing final parameter defaults without an actual round of Designer feedback on real renders
 - Skipping straight to porting the algorithm into the real-time codebase before any round of tuning feedback
+
+---
+
+**Random combined-parameter batches for interaction effects**
+After one-parameter-at-a-time sweeps establish each parameter's usable low/high range, render a second batch of combinations by randomly sampling several parameters at once within their discovered ranges (not exhaustively grid-searching every combination). This surfaces interaction effects — e.g. two parameters that sound fine individually but clash or reinforce unexpectedly together — that isolated sweeps cannot reveal. Use both methods together: one-at-a-time sweeps to find sane bounds, random combined batches to confirm those bounds still hold once parameters interact.
+
+**A failed response looks like:**
+- Only ever testing parameters in isolation and never validating combined settings before locking in defaults
+- Exhaustively grid-searching every combination of every parameter instead of random sampling within already-discovered ranges
+- Randomly sampling parameter combinations before any individual-parameter bounds have been established

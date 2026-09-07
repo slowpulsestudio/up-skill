@@ -27,12 +27,14 @@ skills/
         vercel-password.md
         image-generation.md
         web-scraper.md
+        dsp-prototyping.md
     platform/
         ios.md
         chrome-extension.md
         python-mac.md
         python-website.md
         python-cli.md
+        juce-vst3-plugin.md
 ```
 
 Each file should cover **one topic only** and remain reusable across projects.
@@ -69,6 +71,7 @@ The AI asks real interactive questions (buttons/checkboxes), not plain text:
   platform/python-mac
   platform/python-website
   platform/python-cli
+  platform/juce-vst3-plugin
   ```
 
 - **Workflow — multi-select checkboxes, `general`/`architecture`/`git` pre-checked as recommended defaults. Add or remove any others that apply:**
@@ -84,6 +87,7 @@ The AI asks real interactive questions (buttons/checkboxes), not plain text:
   workflow/vercel-password
   workflow/image-generation
   workflow/web-scraper
+  workflow/dsp-prototyping
   ```
 
 See [how-to-setup-projects.md](how-to-setup-projects.md) for the full walkthrough and a skill-by-skill reference table.

@@ -51,6 +51,7 @@ platform/chrome-extension
 platform/python-mac
 platform/python-website
 platform/python-cli
+platform/juce-vst3-plugin
 ```
 
 **Workflow — multi-select checkboxes, `general`/`architecture`/`git` pre-checked. Add or remove any others that apply:**
@@ -66,6 +67,7 @@ workflow/vercel-publish
 workflow/vercel-password
 workflow/image-generation
 workflow/web-scraper
+workflow/dsp-prototyping
 ```
 
 | Skill | When to include |
@@ -75,6 +77,7 @@ workflow/web-scraper
 | `platform/python-mac` | Python desktop app for Mac |
 | `platform/python-website` | Python web app (FastAPI etc.) |
 | `platform/python-cli` | Python local script/CLI tool |
+| `platform/juce-vst3-plugin` | Building a VST3 audio plugin (JUCE/C++) |
 | `workflow/general` | Core execution rules — pre-checked by default |
 | `workflow/architecture` | General code structure rules — pre-checked by default |
 | `workflow/git` | Source control rules — pre-checked by default |
@@ -85,6 +88,7 @@ workflow/web-scraper
 | `workflow/vercel-password` | Password gate for Vercel preview deployments |
 | `workflow/image-generation` | If the project calls an AI image-generation API |
 | `workflow/web-scraper` | If the project scrapes data from websites |
+| `workflow/dsp-prototyping` | If the project involves tuning audio/DSP algorithms before a real-time port |
 
 ---
 

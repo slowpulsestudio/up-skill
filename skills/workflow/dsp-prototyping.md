@@ -38,6 +38,15 @@ Treat tuning as iterative rounds: Round 1 sweeps the full plausible range per pa
 
 ---
 
+**Ad-hoc test renders go in a subfolder, never the Output/ root**
+One-off A/B renders (e.g. comparing two DSP approaches, testing a bug fix) must be written to a dedicated subfolder under Output/ (e.g. `Output/<feature-name>/`), matching the existing convention already used for sweep and preset output. Never write loose WAV/PNG files directly into Output/'s root.
+
+**A failed response looks like:**
+- Writing a quick comparison render straight to Output/some_test.wav instead of Output/some_test/some_test.wav
+- Leaving the Designer to manually clean up/organize stray files the agent wrote to the Output/ root
+
+---
+
 **Random combined-parameter batches for interaction effects**
 After one-parameter-at-a-time sweeps establish each parameter's usable low/high range, render a second batch of combinations by randomly sampling several parameters at once within their discovered ranges (not exhaustively grid-searching every combination). This surfaces interaction effects — e.g. two parameters that sound fine individually but clash or reinforce unexpectedly together — that isolated sweeps cannot reveal. Use both methods together: one-at-a-time sweeps to find sane bounds, random combined batches to confirm those bounds still hold once parameters interact.
 

@@ -21,6 +21,15 @@ Bring JUCE in via CMake `FetchContent`, pinned to a specific release tag — nev
 
 ---
 
+**Install location: vendor subfolder, not the bare VST3 root**
+Plugins install to a `SlowPulseStudio` subfolder inside the system VST3 folder, not directly into `~/Library/Audio/Plug-Ins/VST3/`. Set `VST3_COPY_DIR "$ENV{HOME}/Library/Audio/Plug-Ins/VST3/SlowPulseStudio"` on `juce_add_plugin(...)` alongside `COPY_PLUGIN_AFTER_BUILD TRUE`. This keeps every plugin from this studio grouped together in the DAW's plugin browser instead of mixed in with every other vendor's plugins.
+
+**A failed response looks like:**
+- Letting COPY_PLUGIN_AFTER_BUILD install straight to the bare VST3/ root without a vendor subfolder
+- Using a different or inconsistent subfolder name across projects instead of SlowPulseStudio
+
+---
+
 **Real-time audio safety in `processBlock`**
 `processBlock` runs on the audio thread and must never allocate, lock, log, or do file/network I/O — any of these can cause audible dropouts/glitches in the DAW. Parameter changes must be smoothed (`juce::SmoothedValue`), never applied as a hard jump, to avoid zipper noise/clicks.
 

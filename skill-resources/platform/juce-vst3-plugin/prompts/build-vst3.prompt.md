@@ -50,7 +50,7 @@ On a successful build, confirm the `.vst3` now exists under:
 ~/Library/Audio/Plug-Ins/VST3/Slow Pulse Studio/
 ```
 
-Remind the user to fully restart their DAW if it was already open — a rebuilt plugin can stay stale in a running host even after a successful reinstall.
+Say exactly: "Time to test the VST3 in your DAW! (If it was already open, fully restart it — a rebuilt plugin can stay stale in a running host otherwise.)" — not a multi-step checklist or a longer prose explanation.
 
 ## Notes
 

@@ -3,12 +3,16 @@ mode: agent
 description: Rebuild master-skills.md by fetching the latest skill files from the up-skill repo on GitHub, and copy any skill-bundled files into this project.
 ---
 
+## Cache-busting (applies to every fetch in this prompt)
+
+`raw.githubusercontent.com` and GitHub archive zip downloads are served through a CDN that can return a stale cached response for a few minutes after a push. To avoid silently acting on stale content, append a cache-busting query string to every URL fetched in this prompt: `?cb={unix-timestamp-or-random-value}`, using a fresh value per run (the same value can be reused for all fetches within one run).
+
 ## Step -1 — Self-update check
 
 Before doing anything else, fetch the latest version of this prompt from the up-skill repo:
 
 ```
-https://raw.githubusercontent.com/slowpulsestudio/up-skill/main/.github/prompts/skill-me-up.prompt.md
+https://raw.githubusercontent.com/slowpulsestudio/up-skill/main/.github/prompts/skill-me-up.prompt.md?cb={cache-bust}
 ```
 
 Compare it to the current contents of `.github/prompts/skill-me-up.prompt.md` in this project.
@@ -111,7 +115,7 @@ After the walkthrough, call `get_metadata` again to confirm the connection now w
 For each skill name, fetch the corresponding skill file from GitHub using this URL pattern:
 
 ```
-https://raw.githubusercontent.com/slowpulsestudio/up-skill/main/skills/{skill-name}.md
+https://raw.githubusercontent.com/slowpulsestudio/up-skill/main/skills/{skill-name}.md?cb={cache-bust}
 ```
 
 Fetch all skills in parallel. Then concatenate them in the order they appear in `.skills`, with a blank line between each, and write the result to `master-skills.md` in the project root, overwriting whatever was there before.
@@ -131,7 +135,7 @@ source-folder/ -> dest-folder/
 
 For each mapping, use the zip download approach:
 1. Download the up-skill repo as a zip:
-   `https://github.com/slowpulsestudio/up-skill/archive/refs/heads/main.zip`
+   `https://github.com/slowpulsestudio/up-skill/archive/refs/heads/main.zip?cb={cache-bust}`
 2. Extract only the files whose path within the zip starts with `up-skill-main/skill-resources/{skill-name}/{source-folder}/`
 3. Write each extracted file to `{project-root}/{dest-folder}/{relative-path}`, where `relative-path` is the portion after `up-skill-main/skill-resources/{skill-name}/{source-folder}/`. Create any necessary directories.
 4. If a file already exists at the destination and its content differs, warn the user and skip it — do not overwrite.

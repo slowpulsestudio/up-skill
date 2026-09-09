@@ -107,6 +107,8 @@ That's it. The AI will have created `master-skills.md`, `.github/copilot-instruc
 
 Whenever Up-Skill is updated with new or improved skills, just run `/skill-me-up` again in Copilot chat. It will re-fetch everything and overwrite `master-skills.md` with the latest version. Bundled files that already exist in your project will not be overwritten — you'll be warned about any conflicts so you can resolve them manually.
 
+`/skill-me-up` also keeps a second slash command, `/system-my-design`, installed and current automatically. Run `/system-my-design` any time you want to check whether the bundled resource files it left behind conflict-skipped (e.g. a shared UI component) have since been improved in Up-Skill — it shows a diff for each changed file and asks before overwriting anything, instead of the silent skip `/skill-me-up` does.
+
 ---
 
 For skill authors, see [how-to-create-skills.md](how-to-create-skills.md).

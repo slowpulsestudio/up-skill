@@ -21,10 +21,16 @@ Read `.github/prompts/skill-me-up.prompt.md` from the extracted snapshot (`up-sk
 
 Compare it to the current contents of `.github/prompts/skill-me-up.prompt.md` in this project.
 
-- **If they are identical:** continue to Step 0.
+- **If they are identical:** continue to the companion-prompt check below.
 - **If they differ:** tell the user: *"There are updates available for the skill-me-up prompt. Would you like me to update it now? You'll need to run `/skill-me-up` again after."*
   - If yes: overwrite `.github/prompts/skill-me-up.prompt.md` with the fetched version and stop. Do not continue setup.
-  - If no: continue to Step 0 with the current version.
+  - If no: continue to the companion-prompt check below with the current version.
+
+Then check for the companion `/system-my-design` prompt, which is core up-skill tooling (not a per-skill bundled resource) and should exist alongside `skill-me-up.prompt.md` in every project:
+
+- Read `up-skill-main/.github/prompts/system-my-design.prompt.md` from the snapshot.
+- If `.github/prompts/system-my-design.prompt.md` doesn't exist in this project, or exists but differs from the snapshot version, overwrite/create it silently (no need to ask — unlike `skill-me-up.prompt.md` itself, this doesn't require restarting the run).
+- Continue to Step 0.
 
 ## Step 0 — Skills setup
 

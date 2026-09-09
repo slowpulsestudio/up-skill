@@ -31,11 +31,11 @@ Since JUCE is pinned via CMake `FetchContent`, the actual JUCE source is availab
 ---
 
 **Install location: vendor subfolder, not the bare VST3 root**
-Plugins install to a `SlowPulseStudio` subfolder inside the system VST3 folder, not directly into `~/Library/Audio/Plug-Ins/VST3/`. Set `VST3_COPY_DIR "$ENV{HOME}/Library/Audio/Plug-Ins/VST3/SlowPulseStudio"` on `juce_add_plugin(...)` alongside `COPY_PLUGIN_AFTER_BUILD TRUE`. This keeps every plugin from this studio grouped together in the DAW's plugin browser instead of mixed in with every other vendor's plugins.
+Plugins install to a `Slow Pulse Studio` subfolder inside the system VST3 folder, not directly into `~/Library/Audio/Plug-Ins/VST3/`. Set `VST3_COPY_DIR "$ENV{HOME}/Library/Audio/Plug-Ins/VST3/Slow Pulse Studio"` on `juce_add_plugin(...)` alongside `COPY_PLUGIN_AFTER_BUILD TRUE`. This keeps every plugin from this studio grouped together in the DAW's plugin browser instead of mixed in with every other vendor's plugins.
 
 **A failed response looks like:**
 - Letting COPY_PLUGIN_AFTER_BUILD install straight to the bare VST3/ root without a vendor subfolder
-- Using a different or inconsistent subfolder name across projects instead of SlowPulseStudio
+- Using a different or inconsistent subfolder name across projects instead of Slow Pulse Studio
 
 ---
 

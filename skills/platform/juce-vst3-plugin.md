@@ -101,3 +101,8 @@ When scaffolding a new JUCE plugin project, create a `Testing/` folder containin
 - Committing the DAW test project folder before gitignoring it, requiring a later `git rm --cached` cleanup
 - Tracking `Backup/`/`Samples/`-style auto-generated DAW subfolders in git
 - Skipping the `Testing/` scaffold entirely because "the Designer can set it up manually"
+
+---
+
+## Resources
+prompts/ -> .github/prompts/

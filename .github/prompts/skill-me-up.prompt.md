@@ -7,11 +7,13 @@ description: Rebuild master-skills.md by fetching the latest skill files from th
 
 `raw.githubusercontent.com` is served through a CDN with a real ~5 minute cache that a cache-busting query string does **not** bypass — the cache key ignores query strings. The GitHub archive zip download below is not CDN-cached (`Cache-Control: max-age=0, private`) and is always current. So: download this zip once, at the very start of every run, and read every file needed by every later step from this one extracted snapshot. Never fetch individual files from `raw.githubusercontent.com` in this prompt.
 
+There is never a reason to reuse a cached copy of this zip across runs — every run must hit the network fresh. Download it with a tool/method that cannot serve a locally-cached response (e.g. `curl -sL -H 'Cache-Control: no-cache' -H 'Pragma: no-cache'`, not a fetch tool that might return a cached page). If the tool you're using for downloads has its own cache, disable or bypass it for this request.
+
 ```
 https://github.com/slowpulsestudio/up-skill/archive/refs/heads/main.zip
 ```
 
-Extract it to a temp location. Every path inside is prefixed with `up-skill-main/` (e.g. `up-skill-main/skills/platform/ios.md`).
+Extract it to a fresh temp location (do not reuse a temp directory from a previous run). Every path inside is prefixed with `up-skill-main/` (e.g. `up-skill-main/skills/platform/ios.md`).
 
 ## Step -1 — Self-update check
 

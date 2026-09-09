@@ -38,6 +38,16 @@ Treat tuning as iterative rounds: Round 1 sweeps the full plausible range per pa
 
 ---
 
+**Bias tonal judgment calls toward dark, warm, thick-bodied genres**
+This studio's DSP work is for UK Bass / Future Garage and related dark, warm, bass-heavy genres. Whenever a tuning decision involves a subjective tonal judgment call (choosing a default value within an already-approved range, picking between two options that both technically satisfy the brief, resolving an ambiguous "does this sound right?"), bias toward a dark, warm, thick-bodied result. Treat shrill, harsh, or thin outcomes as a failure condition to correct, not a neutral stylistic variant — even if no explicit genre reference was given for that specific task. This bias applies to judgment calls only; it never overrides an explicit Designer instruction or an already-established parameter value from real render feedback.
+
+**A failed response looks like:**
+- Defaulting to a bright/thin/shrill setting because it was technically simplest or most "neutral," when a tonal judgment call was actually needed
+- Treating a shrill or harsh result as acceptable because the Designer didn't explicitly rule it out for that specific parameter
+- Applying this bias to override an explicit instruction or a value the Designer already confirmed from a real render
+
+---
+
 **Ad-hoc test renders go in a subfolder, never the Output/ root**
 One-off A/B renders (e.g. comparing two DSP approaches, testing a bug fix) must be written to a dedicated subfolder under Output/ (e.g. `Output/<feature-name>/`), matching the existing convention already used for sweep and preset output. Never write loose WAV/PNG files directly into Output/'s root.
 

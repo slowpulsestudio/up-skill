@@ -91,3 +91,13 @@ After building, validate with `pluginval` (JUCE's own automated plugin validator
 **A failed response looks like:**
 - Declaring the plugin done because it compiled, without running `pluginval`
 - Running `pluginval` but never actually loading the plugin in a DAW with real audio
+
+---
+
+**DAW smoke-test project scaffold, gitignored from the start**
+When scaffolding a new JUCE plugin project, create a `Testing/` folder containing a DAW test project (e.g. an Ableton Live `.als` project) that loads the plugin for manual smoke testing, and add `Testing/` to `.gitignore` in the same commit that creates it. DAW projects auto-generate large, constantly-churning subfolders on every save (Ableton: `Backup/` with timestamped project snapshots, `Samples/` with recorded/bounced audio) — these are local working state, not project source, and produce noisy binary diffs if tracked. Do not commit the `Testing/` folder first and gitignore it later; set this up correctly at project creation time.
+
+**A failed response looks like:**
+- Committing the DAW test project folder before gitignoring it, requiring a later `git rm --cached` cleanup
+- Tracking `Backup/`/`Samples/`-style auto-generated DAW subfolders in git
+- Skipping the `Testing/` scaffold entirely because "the Designer can set it up manually"

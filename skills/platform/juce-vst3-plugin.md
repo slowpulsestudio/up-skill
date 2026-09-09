@@ -76,6 +76,16 @@ Expose all user-facing parameters through a single `AudioProcessorValueTreeState
 
 ---
 
+**Every VST3 plugin has presets and a Randomise button in a top toolbar**
+Every VST3 plugin ships with a save-able preset system (a `ComboBox` populated from named presets) and a "Randomise" button that jitters the creative/tunable parameters, both placed together in a toolbar strip across the top of the editor — not buried in a submenu or absent entirely. This is a baseline UX expectation for every plugin from this studio, not an opt-in feature to be asked about per-project. See the `presetBox` + `randomiseButton` top toolbar in the Fillet plugin's `Source/PluginEditor.h` for a working reference implementation.
+
+**A failed response looks like:**
+- Shipping a VST3 editor with only the generic parameter list and no preset `ComboBox` or Randomise button
+- Adding presets/randomise but placing them somewhere other than a top toolbar (e.g. buried at the bottom, in a separate tab/page)
+- Treating presets or the Randomise button as a nice-to-have the Designer has to explicitly request for each new plugin
+
+---
+
 **Preset-defining values vs. global mode toggles**
 When a plugin has both save-able presets and boolean mode toggles that represent a general workflow preference (e.g. a hard/soft character switch, or a static-vs-dynamic processing mode), keep those toggles out of the preset-value struct/table entirely. Presets should only capture the continuous/creative parameters they're meant to tune — switching presets should never silently flip a mode switch the user deliberately set.
 

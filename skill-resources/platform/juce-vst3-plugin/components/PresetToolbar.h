@@ -8,11 +8,16 @@ namespace sps
 
 /**
  * Reusable top-toolbar component used by every Slow Pulse Studio VST3 plugin.
- * Combines a preset ComboBox with an adjacent Randomise button, and shows a
- * dirty-state indicator (italic text + trailing '*') when the current preset
- * has been manually tweaked. See skills/platform/juce-vst3-plugin.md rules:
+ * Combines a preset ComboBox (no dropdown chevron - flanked by "<"/">" cycle
+ * buttons instead) with an adjacent Randomise button, and shows a dirty-state
+ * indicator (italic text + trailing '*') when the current preset has been
+ * manually tweaked. See skills/platform/juce-vst3-plugin.md rules:
  *   - "Every VST3 plugin has presets and a Randomise button in a top toolbar"
  *   - "Preset dirty-state indicator"
+ *
+ * Clicking the "<"/">" buttons cycles to the previous/next preset (wrapping
+ * at the ends). Clicking anywhere else on the preset control (the name/box
+ * area between them) opens the dropdown, same as a normal ComboBox.
  *
  * This component owns no parameter/preset data itself - the host plugin's
  * editor wires up setPresetNames(), onPresetSelected, onRandomise, and isDirty,
@@ -31,6 +36,12 @@ public:
             refreshDisplay();
         };
         addAndMakeVisible (presetBox);
+
+        prevPresetButton.onClick = [this] { cyclePreset (-1); };
+        addAndMakeVisible (prevPresetButton);
+
+        nextPresetButton.onClick = [this] { cyclePreset (1); };
+        addAndMakeVisible (nextPresetButton);
 
         randomiseButton.onClick = [this]
         {
@@ -58,6 +69,19 @@ public:
         refreshDisplay();
     }
 
+    /// Moves to the previous (-1) or next (+1) preset, wrapping at the ends. Triggers
+    /// onPresetSelected and refreshDisplay the same as picking a preset from the dropdown.
+    void cyclePreset (int delta)
+    {
+        const auto numItems = presetBox.getNumItems();
+        if (numItems <= 0)
+            return;
+
+        const auto currentIndex = presetBox.indexOfItemId (presetBox.getSelectedId());
+        const auto newIndex = ((currentIndex < 0 ? 0 : currentIndex) + delta % numItems + numItems) % numItems;
+        presetBox.setSelectedId (newIndex + 1);
+    }
+
     /// Re-evaluates isDirty and updates the italic/asterisk display. Call this whenever a
     /// tracked parameter changes (e.g. from an APVTS::Listener::parameterChanged callback).
     void refreshDisplay()
@@ -75,10 +99,13 @@ public:
         auto bounds = getLocalBounds();
         randomiseButton.setBounds (bounds.removeFromRight (randomiseButtonWidth));
         bounds.removeFromRight (spacing);
+        prevPresetButton.setBounds (bounds.removeFromLeft (cycleButtonWidth));
+        nextPresetButton.setBounds (bounds.removeFromRight (cycleButtonWidth));
         presetBox.setBounds (bounds);
     }
 
-    /// Called with the newly-selected preset index when the Designer picks one from the dropdown.
+    /// Called with the newly-selected preset index when the Designer picks one from the
+    /// dropdown or uses the "<"/">" cycle buttons.
     std::function<void (int)> onPresetSelected;
 
     /// Called when the Randomise button is clicked. Jitter the plugin's own randomisable
@@ -91,8 +118,9 @@ public:
     std::function<bool()> isDirty;
 
 private:
-    /// Italicises the preset ComboBox's text when the current preset has been manually tweaked.
-    class DirtyStateLookAndFeel : public juce::LookAndFeel_V4
+    /// Italicises the preset ComboBox's text when the current preset has been manually tweaked,
+    /// and suppresses the default dropdown chevron - the "<"/">" cycle buttons replace it.
+    class PresetBoxLookAndFeel : public juce::LookAndFeel_V4
     {
     public:
         bool italic = false;
@@ -102,13 +130,36 @@ private:
             auto font = juce::LookAndFeel_V4::getComboBoxFont (box);
             return italic ? font.italicised() : font;
         }
+
+        void drawComboBox (juce::Graphics& g, int width, int height, bool /*isButtonDown*/,
+                            int /*buttonX*/, int /*buttonY*/, int /*buttonW*/, int /*buttonH*/,
+                            juce::ComboBox& box) override
+        {
+            const juce::Rectangle<float> boxBounds (0.0f, 0.0f, (float) width, (float) height);
+
+            g.setColour (box.findColour (juce::ComboBox::backgroundColourId));
+            g.fillRoundedRectangle (boxBounds, 3.0f);
+
+            g.setColour (box.findColour (juce::ComboBox::outlineColourId));
+            g.drawRoundedRectangle (boxBounds.reduced (0.5f), 3.0f, 1.0f);
+            // Deliberately no arrow here - the "<"/">" cycle buttons replace it.
+        }
+
+        void positionComboBoxText (juce::ComboBox& box, juce::Label& labelToPosition) override
+        {
+            labelToPosition.setBounds (1, 1, box.getWidth() - 2, box.getHeight() - 2);
+            labelToPosition.setFont (getComboBoxFont (box));
+        }
     };
 
     static constexpr int randomiseButtonWidth = 100;
+    static constexpr int cycleButtonWidth = 24;
     static constexpr int spacing = 8;
 
-    DirtyStateLookAndFeel presetBoxLookAndFeel;
+    PresetBoxLookAndFeel presetBoxLookAndFeel;
     juce::ComboBox presetBox;
+    juce::TextButton prevPresetButton { "<" };
+    juce::TextButton nextPresetButton { ">" };
     juce::TextButton randomiseButton { "Randomise" };
 };
 

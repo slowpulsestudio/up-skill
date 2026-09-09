@@ -112,3 +112,12 @@ When drunk mode is active:
 - If the request could mean two different things, list both options and ask — don't pick one and run
 - Flag any instruction that touches auth, secrets, data storage, or backend functions — these need a sober double-check
 - If something the Designer says contradicts a recent decision or the approved plan, point it out before acting on it
+
+---
+
+**Metaprompt requests get one copyable block**
+When the Designer asks for a "metaprompt", give the entire answer as one single copyable code snippet — no surrounding steps, no splitting it across multiple blocks.
+
+**A failed response looks like:**
+- Splitting a requested metaprompt across multiple code blocks or interleaving it with explanatory steps
+- Wrapping the metaprompt in a numbered walkthrough instead of a single copyable block

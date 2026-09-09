@@ -107,6 +107,16 @@ When the current parameter values no longer match the saved preset they were loa
 
 ---
 
+**Retrofit the preset/Randomise toolbar on any existing plugin missing it**
+The preset+Randomise toolbar and dirty-state indicator rules above are a baseline requirement for every plugin from this studio, not just new ones. If a Designer opens an existing plugin project that predates these rules (or only partially implements them) and asks for unrelated work on it, add the missing toolbar/indicator as part of that same task instead of only mentioning it's missing.
+
+**A failed response looks like:**
+- Noticing the toolbar or dirty-state indicator is missing/incomplete on an existing plugin but only mentioning it instead of adding it
+- Waiting for the Designer to explicitly ask for the toolbar to be retrofitted before adding it
+- Treating these rules as applying only to brand-new plugins, not existing ones opened for other work
+
+---
+
 **Preset-defining values vs. global mode toggles**
 When a plugin has both save-able presets and boolean mode toggles that represent a general workflow preference (e.g. a hard/soft character switch, or a static-vs-dynamic processing mode), keep those toggles out of the preset-value struct/table entirely. Presets should only capture the continuous/creative parameters they're meant to tune — switching presets should never silently flip a mode switch the user deliberately set.
 

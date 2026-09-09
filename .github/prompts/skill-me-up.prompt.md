@@ -3,17 +3,19 @@ mode: agent
 description: Rebuild master-skills.md by fetching the latest skill files from the up-skill repo on GitHub, and copy any skill-bundled files into this project.
 ---
 
-## Cache-busting (applies to every fetch in this prompt)
+## Step -2 — Download a fresh repo snapshot
 
-`raw.githubusercontent.com` and GitHub archive zip downloads are served through a CDN that can return a stale cached response for a few minutes after a push. To avoid silently acting on stale content, append a cache-busting query string to every URL fetched in this prompt: `?cb={unix-timestamp-or-random-value}`, using a fresh value per run (the same value can be reused for all fetches within one run).
+`raw.githubusercontent.com` is served through a CDN with a real ~5 minute cache that a cache-busting query string does **not** bypass — the cache key ignores query strings. The GitHub archive zip download below is not CDN-cached (`Cache-Control: max-age=0, private`) and is always current. So: download this zip once, at the very start of every run, and read every file needed by every later step from this one extracted snapshot. Never fetch individual files from `raw.githubusercontent.com` in this prompt.
+
+```
+https://github.com/slowpulsestudio/up-skill/archive/refs/heads/main.zip
+```
+
+Extract it to a temp location. Every path inside is prefixed with `up-skill-main/` (e.g. `up-skill-main/skills/platform/ios.md`).
 
 ## Step -1 — Self-update check
 
-Before doing anything else, fetch the latest version of this prompt from the up-skill repo:
-
-```
-https://raw.githubusercontent.com/slowpulsestudio/up-skill/main/.github/prompts/skill-me-up.prompt.md?cb={cache-bust}
-```
+Read `.github/prompts/skill-me-up.prompt.md` from the extracted snapshot (`up-skill-main/.github/prompts/skill-me-up.prompt.md`).
 
 Compare it to the current contents of `.github/prompts/skill-me-up.prompt.md` in this project.
 
@@ -112,13 +114,9 @@ After the walkthrough, call `get_metadata` again to confirm the connection now w
 
 ## Step 1 — Rebuild master-skills.md
 
-For each skill name, fetch the corresponding skill file from GitHub using this URL pattern:
+For each skill name, read the corresponding skill file from the extracted snapshot downloaded in Step -2, at `up-skill-main/skills/{skill-name}.md`. If a skill name has no matching file in the snapshot, treat it as a failed fetch for the Step 4 report.
 
-```
-https://raw.githubusercontent.com/slowpulsestudio/up-skill/main/skills/{skill-name}.md?cb={cache-bust}
-```
-
-Fetch all skills in parallel. Then concatenate them in the order they appear in `.skills`, with a blank line between each, and write the result to `master-skills.md` in the project root, overwriting whatever was there before.
+Concatenate them in the order they appear in `.skills`, with a blank line between each, and write the result to `master-skills.md` in the project root, overwriting whatever was there before.
 
 ## Step 2 — Copy skill-bundled files
 
@@ -133,14 +131,12 @@ source-folder/ -> dest-folder/
 - `source-folder/` is a path relative to `skill-resources/{skill-name}/` in the up-skill repo
 - `dest-folder/` is the destination path relative to this project's root
 
-For each mapping, use the zip download approach:
-1. Download the up-skill repo as a zip:
-   `https://github.com/slowpulsestudio/up-skill/archive/refs/heads/main.zip?cb={cache-bust}`
-2. Extract only the files whose path within the zip starts with `up-skill-main/skill-resources/{skill-name}/{source-folder}/`
-3. Write each extracted file to `{project-root}/{dest-folder}/{relative-path}`, where `relative-path` is the portion after `up-skill-main/skill-resources/{skill-name}/{source-folder}/`. Create any necessary directories.
-4. If a file already exists at the destination and its content differs, warn the user and skip it — do not overwrite.
+For each mapping, extract from the snapshot already downloaded in Step -2 (do not download the zip again):
+1. Extract only the files whose path within the zip starts with `up-skill-main/skill-resources/{skill-name}/{source-folder}/`
+2. Write each extracted file to `{project-root}/{dest-folder}/{relative-path}`, where `relative-path` is the portion after `up-skill-main/skill-resources/{skill-name}/{source-folder}/`. Create any necessary directories.
+3. If a file already exists at the destination and its content differs, warn the user and skip it — do not overwrite.
 
-Download the zip once and reuse it for all resource mappings across all skills.
+Reuse the single Step -2 snapshot for all resource mappings across all skills.
 
 ## Step 3 — Create AI instruction files
 

@@ -32,8 +32,9 @@ Check whether a `.skills` file exists in the root of this project.
    - `platform/python-mac` — Python desktop app for Mac
    - `platform/python-website` — Python web app (FastAPI etc.)
    - `platform/python-cli` — Python local script/CLI tool
+   - `platform/juce-vst3-plugin` — Building a VST3 audio plugin (JUCE/C++)
 
-2. **Workflow skills** (multi-select checkboxes — `workflow/general`, `workflow/architecture`, and `workflow/git` pre-checked as recommended defaults; the rest start unchecked):
+2. **Workflow skills** (multi-select checkboxes — `workflow/general`, `workflow/architecture`, and `workflow/git` pre-checked as recommended defaults; the rest start unchecked. If `platform/juce-vst3-plugin` was selected in the platform question, also pre-check `workflow/dsp-prototyping`):
    - `workflow/general` — core execution rules (recommended, pre-checked)
    - `workflow/architecture` — general code structure rules (recommended, pre-checked)
    - `workflow/git` — source control rules (recommended, pre-checked)
@@ -44,6 +45,7 @@ Check whether a `.skills` file exists in the root of this project.
    - `workflow/vercel-publish` — if the project deploys to Vercel
    - `workflow/vercel-password` — password gate for Vercel preview deployments
    - `workflow/image-generation` — if the project calls an AI image-generation API
+   - `workflow/dsp-prototyping` — if the project involves tuning audio/DSP algorithms before a real-time port (pre-checked when `platform/juce-vst3-plugin` was selected)
 
    If no interactive question tool is available, fall back to asking both as plain numbered-list questions in chat, noting `workflow/general`, `workflow/architecture`, and `workflow/git` as the recommended defaults.
 

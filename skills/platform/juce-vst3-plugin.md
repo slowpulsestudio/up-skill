@@ -30,6 +30,20 @@ Since JUCE is pinned via CMake `FetchContent`, the actual JUCE source is availab
 
 ---
 
+**JUCE 9's `juce_audio_processors_headless` VST3 module can fail to compile on newer Clang/libc++ with `'shared_ptr' is not a member of 'std'`**
+The Steinberg VST3 SDK headers vendored inside JUCE 9's `juce_audio_processors_headless` module use `std::shared_ptr` without an explicit `#include <memory>`. Recent Apple Clang/libc++ releases (Xcode 16+) have stopped transitively pulling in `<memory>` through other standard headers, so this compiles fine on older toolchains but fails on newer ones with no fix in JUCE's newest release tag (9.0.2 as of writing — verify no newer tag has fixed it before applying this). Since the failing file lives in FetchContent-downloaded, non-persistent vendor source, don't patch it directly — force the include via a compiler flag on the plugin's own target instead:
+
+```cmake
+target_compile_options(<TargetName> PRIVATE -include memory)
+```
+
+**A failed response looks like:**
+- Editing the vendored JUCE header directly in `build/_deps/juce-src` — it gets wiped and re-fetched on the next clean configure
+- Concluding the Designer's own `Source/` code or repo is broken/incomplete when the compile error is inside JUCE's own headers before any of their code is even reached
+- Not checking whether a newer JUCE release tag has already fixed this before applying the `-include memory` workaround
+
+---
+
 **Install location: vendor subfolder, not the bare VST3 root**
 Plugins install to a `Slow Pulse Studio` subfolder inside the system VST3 folder, not directly into `~/Library/Audio/Plug-Ins/VST3/`. Set `VST3_COPY_DIR "$ENV{HOME}/Library/Audio/Plug-Ins/VST3/Slow Pulse Studio"` on `juce_add_plugin(...)` alongside `COPY_PLUGIN_AFTER_BUILD TRUE`. This keeps every plugin from this studio grouped together in the DAW's plugin browser instead of mixed in with every other vendor's plugins.
 

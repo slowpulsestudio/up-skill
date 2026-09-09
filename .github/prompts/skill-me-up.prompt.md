@@ -20,7 +20,10 @@ Compare it to the current contents of `.github/prompts/skill-me-up.prompt.md` in
 
 ## Step 0 — Skills setup
 
-Check whether a `.skills` file exists in the root of this project.
+Check whether a `.skills` file exists in the root of this project. Whichever branch applies determines the **run type** for the rest of this prompt — remember it for Step 5:
+
+- `.skills` already exists → this run is a **refresh** (re-running `/skill-me-up` on an already-set-up project)
+- `.skills` does not exist → this run is the **initial setup**
 
 **If `.skills` exists:** read it. It contains a list of skill names, one per line. Skip blank lines and any line starting with `#`.
 
@@ -175,9 +178,13 @@ When done, report:
 Ask the following questions one at a time, only for the skills that are active. Skip any that aren't.
 
 **If `workflow/git` is active:**
-*"Would you like me to commit and push this initial setup to GitHub?"*
-- If yes: stage all files, commit with the message `Initial project setup`, and push to origin.
+Use the run type determined in Step 0 to phrase the question and commit message — never call a refresh an "initial setup":
+- **Initial setup run:** *"Would you like me to commit and push this initial setup to GitHub?"* If yes: stage all files, commit with the message `Initial project setup`, and push to origin.
+- **Refresh run:** *"Would you like me to commit and push this skills refresh to GitHub?"* If yes: stage all files, commit with the message `Refresh skills via /skill-me-up`, and push to origin.
 - If no: skip.
+
+**A failed response looks like:**
+- Asking "commit and push this initial setup" on a refresh run where `.skills` already existed before this run
 
 **If `workflow/vercel-publish` is active** (ask after the git question is resolved):
 Check whether `.vercel/project.json` exists in the project root.

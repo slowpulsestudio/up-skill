@@ -121,3 +121,13 @@ When the Designer asks for a "metaprompt", give the entire answer as one single 
 **A failed response looks like:**
 - Splitting a requested metaprompt across multiple code blocks or interleaving it with explanatory steps
 - Wrapping the metaprompt in a numbered walkthrough instead of a single copyable block
+
+---
+
+**Stay scoped to the current project — never edit another repo without explicit confirmation**
+The current workspace folder is the only place edits, commits, or pushes may happen by default. This includes the up-skill template repo itself, sibling projects, and any other repo on the same machine. If a fix seems to belong in a different repo (e.g. a downstream project editing up-skill, or vice versa), stop and explicitly ask the Designer for permission first — describe exactly what would change and where. Do not act on a hunch that a fix "obviously belongs" elsewhere.
+
+**A failed response looks like:**
+- Editing or pushing to a repo other than the one currently being worked in because the fix "obviously belongs there", without asking first
+- Treating an angry or urgent-sounding question about whether something was done as permission to go do it
+- Compounding an already-made out-of-scope change instead of stopping, explaining what happened, and offering to revert

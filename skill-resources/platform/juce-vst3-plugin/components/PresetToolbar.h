@@ -19,6 +19,10 @@ namespace sps
  * at the ends). Clicking anywhere else on the preset control (the name/box
  * area between them) opens the dropdown, same as a normal ComboBox.
  *
+ * Pressing Randomise does not make the selected preset dirty - it clears the
+ * preset selection entirely and shows a plain "Random" label instead (see
+ * showUnsavedLabel()), distinct from the italic/'*' dirty-state indicator.
+ *
  * This component owns no parameter/preset data itself - the host plugin's
  * editor wires up setPresetNames(), onPresetSelected, onRandomise, and isDirty,
  * and calls refreshDisplay() whenever a tracked parameter changes.
@@ -31,6 +35,7 @@ public:
         presetBox.setLookAndFeel (&presetBoxLookAndFeel);
         presetBox.onChange = [this]
         {
+            showingCustomLabel = false;
             if (onPresetSelected != nullptr)
                 onPresetSelected (presetBox.getSelectedId() - 1);
             refreshDisplay();
@@ -47,7 +52,7 @@ public:
         {
             if (onRandomise != nullptr)
                 onRandomise();
-            refreshDisplay();
+            showUnsavedLabel ("Random");
         };
         addAndMakeVisible (randomiseButton);
     }
@@ -65,6 +70,7 @@ public:
     /// Selects a preset by index without triggering onPresetSelected, then refreshes the display.
     void setSelectedPreset (int index)
     {
+        showingCustomLabel = false;
         presetBox.setSelectedId (index + 1, juce::dontSendNotification);
         refreshDisplay();
     }
@@ -84,13 +90,31 @@ public:
 
     /// Re-evaluates isDirty and updates the italic/asterisk display. Call this whenever a
     /// tracked parameter changes (e.g. from an APVTS::Listener::parameterChanged callback).
+    /// No-ops while a custom label (e.g. "Random") is showing - see showUnsavedLabel().
     void refreshDisplay()
     {
+        if (showingCustomLabel)
+            return;
+
         const auto dirty = isDirty != nullptr && isDirty();
         presetBoxLookAndFeel.italic = dirty;
         const auto itemIndex = presetBox.indexOfItemId (presetBox.getSelectedId());
         const auto name = itemIndex >= 0 ? presetBox.getItemText (itemIndex) : juce::String();
         presetBox.setText (dirty ? name + "*" : name, juce::dontSendNotification);
+        presetBox.repaint();
+    }
+
+    /// Clears the preset selection and shows `label` (e.g. "Random") in its place - never
+    /// italicised, never given a trailing '*'. This is a distinct state from the dirty-state
+    /// indicator, not a variant of it. Persists until the Designer explicitly picks a preset
+    /// from the dropdown or cycle buttons (or the host calls setSelectedPreset()), at which
+    /// point normal preset-name + dirty-state display resumes automatically.
+    void showUnsavedLabel (const juce::String& label)
+    {
+        showingCustomLabel = true;
+        presetBox.setSelectedId (0, juce::dontSendNotification);
+        presetBoxLookAndFeel.italic = false;
+        presetBox.setText (label, juce::dontSendNotification);
         presetBox.repaint();
     }
 
@@ -110,7 +134,8 @@ public:
 
     /// Called when the Randomise button is clicked. Jitter the plugin's own randomisable
     /// parameters here - exclude global mode toggles per the "Preset-defining values vs.
-    /// global mode toggles" rule.
+    /// global mode toggles" rule, but always include any seed/determinism parameter (a seed
+    /// is not a global mode toggle even if it also has its own dedicated regenerate control).
     std::function<void()> onRandomise;
 
     /// Returns true when the current parameter values no longer match the selected preset.
@@ -156,6 +181,7 @@ private:
     static constexpr int cycleButtonWidth = 24;
     static constexpr int spacing = 8;
 
+    bool showingCustomLabel = false;
     PresetBoxLookAndFeel presetBoxLookAndFeel;
     juce::ComboBox presetBox;
     juce::TextButton prevPresetButton { "<" };

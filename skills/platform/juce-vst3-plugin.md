@@ -89,22 +89,31 @@ Expose all user-facing parameters through a single `AudioProcessorValueTreeState
 **Every VST3 plugin has presets and a Randomise button in a top toolbar**
 Every VST3 plugin ships with a save-able preset system (a `ComboBox` populated from named presets) and a "Randomise" button that jitters the creative/tunable parameters, both placed together in a toolbar strip across the top of the editor — not buried in a submenu or absent entirely. The Randomise button sits immediately to the right of the preset `ComboBox`, not elsewhere in the toolbar. This is a baseline UX expectation for every plugin from this studio, not an opt-in feature to be asked about per-project. Use the shared `sps::PresetToolbar` component (bundled into this project's `Source/Components/PresetToolbar.h` — see the `## Resources` section) instead of reimplementing the toolbar from scratch each time. Run `/system-my-design` periodically to check for and review updates to this component.
 
+Pressing Randomise deselects any preset entirely — the toolbar shows the literal text "Random" (no italics, no trailing `*`) until the Designer explicitly picks a preset again from the dropdown or cycle buttons, at which point normal preset-name + dirty-state display resumes. `sps::PresetToolbar` has a dedicated `showUnsavedLabel()` method for this — never fake it by clearing the `ComboBox` selection directly.
+
 **A failed response looks like:**
 - Shipping a VST3 editor with only the generic parameter list and no preset `ComboBox` or Randomise button
 - Adding presets/randomise but placing them somewhere other than a top toolbar (e.g. buried at the bottom, in a separate tab/page)
 - Placing the Randomise button somewhere other than immediately to the right of the preset `ComboBox`
 - Treating presets or the Randomise button as a nice-to-have the Designer has to explicitly request for each new plugin
 - Reimplementing the toolbar/dirty-state logic from scratch instead of using `sps::PresetToolbar`
+- Leaving the previously-selected preset's name (dirty or not) displayed after Randomise instead of showing "Random"
 
 ---
 
 **Preset dirty-state indicator**
 When the current parameter values no longer match the saved preset they were loaded from (the Designer tweaked something, or Randomise was pressed), show the preset name in the `ComboBox` in italics with a trailing `*` (e.g. `Warm Pad*`). Revert to the plain, non-italic name with no `*` the moment the values match a saved preset again (including right after saving). `sps::PresetToolbar` (see above) already implements this via its `isDirty` callback — wire it up rather than reimplementing the italics/`*` logic.
 
+When a plugin has named presets and is opened fresh (no saved DAW state to restore), initialize the editor to the first preset in the list via the same code path used when the Designer picks a preset from the toolbar (`sps::PresetToolbar::setSelectedPreset (0)` plus loading that preset's values into the plugin's parameters) — never leave the raw `AudioParameterFloat`/etc. defaults from the parameter layout in place. The toolbar must show that first preset selected and non-dirty (no `*`) immediately on open.
+
+That first preset must be a dedicated "Default" preset with neutral/baseline parameter values — not just whichever preset happens to be first alphabetically or by creation order — so the Designer always has a known, unmodified state to return to via the dropdown or cycle buttons.
+
 **A failed response looks like:**
 - Leaving the preset name unchanged (no italics, no `*`) after a parameter has been edited or Randomise pressed
 - Leaving the italics/`*` in place after the Designer saves the current values as/over that preset
 - Using a different dirty-state indicator than italics + trailing `*` (e.g. a separate icon, a color change, a modal dialog)
+- Leaving the editor on raw parameter defaults on first open instead of the first named preset
+- Treating an arbitrary/creative preset as the first-in-list default instead of a dedicated neutral "Default" preset
 
 ---
 
@@ -121,9 +130,12 @@ The preset+Randomise toolbar and dirty-state indicator rules above are a baselin
 **Preset-defining values vs. global mode toggles**
 When a plugin has both save-able presets and boolean mode toggles that represent a general workflow preference (e.g. a hard/soft character switch, or a static-vs-dynamic processing mode), keep those toggles out of the preset-value struct/table entirely. Presets should only capture the continuous/creative parameters they're meant to tune — switching presets should never silently flip a mode switch the user deliberately set.
 
+A seed/determinism parameter (one that seeds the plugin's own internal RNG or generative trajectory) is not a global mode toggle under this rule, even if it also has its own dedicated regenerate control (e.g. a "New Worm"/"New Pattern" button) — it's part of the creative variation Randomise exists to produce, so it stays in the preset-tunable set and Randomise must still jitter it. Only exclude parameters that are genuinely non-preset workflow settings.
+
 **A failed response looks like:**
 - Bundling a general-purpose mode toggle into the same struct/table as preset-tunable values, causing preset switches to silently change it
 - Forgetting to document which parameters are intentionally excluded from presets, leaving future changes to accidentally include them
+- Excluding a seed/determinism parameter from Randomise because it has its own dedicated regenerate button
 
 ---
 

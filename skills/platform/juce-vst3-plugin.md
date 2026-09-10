@@ -109,10 +109,13 @@ Any numeric value shown in the UI (parameter readouts, labels, tooltips) is roun
 **Every control has a hover tooltip using classic industry terminology**
 Every parameter control in the editor (knob, slider, button, toggle) gets a hover tooltip (`juce::Component::setTooltip` or equivalent) explaining what it does, written using the classic, industry-standard term a working audio engineer would recognize (e.g. "Attack", "Release", "Q", "Drive", "Wet/Dry") rather than an invented or marketing-style name. This applies to every parameter, not just the ones that seem non-obvious.
 
+When a control's on-screen label is a whimsical/thematic metaphor rather than a classic industry term (e.g. "Wiggle", "New Worm"), the tooltip opens with a plain-language definition of what that metaphor means before giving the technical/industry-standard explanation — never the technical term alone with no explanation of the metaphor, and never the metaphor's definition omitted in favor of jumping straight to jargon.
+
 **A failed response looks like:**
 - Shipping a knob/slider/button with no tooltip at all
 - Only adding tooltips to a subset of "confusing" parameters instead of every control
 - Using a made-up or branded label in the tooltip instead of the classic industry term (e.g. "Squish" instead of "Ratio")
+- Opening a metaphor-labeled control's tooltip with the technical explanation instead of defining the metaphor first
 
 ---
 

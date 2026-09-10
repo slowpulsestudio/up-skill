@@ -121,6 +121,8 @@ Every VST3 plugin ships with a save-able preset system (a `ComboBox` populated f
 
 Pressing Randomise deselects any preset entirely — the toolbar shows the literal text "Random" (no italics, no trailing `*`) until the Designer explicitly picks a preset again from the dropdown or cycle buttons, at which point normal preset-name + dirty-state display resumes. `sps::PresetToolbar` has a dedicated `showUnsavedLabel()` method for this — never fake it by clearing the `ComboBox` selection directly.
 
+Randomise only jitters preset-tunable creative parameters — it must never touch any control in an Input or Output section of the GUI (input gain/trim, output gain, dry/wet mix, bypass), per the "Preset-defining values vs. global mode toggles" rule below.
+
 **A failed response looks like:**
 - Shipping a VST3 editor with only the generic parameter list and no preset `ComboBox` or Randomise button
 - Adding presets/randomise but placing them somewhere other than a top toolbar (e.g. buried at the bottom, in a separate tab/page)
@@ -128,6 +130,7 @@ Pressing Randomise deselects any preset entirely — the toolbar shows the liter
 - Treating presets or the Randomise button as a nice-to-have the Designer has to explicitly request for each new plugin
 - Reimplementing the toolbar/dirty-state logic from scratch instead of using `sps::PresetToolbar`
 - Leaving the previously-selected preset's name (dirty or not) displayed after Randomise instead of showing "Random"
+- Jittering an Input/Output-section control (input gain, output gain, dry/wet mix, bypass) when Randomise is pressed
 
 ---
 
@@ -162,10 +165,13 @@ When a plugin has both save-able presets and boolean mode toggles that represent
 
 A seed/determinism parameter (one that seeds the plugin's own internal RNG or generative trajectory) is not a global mode toggle under this rule, even if it also has its own dedicated regenerate control (e.g. a "New Worm"/"New Pattern" button) — it's part of the creative variation Randomise exists to produce, so it stays in the preset-tunable set and Randomise must still jitter it. Only exclude parameters that are genuinely non-preset workflow settings.
 
+Any control that lives in an Input or Output section of the GUI (e.g. input gain/trim, output gain, dry/wet mix, bypass) is always excluded from presets and from Randomise, the same as a global mode toggle — these are gain-staging/session-level settings the Designer sets for their current mix, not creative content a preset should recall or Randomise should jitter.
+
 **A failed response looks like:**
 - Bundling a general-purpose mode toggle into the same struct/table as preset-tunable values, causing preset switches to silently change it
 - Forgetting to document which parameters are intentionally excluded from presets, leaving future changes to accidentally include them
 - Excluding a seed/determinism parameter from Randomise because it has its own dedicated regenerate button
+- Including an Input/Output-section control (input gain, output gain, dry/wet mix, bypass) in a preset's saved values or in Randomise's jitter set
 
 ---
 

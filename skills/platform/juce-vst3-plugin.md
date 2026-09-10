@@ -86,6 +86,36 @@ Expose all user-facing parameters through a single `AudioProcessorValueTreeState
 
 ---
 
+**Rotary knobs are the default control, not linear sliders**
+For continuous plugin parameters, use a rotary knob (`juce::Slider::RotaryHorizontalVerticalDrag` or equivalent rotary style) as the default control. Only use a linear `juce::Slider` (horizontal or vertical bar) when the Designer explicitly asks for one, or the parameter is inherently linear/positional in a way a knob can't represent (e.g. a playhead/scrub position). Don't default to a linear slider just because it's the JUCE `Slider` default style.
+
+**A failed response looks like:**
+- Adding a horizontal/vertical bar `Slider` for a generic gain/frequency/mix-style parameter without being asked
+- Leaving a `Slider` on its default linear style instead of setting a rotary style
+- Using a linear slider "for now" with intent to swap to a knob later
+
+---
+
+**Round displayed parameter values to whole integers**
+Any numeric value shown in the UI (parameter readouts, labels, tooltips) is rounded up to a whole integer by default — no decimal places — unless the Designer explicitly asks for decimal precision on a specific parameter. Round the display text only; keep the underlying parameter value at full float precision internally.
+
+**A failed response looks like:**
+- Displaying a parameter value like `-3.42 dB` or `440.0 Hz` in the UI by default
+- Truncating/flooring instead of rounding
+- Rounding the underlying stored/automated parameter value itself instead of only the displayed text
+
+---
+
+**Every control has a hover tooltip using classic industry terminology**
+Every parameter control in the editor (knob, slider, button, toggle) gets a hover tooltip (`juce::Component::setTooltip` or equivalent) explaining what it does, written using the classic, industry-standard term a working audio engineer would recognize (e.g. "Attack", "Release", "Q", "Drive", "Wet/Dry") rather than an invented or marketing-style name. This applies to every parameter, not just the ones that seem non-obvious.
+
+**A failed response looks like:**
+- Shipping a knob/slider/button with no tooltip at all
+- Only adding tooltips to a subset of "confusing" parameters instead of every control
+- Using a made-up or branded label in the tooltip instead of the classic industry term (e.g. "Squish" instead of "Ratio")
+
+---
+
 **Every VST3 plugin has presets and a Randomise button in a top toolbar**
 Every VST3 plugin ships with a save-able preset system (a `ComboBox` populated from named presets) and a "Randomise" button that jitters the creative/tunable parameters, both placed together in a toolbar strip across the top of the editor — not buried in a submenu or absent entirely. The Randomise button sits immediately to the right of the preset `ComboBox`, not elsewhere in the toolbar. This is a baseline UX expectation for every plugin from this studio, not an opt-in feature to be asked about per-project. Use the shared `sps::PresetToolbar` component (bundled into this project's `Source/Components/PresetToolbar.h` — see the `## Resources` section) instead of reimplementing the toolbar from scratch each time. Run `/system-my-design` periodically to check for and review updates to this component.
 

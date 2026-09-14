@@ -88,6 +88,7 @@ The AI asks real interactive questions (buttons/checkboxes), not plain text:
   workflow/image-generation
   workflow/web-scraper
   workflow/dsp-prototyping
+  workflow/design-system-storybook
   ```
 
 See [how-to-setup-projects.md](how-to-setup-projects.md) for the full walkthrough and a skill-by-skill reference table.

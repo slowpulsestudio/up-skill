@@ -68,6 +68,7 @@ workflow/vercel-password
 workflow/image-generation
 workflow/web-scraper
 workflow/dsp-prototyping
+workflow/design-system-storybook
 ```
 
 | Skill | When to include |
@@ -89,6 +90,7 @@ workflow/dsp-prototyping
 | `workflow/image-generation` | If the project calls an AI image-generation API |
 | `workflow/web-scraper` | If the project scrapes data from websites |
 | `workflow/dsp-prototyping` | If the project involves tuning audio/DSP algorithms before a real-time port |
+| `workflow/design-system-storybook` | If the project is a component gallery/storybook for a shared design system |
 
 ---
 

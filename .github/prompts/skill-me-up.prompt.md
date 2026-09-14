@@ -63,6 +63,7 @@ Check whether a `.skills` file exists in the root of this project. Whichever bra
    - `workflow/vercel-password` — password gate for Vercel preview deployments
    - `workflow/image-generation` — if the project calls an AI image-generation API
    - `workflow/dsp-prototyping` — if the project involves tuning audio/DSP algorithms before a real-time port (pre-checked when `platform/juce-vst3-plugin` was selected)
+   - `workflow/design-system-storybook` — if the project is a component gallery/storybook for a shared design system
 
    If no interactive question tool is available, fall back to asking both as plain numbered-list questions in chat, noting `workflow/general`, `workflow/architecture`, and `workflow/git` as the recommended defaults.
 

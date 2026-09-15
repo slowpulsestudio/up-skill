@@ -51,11 +51,11 @@ Check whether a `.skills` file exists in the root of this project. Whichever bra
    - `platform/python-cli` — Python local script/CLI tool
    - `platform/juce-vst3-plugin` — Building a VST3 audio plugin (JUCE/C++)
 
-2. **Workflow skills** (multi-select checkboxes — `workflow/general`, `workflow/architecture`, and `workflow/git` pre-checked as recommended defaults; the rest start unchecked. If `platform/juce-vst3-plugin` was selected in the platform question, also pre-check `workflow/dsp-prototyping`):
+2. **Workflow skills** (multi-select checkboxes — `workflow/general`, `workflow/architecture`, `workflow/git`, and `workflow/testing` pre-checked as recommended defaults; the rest start unchecked. If `platform/juce-vst3-plugin` was selected in the platform question, also pre-check `workflow/dsp-prototyping`):
    - `workflow/general` — core execution rules (recommended, pre-checked)
    - `workflow/architecture` — general code structure rules (recommended, pre-checked)
    - `workflow/git` — source control rules (recommended, pre-checked)
-   - `workflow/testing` — testing standards
+   - `workflow/testing` — testing standards (recommended, pre-checked)
    - `workflow/web-scraper` — if the project scrapes data from websites
    - `workflow/figma-read-from-mcp` — if the project uses Figma (design → code direction)
    - `workflow/figma-write-to-canvas` — if the project uses Figma write-to-canvas / code → canvas skills
@@ -63,9 +63,9 @@ Check whether a `.skills` file exists in the root of this project. Whichever bra
    - `workflow/vercel-password` — password gate for Vercel preview deployments
    - `workflow/image-generation` — if the project calls an AI image-generation API
    - `workflow/dsp-prototyping` — if the project involves tuning audio/DSP algorithms before a real-time port (pre-checked when `platform/juce-vst3-plugin` was selected)
-   - `workflow/design-system-storybook` — if the project is a component gallery/storybook for a shared design system
+   - `workflow/design-system-gallery` — if the project is a component gallery for a shared design system
 
-   If no interactive question tool is available, fall back to asking both as plain numbered-list questions in chat, noting `workflow/general`, `workflow/architecture`, and `workflow/git` as the recommended defaults.
+   If no interactive question tool is available, fall back to asking both as plain numbered-list questions in chat, noting `workflow/general`, `workflow/architecture`, `workflow/git`, and `workflow/testing` as the recommended defaults.
 
 3. For each of the following selected skills, ask a follow-up question:
 

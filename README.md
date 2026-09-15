@@ -74,7 +74,7 @@ The AI asks real interactive questions (buttons/checkboxes), not plain text:
   platform/juce-vst3-plugin
   ```
 
-- **Workflow — multi-select checkboxes, `general`/`architecture`/`git` pre-checked as recommended defaults. Add or remove any others that apply:**
+- **Workflow — multi-select checkboxes, `general`/`architecture`/`git`/`testing` pre-checked as recommended defaults. Add or remove any others that apply:**
 
   ```
   workflow/general
@@ -88,7 +88,7 @@ The AI asks real interactive questions (buttons/checkboxes), not plain text:
   workflow/image-generation
   workflow/web-scraper
   workflow/dsp-prototyping
-  workflow/design-system-storybook
+  workflow/design-system-gallery
   ```
 
 See [how-to-setup-projects.md](how-to-setup-projects.md) for the full walkthrough and a skill-by-skill reference table.
@@ -97,7 +97,7 @@ See [how-to-setup-projects.md](how-to-setup-projects.md) for the full walkthroug
 
 For each project:
 
-1. From `skills/workflow/`, pick via a multi-select checklist — `general.md`, `architecture.md`, and `git.md` are pre-checked as recommended defaults. Add or remove any others that apply.
+1. From `skills/workflow/`, pick via a multi-select checklist — `general.md`, `architecture.md`, `git.md`, and `testing.md` are pre-checked as recommended defaults. Add or remove any others that apply.
 2. From `skills/platform/`, pick **exactly one** via a single-select question to match the project's platform (e.g. `ios.md` for an iOS app, `python-mac.md` for a Mac desktop app). Never include more than one platform skill.
 3. Concatenate them, in order, into a single `master-skills.md`.
 4. Append any project-specific instructions.

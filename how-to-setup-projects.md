@@ -37,7 +37,7 @@ This always pulls the latest versions from GitHub, so any improvements made to U
 The AI will ask you these as real interactive questions (buttons/checkboxes), not plain text:
 1. What is the project/app name
 2. Which platform this project uses (single-select)
-3. Which workflow skills apply (multi-select checkboxes — `general`, `architecture`, and `git` are pre-checked as recommended defaults)
+3. Which workflow skills apply (multi-select checkboxes — `general`, `architecture`, `git`, and `testing` are pre-checked as recommended defaults)
 4. Follow-up questions for specific skills:
    - **`workflow/git`** — GitHub repo URL
    - **`workflow/figma-read-from-mcp`** — Figma file URL
@@ -54,7 +54,7 @@ platform/python-cli
 platform/juce-vst3-plugin
 ```
 
-**Workflow — multi-select checkboxes, `general`/`architecture`/`git` pre-checked. Add or remove any others that apply:**
+**Workflow — multi-select checkboxes, `general`/`architecture`/`git`/`testing` pre-checked. Add or remove any others that apply:**
 
 ```
 workflow/general
@@ -68,7 +68,7 @@ workflow/vercel-password
 workflow/image-generation
 workflow/web-scraper
 workflow/dsp-prototyping
-workflow/design-system-storybook
+workflow/design-system-gallery
 ```
 
 | Skill | When to include |
@@ -82,7 +82,7 @@ workflow/design-system-storybook
 | `workflow/general` | Core execution rules — pre-checked by default |
 | `workflow/architecture` | General code structure rules — pre-checked by default |
 | `workflow/git` | Source control rules — pre-checked by default |
-| `workflow/testing` | Testing standards |
+| `workflow/testing` | Testing standards — pre-checked by default |
 | `workflow/figma-read-from-mcp` | If the project uses Figma for design (design → code) |
 | `workflow/figma-write-to-canvas` | If the project uses Figma write-to-canvas / code → canvas skills |
 | `workflow/vercel-publish` | If the project deploys to Vercel |
@@ -90,7 +90,7 @@ workflow/design-system-storybook
 | `workflow/image-generation` | If the project calls an AI image-generation API |
 | `workflow/web-scraper` | If the project scrapes data from websites |
 | `workflow/dsp-prototyping` | If the project involves tuning audio/DSP algorithms before a real-time port |
-| `workflow/design-system-storybook` | If the project is a component gallery/storybook for a shared design system |
+| `workflow/design-system-gallery` | If the project is a component gallery for a shared design system |
 
 ---
 

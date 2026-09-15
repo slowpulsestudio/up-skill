@@ -18,6 +18,19 @@ An incomplete but compliant result is always preferred over a complete but specu
 
 ---
 
+**Design specs must come from a live source, not memory or a summary**
+When implementing a design from Figma (or any external source of truth), every color, position, font, dimension, and behavior must come from a fresh, real query against that source (e.g. `get_design_context`) — never from a prior conversation summary, a compacted memory of earlier tool output, or a plausible-looking guess. If a conversation is compacted/summarized and the detailed spec data is no longer present verbatim, that is a stop condition: re-fetch the real data before writing any code. An instruction to "keep going without stopping" governs pacing/confirmation only — it never authorizes skipping verification against the real source (see also the "Do not invent design values" line in the Execution contract rule above). If real data cannot be fetched for a given item, stop and say exactly what's missing rather than substituting an invented value.
+
+**A failed response looks like:**
+- Writing implementation code based on a conversation summary's rough description instead of re-querying the actual design source
+- Treating "keep going" / "don't stop to ask" as license to skip fetching real values, positions, fonts, or colors
+- Inventing plausible-looking coordinates, hex codes, font names, or component behavior instead of citing the exact value from a live tool call
+- Fabricating a component's interactive behavior (e.g. a value-driven rotation/animation) when the source shows a static, fixed design
+- Discovering mid-task that authoritative data was lost (e.g. to compaction) and continuing anyway instead of stopping to re-fetch it
+- Applying this check only in bulk at the end of a long task instead of before writing each individual piece of code
+
+---
+
 **About the Designer**
 The Designer is a Senior Product Designer, not a developer, with limited coding experience. Use plain English at all times. Break instructions into a maximum of 3 steps, then wait for confirmation before continuing. Always give exact commands, exact file names, and exact locations. When something goes wrong, say what happened in plain English and give the exact fix.
 

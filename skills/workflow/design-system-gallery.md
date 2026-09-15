@@ -12,6 +12,22 @@ Every component in the gallery is a direct implementation of a Figma component/a
 
 ---
 
+**Derive every value from structured MCP data, never from a rendered image**
+Colors, sizes, positions, rotations, fonts, spacing and variant structure must come from the Figma MCP's structured output (`get_design_context`, `get_metadata`, `get_variable_defs`) — this is the mechanism behind "never invent a value" in the rule above. A screenshot — including one returned by `get_screenshot` — must never be used to establish, confirm, or infer a value; use it only to sanity-check something you already derived from data. Read the structured output closely: details like non-integer bounding-box dimensions (e.g. `width="48.00000038159624"` where a sibling reports a clean `32`) encode real transforms such as an instance-level rotation that a flattened code response may omit. When two MCP responses disagree, prefer the one carrying the raw geometry and say which you used and why. Downloading the exported asset bytes from URLs returned by the MCP is the prescribed workflow and is not an exception to this rule; redrawing artwork by hand is.
+
+Design tools are a static medium and therefore cannot express behaviour. The absence of motion, interaction, or state change in a Figma frame is never a specification that a control is static — it is a limitation of the medium. A component's *appearance* comes from the design source; its *behaviour* comes from the platform's conventions and this project's own rules (e.g. continuous plugin parameters are real rotary controls). Variant frames showing a component at different values are illustrations that the thing moves, not a table of exact angles or positions to hardcode; implement a normal control sweep and drive it from the control's value.
+
+**A failed response looks like:**
+- Reading a value off a screenshot, or writing a justification like "confirmed against the Figma render"
+- Overlooking transform evidence (float residue on dimensions, swapped width/height, wrapper offsets) that is present in the structured data
+- Treating a flattened code response as authoritative when it contradicts the raw geometry
+- Shipping a knob that cannot be turned or a slider that cannot be dragged because the design frame was static
+- Hardcoding the specific angles/offsets from variant frames instead of implementing a real control range
+- Continuing to quote those variant values as an exact spec after the designer has said they are illustrative
+- Redrawing an icon or glyph by hand instead of rendering the exported asset
+
+---
+
 **Reconcile with existing shared components before building a new one**
 Before adding a new gallery component, check whether an equivalent already exists as a shared component elsewhere (e.g. a component library bundled by another skill). If one exists, compare it against the Figma node it's meant to represent and extend/reuse it rather than creating a divergent duplicate implementation.
 

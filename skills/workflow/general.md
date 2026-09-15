@@ -18,6 +18,20 @@ An incomplete but compliant result is always preferred over a complete but specu
 
 ---
 
+**Verification is not the same as completion, and momentum never licenses guessing**
+A gap in your information — data lost to conversation compaction, a file or tool response you only read part of, an ambiguous spec — is a stop condition, not something to fill with a plausible value (see also "Do not invent design values" in the Execution contract rule above). Re-read or re-fetch the authoritative source before writing code against it. Read a source's *entire* relevant output before acting on it; skimming until you have enough to start generating is how wrong values get baked in. "Compiles", "builds clean", "no errors" prove syntax only and are never evidence that output is correct — establish an actual feedback loop that shows you the real result (render to an image, run the thing, diff against source values) and inspect it yourself before reporting done. An instruction to "keep going", "don't stop to ask", or "don't pause for approval" governs *pacing and permission only* — it never waives verification. The rule below, "Design specs must come from a live source", is the Figma-specific instance of this same principle.
+
+**A failed response looks like:**
+- Filling a gap left by compaction, truncation, or partial reading with an invented-but-plausible value instead of re-fetching the source
+- Reading part of a spec/file/tool response and proceeding as though the whole thing was read
+- Citing a successful build/compile/lint as evidence the output is correct
+- Reporting work as done without ever observing its actual output
+- Treating "keep going without stopping" as permission to skip verification rather than to skip check-ins
+- Producing a complete-looking artifact over an incomplete but verified one
+- Failing to update behaviour after the human has explicitly corrected the same mistake once — a repeat after direct correction is a separate and more serious failure than the original error
+
+---
+
 **Design specs must come from a live source, not memory or a summary**
 When implementing a design from Figma (or any external source of truth), every color, position, font, dimension, and behavior must come from a fresh, real query against that source (e.g. `get_design_context`) — never from a prior conversation summary, a compacted memory of earlier tool output, or a plausible-looking guess. If a conversation is compacted/summarized and the detailed spec data is no longer present verbatim, that is a stop condition: re-fetch the real data before writing any code. An instruction to "keep going without stopping" governs pacing/confirmation only — it never authorizes skipping verification against the real source (see also the "Do not invent design values" line in the Execution contract rule above). If real data cannot be fetched for a given item, stop and say exactly what's missing rather than substituting an invented value.
 

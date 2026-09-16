@@ -21,6 +21,35 @@ Bring JUCE in via CMake `FetchContent`, pinned to a specific release tag — nev
 
 ---
 
+**Design system acquisition**
+Every plugin's UI is built from the shared Slow Pulse Studio design system, never from stock JUCE widgets or a bespoke LookAndFeel. Bring it in the same way JUCE itself is brought in — CMake `FetchContent`, pinned to a specific release tag, never a moving branch:
+
+```cmake
+FetchContent_Declare(
+    SpsDesignSystem
+    GIT_REPOSITORY https://github.com/slowpulsestudio/sps-juce-design-system.git
+    GIT_TAG v0.1.0
+    GIT_SHALLOW TRUE
+)
+FetchContent_MakeAvailable(SpsDesignSystem)
+target_link_libraries(<TargetName> PRIVATE sps::DesignSystem)
+```
+
+Do not copy design system source files into the plugin's own `Source/` folder. The library carries its own fonts, icons and colours; a plugin that copies them will drift the moment the design system is updated. Every colour, radius, spacing value and font size comes from the design system's tokens rather than being written as a literal in the plugin.
+
+Continuous parameters use `sps::RotaryKnob`. Choice parameters use `sps::SwitchSelector`. Boolean parameters use `sps::BinaryToggle`. Numeric entry uses `sps::NumericInput`. Readouts use `sps::NumericDisplay`. The preset toolbar is `sps::PresetToolbar`. The chassis is `sps::ModulePanel`.
+
+A plugin that is not yet connected to the design system is migrated with `/adopt-design-system`, which is a one-time job. After that, run `/system-my-design` periodically to check whether a newer design system version is available.
+
+**A failed response looks like:**
+- Building a plugin editor from stock `juce::Slider` / `juce::TextButton` / `GenericAudioProcessorEditor` instead of the design system's components
+- Copying design system source files into the plugin's own `Source/` folder instead of linking the library
+- Pinning the design system's `FetchContent` to `main` instead of a release tag
+- Writing a hex colour, corner radius or font size directly into a plugin when a design system token already defines it
+- Writing a bespoke `LookAndFeel` to restyle stock JUCE widgets
+
+---
+
 **Verify exact JUCE API against the real FetchContent source, not memory**
 Since JUCE is pinned via CMake `FetchContent`, the actual JUCE source is available on disk at `<build-dir>/_deps/juce-src`. When unsure of an exact method name, signature, or class (e.g. a LookAndFeel override or a Font method), grep that real source directly instead of guessing from memory — it is authoritative for the exact pinned version in use.
 
@@ -120,7 +149,7 @@ When a control's on-screen label is a whimsical/thematic metaphor rather than a 
 ---
 
 **Every VST3 plugin has presets and a Randomise button in a top toolbar**
-Every VST3 plugin ships with a save-able preset system (a `ComboBox` populated from named presets) and a "Randomise" button that jitters the creative/tunable parameters, both placed together in a toolbar strip across the top of the editor — not buried in a submenu or absent entirely. The Randomise button sits immediately to the right of the preset `ComboBox`, not elsewhere in the toolbar. This is a baseline UX expectation for every plugin from this studio, not an opt-in feature to be asked about per-project. Use the shared `sps::PresetToolbar` component (bundled into this project's `Source/Components/PresetToolbar.h` — see the `## Resources` section) instead of reimplementing the toolbar from scratch each time. Run `/system-my-design` periodically to check for and review updates to this component.
+Every VST3 plugin ships with a save-able preset system (a `ComboBox` populated from named presets) and a "Randomise" button that jitters the creative/tunable parameters, both placed together in a toolbar strip across the top of the editor — not buried in a submenu or absent entirely. The Randomise button sits immediately to the right of the preset `ComboBox`, not elsewhere in the toolbar. This is a baseline UX expectation for every plugin from this studio, not an opt-in feature to be asked about per-project. Use the shared `sps::PresetToolbar` component from the design system library instead of reimplementing the toolbar from scratch each time. Run `/system-my-design` periodically to check whether a newer design system version is available.
 
 Pressing Randomise deselects any preset entirely — the toolbar shows the literal text "Random" (no italics, no trailing `*`) until the Designer explicitly picks a preset again from the dropdown or cycle buttons, at which point normal preset-name + dirty-state display resumes. `sps::PresetToolbar` has a dedicated `showUnsavedLabel()` method for this — never fake it by clearing the `ComboBox` selection directly.
 
@@ -207,4 +236,3 @@ When scaffolding a new JUCE plugin project, create a `Testing/` folder containin
 
 ## Resources
 prompts/ -> .github/prompts/
-components/ -> Source/Components/

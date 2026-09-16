@@ -143,7 +143,7 @@ source-folder/ -> dest-folder/
 For each mapping, extract from the snapshot already downloaded in Step -2 (do not download the zip again):
 1. Extract only the files whose path within the zip starts with `up-skill-main/skill-resources/{skill-name}/{source-folder}/`
 2. Write each extracted file to `{project-root}/{dest-folder}/{relative-path}`, where `relative-path` is the portion after `up-skill-main/skill-resources/{skill-name}/{source-folder}/`. Create any necessary directories.
-3. If a file already exists at the destination and its content differs, warn the user and skip it — do not overwrite.
+3. If a file already exists at the destination and its content differs, show the user what changed and ask whether to update it. If they decline, leave the existing file untouched. Never overwrite without asking.
 
 Reuse the single Step -2 snapshot for all resource mappings across all skills.
 

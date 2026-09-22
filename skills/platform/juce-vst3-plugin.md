@@ -207,6 +207,28 @@ Any control that lives in an Input or Output section of the GUI (e.g. input gain
 
 ---
 
+**Input and output belong in the layout, not among the parameters**
+Every plugin wears a strip down each side: input trim above its fader on the left, mix above the output fader on the right. These are not creative parameters — they never appear in the parameter grid, and Randomise never touches them (see the rule above). Every plugin has both strips; this is chassis, not a per-plugin decision. Four of five plugins were missing one before anyone checked, because nothing made their absence visible.
+
+**A failed response looks like:**
+- Placing input trim, mix, or output gain in the main parameter grid alongside creative controls
+- Shipping a plugin with only one of the two strips, or neither
+- Treating the strips as an optional layout choice to raise with the Designer per plugin
+
+---
+
+**Section membership is authored, not coded**
+Which parameter belongs to INPUT, PERFORMANCE or OUTPUT is declared once in the design system's per-plugin parameter authoring file, and the strips are built from whatever has been put in them. A plugin reads that file rather than carrying its own hardcoded list of names to skip — so adding a control to a section is enough, and nobody has to remember a rule.
+
+Slots fill from the bottom, so a lone parameter lands on the fader rather than the readout above it. An unclaimed slot draws nothing: an empty strip is a visible reminder that a plugin is unfinished, rather than a default quietly standing in for a decision nobody made.
+
+**A failed response looks like:**
+- Hardcoding a list of parameter names to exclude from the grid inside the plugin, instead of reading the authored sections
+- Filling an empty slot with a placeholder or sensible default rather than leaving it blank
+- Filling slots from the top, so a single parameter lands on the readout instead of the fader
+
+---
+
 **Validation**
 After building, validate with `pluginval` (JUCE's own automated plugin validator) before considering the plugin "done" — this is the automated check, not a substitute for it. Then load it in a real DAW (rescan the plugin folder) and process real audio as the end-to-end smoke test; a clean `pluginval` pass alone is not sufficient.
 

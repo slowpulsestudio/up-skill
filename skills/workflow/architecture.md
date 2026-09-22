@@ -20,6 +20,26 @@ When adding a feature, extend the existing implementation rather than writing a 
 
 ---
 
+**One thing has one name, and any second name is derived from the first**
+Where the same thing is identified in two places, derive the second from the first rather than typing it twice. Two of five plugins carried a heading and a title that disagreed — one was filed under "Phase-Worm" and looked up as "Wormhole" — so everything assigned to them silently failed to appear, with nothing broken enough to notice. Removing the possibility is the only fix worth making for a class of bug whose symptom is silence; correcting the individual instance leaves the next one free to happen.
+
+**A failed response looks like:**
+- Storing a display name and a lookup key as two independently-typed values
+- Fixing the one mismatched instance instead of removing the ability for them to diverge
+- Adding a validation check that the two agree, when deriving one from the other would make the check unnecessary
+
+---
+
+**A component asserts its own requirements rather than relying on every container to remember**
+If a component needs something from whatever contains it, it should assert that itself, at the point it has the information to do so. A fix written as "the Label un-clips its bulb" left every standalone bulb still broken; moving the same call into the bulb's own `resized()` fixed every use at once, including ones not written yet. Any requirement that lives in the consumer is a requirement someone will forget on the next call site.
+
+**A failed response looks like:**
+- Placing a required setup call in one parent, leaving other consumers of the same component broken
+- Documenting a "containers must do X" requirement instead of making the component do X itself
+- Fixing each new call site by hand as it is discovered, rather than moving the assertion into the component
+
+---
+
 **Configuration over hardcoding**
 Values that are likely to change — tunable parameters, feature flags, thresholds, endpoints — belong in configuration (a config file, environment variable, or CLI flag), not hardcoded inside logic. Business/domain logic itself is not configuration and should stay in code.
 

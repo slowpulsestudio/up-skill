@@ -15,16 +15,84 @@ Every component in the gallery is a direct implementation of a Figma component/a
 **Derive every value from structured MCP data, never from a rendered image**
 Colors, sizes, positions, rotations, fonts, spacing and variant structure must come from the Figma MCP's structured output (`get_design_context`, `get_metadata`, `get_variable_defs`) — this is the mechanism behind "never invent a value" in the rule above. A screenshot — including one returned by `get_screenshot` — must never be used to establish, confirm, or infer a value; use it only to sanity-check something you already derived from data. Read the structured output closely: details like non-integer bounding-box dimensions (e.g. `width="48.00000038159624"` where a sibling reports a clean `32`) encode real transforms such as an instance-level rotation that a flattened code response may omit. When two MCP responses disagree, prefer the one carrying the raw geometry and say which you used and why. Downloading the exported asset bytes from URLs returned by the MCP is the prescribed workflow and is not an exception to this rule; redrawing artwork by hand is.
 
-Design tools are a static medium and therefore cannot express behaviour. The absence of motion, interaction, or state change in a Figma frame is never a specification that a control is static — it is a limitation of the medium. A component's *appearance* comes from the design source; its *behaviour* comes from the platform's conventions and this project's own rules (e.g. continuous plugin parameters are real rotary controls). Variant frames showing a component at different values are illustrations that the thing moves, not a table of exact angles or positions to hardcode; implement a normal control sweep and drive it from the control's value.
+Check what a node actually *is* before trusting the exporter's asset. The MCP exporter will hand over a raster PNG for what is a vector node in the file; resampling that raster destroys its contrast, while the node itself carries exact geometry. A dashed graticule exported as a 200x2 PNG rendered at 13% of its intended strength — read as a `LINE` with `strokeWeight: 1` and `dashPattern: [3,3]`, it drew correctly first time. Exported assets also go stale the moment the Figma source is edited: colours and geometry transcribed from an export are a snapshot, so when the Designer says a component "looks wrong", diff the live node properties against the code *before* investigating anything else. A lever slot rendering near-black instead of mid-grey was a stale fill, not the shadow bug it appeared to be.
+
+Design tools are a static medium and cannot express behaviour, so distinguish a control's **inherent mechanism** from its **decorative state**. The mechanism is the control's reason to exist — a knob turns, a fader drags, a slider sweeps its full continuous range — and the absence of motion in a Figma frame is never a specification that it is static. Variant frames showing a component at different values are illustrations that the thing moves, not a table of exact angles or positions to hardcode: implement the real range, drive it from the control's value, and derive geometry from the live size rather than a design-size constant, because organisms routinely stretch an atom wider than it was drawn (a slider atom drawn at 213 but instanced at 245 never reached 100%). Decorative state is the opposite — hover washes, press displacement, focus rings and glows exist only if the design defines them. If a component set has no hover variant, it has no hover behaviour; do not add one because the control "should feel tactile".
 
 **A failed response looks like:**
 - Reading a value off a screenshot, or writing a justification like "confirmed against the Figma render"
 - Overlooking transform evidence (float residue on dimensions, swapped width/height, wrapper offsets) that is present in the structured data
 - Treating a flattened code response as authoritative when it contradicts the raw geometry
+- Accepting a raster export for a node that is really a vector, and inheriting its resampling losses
+- Investigating a "looks wrong" report without first diffing the live node properties against the code
 - Shipping a knob that cannot be turned or a slider that cannot be dragged because the design frame was static
-- Hardcoding the specific angles/offsets from variant frames instead of implementing a real control range
-- Continuing to quote those variant values as an exact spec after the designer has said they are illustrative
+- Hardcoding the angles/offsets from variant frames, or sizing geometry from a design-size constant instead of the live size
+- Inventing a hover, press, or focus state the component set does not define
 - Redrawing an icon or glyph by hand instead of rendering the exported asset
+
+---
+
+**Verify the typeface name, not just its metrics**
+Font identity is a property to verify like any other, and it is the one that measuring position and size will never catch. Read `fontName.family` off the text node and compare it against the name table of the font the code actually loads — do not assume the asset in the repo is the asset in the design. A build shipped a different seven-segment face than Figma specified and it went unnoticed for the whole project, because every measurable property agreed: same nominal size, same advance width, same cap height. Only the glyph shapes differed.
+
+When they disagree, say so and ask rather than substituting the nearest available face. The Designer may not own the font the code uses, or vice versa; the resolution is usually to get the same file into both (the repo's own `.ttf` can normally just be installed). Whoever holds the real source of truth should be the one to move.
+
+**A failed response looks like:**
+- Treating matching size, spacing and alignment as evidence that the typeface matches
+- Quietly swapping in the nearest available font to close a mismatch instead of naming it
+- Changing the code to paper over the gap when the design file is the thing that is wrong
+
+---
+
+**A small size variant is rarely a stripped-down one**
+Read the small variant's own layer tree; do not reason about what "must" fit. A 4px Indicator looked too small to hold the 32px version's bezel and was built lens-only — but Figma keeps the bezel, and at 4px its 2px inside stroke swallows the fill and leaves a black disc. That dark ring is exactly what makes the dot read as crisp rather than as a smudge.
+
+**A failed response looks like:**
+- Dropping detail from a small variant because it seems geometrically implausible, without reading its layers
+- Assuming a size variant is the large one scaled down rather than its own design
+
+---
+
+**Where a rule generates the layout, the rule outranks the drawing**
+Once positions are generated from a rule — a radius and an evenly divided sweep, a grid pitch, a ratio — that generator is the source of truth, not the Figma frame. Verify the rule reproduces the design at its drawn count, then trust it everywhere else. Do not "correct" generated positions back towards hand-measured ones: the drawn values are an artist's approximation of the rule, and the disagreements between them are error, not intent. A switch selector's four tags were transcribed as four hardcoded corners that turned out not to lie on a circle (two at radius 41, two at 45.8–48), which was invisible until a lit marker's glow reached the pointer on the near pair only. Replacing them with one radius and a divided sweep fixed that and made the position count a parameter rather than a redraw.
+
+Say this in the component's own header too — the next person to diff it against Figma will find offsets of a few pixels and assume the code has drifted.
+
+**A failed response looks like:**
+- Re-transcribing coordinates from a later Figma edit into a component whose positions are generated, reintroducing the removed defect
+- Adjusting generated values to match hand-placed ones without checking whether the rule itself is wrong
+- Leaving no note in the component explaining why its positions deliberately differ from the frame
+
+---
+
+**Don't sharpen something the design draws softly**
+A 1px rule sitting on a whole coordinate straddles two device rows at half weight, and that softness is part of how it reads. Snapping it to a pixel centre makes it harder than the design intends. Match the geometry, not an idea of crispness.
+
+**A failed response looks like:**
+- Pixel-snapping a hairline the design deliberately placed on a whole coordinate
+- Treating a soft edge in the design as an error to be corrected
+
+---
+
+**Truncating text can change its meaning, so abbreviate instead**
+A fixed-width readout cut `NATURAL MINOR` down to `NATURAL`. Both are real scales, so nothing looked broken — it just said something false. The same trap catches the fix: abbreviating `MINOR PENTATONIC` to `MIN.` is worse than the original, because Minor is also a real scale.
+
+Cut each word to its first syllable so the phrase keeps its shape; when that still does not fit, trim the longest word a character at a time rather than dropping a word. Mark whatever is left with a point, and offer the full text on hover — but only claim the tooltip when something was actually lost, or it shadows the tooltip of whatever contains it. Write the rule once and let each caller define what "fits" means; it will otherwise arrive twice, days apart, and the two copies will quietly disagree.
+
+**A failed response looks like:**
+- Truncating a label to a substring that is itself a different valid value
+- Abbreviating to something that collides with another real value in the same set
+- Claiming a hover tooltip on text that was not actually shortened
+- Writing a second fitting/abbreviation helper without checking for the existing one
+
+---
+
+**Drawing an atom in the gallery is not the same as the product using it**
+A component the framework owns needs a `LookAndFeel` override (or platform equivalent), not just a class. A tooltip chip had been built, matched against Figma and placed on the atoms page while every real tooltip in the app was still the framework's default yellow box, because nothing had connected the atom to `TooltipWindow`. Check what the product actually renders, not what the specimen page renders.
+
+**A failed response looks like:**
+- Declaring a component done because it renders correctly on the gallery page, without checking the product's real usage
+- Building an atom for something the framework draws, without installing it into the framework's own hook
 
 ---
 
@@ -37,12 +105,16 @@ Before adding a new gallery component, check whether an equivalent already exist
 
 ---
 
-**Gallery components are presentation-only**
-Every component in the gallery is a pure presentation component: it takes props/values and exposes `std::function`-style (or platform-equivalent) callbacks for interaction, with no direct coupling to business logic, persistence, or a specific host's parameter/state system. The gallery exists to preview appearance and interaction states in isolation, not to demonstrate real data wiring.
+**Components own their mechanism, but not the application's logic**
+Every component takes values and exposes `std::function`-style (or platform-equivalent) callbacks, with no direct coupling to business logic, persistence, or a specific host's parameter/state system. That constraint is about *logic*, not about interaction: where the mechanism **is** the interaction — a fader track, a slider track — the atom handles its own drag and reports the result through a callback. An organism that needs control disables the atom's mouse handling and feeds it state instead. An atom that is purely presentational, with its mechanism living in whatever contains it, cannot be tested in isolation and will be reimplemented slightly differently by every consumer.
+
+Do not wire an internal detail to a public callback the consuming plugin will need — assigning `juce::Slider::onValueChange` internally silently breaks any downstream consumer who assigns it too. `juce::Slider` repaints on every `setValue` even under `dontSendNotification`, so syncing an injected child from `paint()` is both more reliable and leaves the callback free.
 
 **A failed response looks like:**
-- Coupling a gallery component directly to a specific app's state/parameter system "for the demo"
+- Coupling a component directly to a specific app's state/parameter system "for the demo"
 - Adding persistence, network calls, or other side effects inside a gallery component
+- Leaving a draggable atom's drag handling to its parent, so the atom cannot be used or tested alone
+- Occupying a public callback that the consuming plugin will need to assign
 
 ---
 

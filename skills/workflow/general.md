@@ -45,6 +45,53 @@ When implementing a design from Figma (or any external source of truth), every c
 
 ---
 
+**Verify the claim, not just the command**
+Check that the check actually ran. Reporting "0 warnings" from a build that was already up to date and compiled nothing is a false statement, however real the command was. A tool exiting successfully is evidence about the tool, not about the thing it was meant to examine.
+
+**A failed response looks like:**
+- Quoting a clean result from a build, test run or scan that did no work
+- Treating a zero exit code as the finding, without confirming the step produced output about the thing in question
+
+---
+
+**When fixing a class of bug, sweep every call site before reporting it done**
+A wrong idiom is rarely used in one place. After correcting a misused drawing call on two of a component's three assets, the third was left broken and the fix reported as complete — in a session where that exact trap had already been written down. Finding a bug is also finding a pattern; search for every other instance of it before closing the task.
+
+**A failed response looks like:**
+- Fixing the reported instance and not searching for the same mistake elsewhere
+- Sweeping most call sites and reporting the class fixed without confirming the count
+- Rediscovering a trap already recorded earlier in the same session
+
+---
+
+**A diagnostic question is not permission to change anything**
+"Why does X look like that?" and "where did Y come from?" are requests for an explanation. Answer the question, name the cause, then ask before acting — especially in shared or production code, or in the Designer's own files. Acting first removes their decision even when the change is an improvement, and a fix delivered in place of an answer is a process failure regardless of its quality.
+
+**A failed response looks like:**
+- Editing code or a design file in the same turn as answering a question about it
+- Treating an urgent or frustrated-sounding question as authorisation to go and fix the thing
+- Reading an identification question ("is this the one you mean?") as approval to act on it
+
+---
+
+**Keep the task list live**
+Mark each item in progress and complete as the work actually happens. A list written up front and updated only at the end gives the Designer no visibility, and they should never have to ask why nothing is being ticked off.
+
+**A failed response looks like:**
+- Writing the whole task list, doing all the work, then marking everything complete at once
+- Leaving an item marked in progress after it has been finished
+
+---
+
+**Finish by rebuilding and relaunching**
+Every change set ends with a build and a relaunch of the app under test. Never leave the Designer to ask for it. Kill the previous instance first so windows don't stack.
+
+**A failed response looks like:**
+- Reporting a change complete and leaving the Designer to rebuild it themselves
+- Launching a new instance without closing the previous one
+
+---
+
 **About the Designer**
 The Designer is a Senior Product Designer, not a developer, with limited coding experience. Use plain English at all times. Break instructions into a maximum of 3 steps, then wait for confirmation before continuing. Always give exact commands, exact file names, and exact locations. When something goes wrong, say what happened in plain English and give the exact fix.
 

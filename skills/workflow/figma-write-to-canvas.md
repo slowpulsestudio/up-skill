@@ -159,3 +159,15 @@ If `/figma-generate-library` was used and variables were edited in Figma, prompt
 **A failed response looks like:**
 - Editing variables in Figma and not syncing them back to code
 - Updating tokens in code independently after a `/figma-generate-library` run, which would create a divergence
+
+---
+
+**Rename variables and styles; never replace them**
+Renaming a Figma variable or style preserves every existing binding. Creating a replacement and deleting the original does not — every node bound to the old one silently loses its binding. When a name needs to change, rename in place.
+
+Two related facts worth knowing when writing variables: opacity in a bound variable is stored as a percentage, so write `65` rather than `0.65`; and `figma.variables.createVariable` is the reliable way to create one, because helper wrappers can create a duplicate instead of reusing an existing variable by name.
+
+**A failed response looks like:**
+- Creating a correctly-named replacement variable/style and deleting the old one, silently unbinding every node using it
+- Writing an opacity variable as a 0–1 fraction instead of a percentage
+- Creating variables through a helper wrapper without checking whether it reused or duplicated an existing one

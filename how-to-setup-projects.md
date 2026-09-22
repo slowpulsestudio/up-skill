@@ -69,6 +69,7 @@ workflow/image-generation
 workflow/web-scraper
 workflow/dsp-prototyping
 workflow/design-system-gallery
+workflow/juce-ui-rendering
 ```
 
 | Skill | When to include |
@@ -91,6 +92,7 @@ workflow/design-system-gallery
 | `workflow/web-scraper` | If the project scrapes data from websites |
 | `workflow/dsp-prototyping` | If the project involves tuning audio/DSP algorithms before a real-time port |
 | `workflow/design-system-gallery` | If the project is a component gallery for a shared design system |
+| `workflow/juce-ui-rendering` | If the project implements Figma artwork as JUCE painting code (building the design system library itself, not consuming it) |
 
 ---
 

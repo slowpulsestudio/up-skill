@@ -64,6 +64,7 @@ Check whether a `.skills` file exists in the root of this project. Whichever bra
    - `workflow/image-generation` — if the project calls an AI image-generation API
    - `workflow/dsp-prototyping` — if the project involves tuning audio/DSP algorithms before a real-time port (pre-checked when `platform/juce-vst3-plugin` was selected)
    - `workflow/design-system-gallery` — if the project is a component gallery for a shared design system
+   - `workflow/juce-ui-rendering` — if the project implements Figma artwork as JUCE painting code (building the design system library itself, not consuming it)
 
    If no interactive question tool is available, fall back to asking both as plain numbered-list questions in chat, noting `workflow/general`, `workflow/architecture`, `workflow/git`, and `workflow/testing` as the recommended defaults.
 

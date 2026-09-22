@@ -33,9 +33,9 @@ Present a table mapping every parameter to the component it will become:
 
 - Continuous parameters -> `sps::RotaryKnob`
 - Choice parameters -> `sps::SwitchSelector`
-- Boolean parameters -> `sps::BinaryToggle`
-- Seed or integer entry -> `sps::NumericInput`
-- Value readouts -> `sps::NumericDisplay`
+- Boolean parameters -> `sps::Toggle`
+- Seed or integer entry -> `sps::Adjustor`
+- Value readouts -> `sps::Quartz`
 
 Then describe the proposed layout in plain English: a `sps::PresetToolbar` across the top, the creative parameters in a grid on a `sps::ModulePanel`, and the input/output/mix controls in a separate section below a divider.
 
@@ -79,6 +79,7 @@ Rewrite the PluginEditor using the approved mapping. Rules:
 
 - Do not touch the processor, the DSP, or `createParameterLayout()`. Parameter IDs, ranges and defaults stay exactly as they are — this is a UI change only.
 - Every control is attached to its parameter through the APVTS attachment classes, so automation and host state keep working.
+- `sps::Toggle` is a `juce::Button`, so boolean parameters bind with `AudioProcessorValueTreeState::ButtonAttachment` like any other button — never hand-roll a `juce::ParameterAttachment` for one.
 - Every control gets a hover tooltip using the classic industry term for that parameter, per the tooltip rule in master-skills.md.
 - Displayed values are rounded to whole integers unless that parameter is explicitly meant to show decimals.
 - Wire `sps::PresetToolbar`: `setPresetNames`, `onPresetSelected`, `onRandomise`, and `isDirty`. Call `refreshDisplay()` whenever a tracked parameter changes.

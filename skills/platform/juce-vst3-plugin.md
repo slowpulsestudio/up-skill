@@ -37,7 +37,7 @@ target_link_libraries(<TargetName> PRIVATE sps::DesignSystem)
 
 Do not copy design system source files into the plugin's own `Source/` folder. The library carries its own fonts, icons and colours; a plugin that copies them will drift the moment the design system is updated. Every colour, radius, spacing value and font size comes from the design system's tokens rather than being written as a literal in the plugin.
 
-Continuous parameters use `sps::RotaryKnob`. Choice parameters use `sps::SwitchSelector`. Boolean parameters use `sps::BinaryToggle`. Numeric entry uses `sps::NumericInput`. Readouts use `sps::NumericDisplay`. The preset toolbar is `sps::PresetToolbar`. The chassis is `sps::ModulePanel`.
+Continuous parameters use `sps::RotaryKnob`. Choice parameters use `sps::SwitchSelector`. Boolean parameters use `sps::Toggle`. Numeric entry uses `sps::Adjustor`. Readouts use `sps::Quartz`. The preset toolbar is `sps::PresetToolbar`. The chassis is `sps::ModulePanel`.
 
 A plugin that is not yet connected to the design system is migrated with `/adopt-design-system`, which is a one-time job. After that, run `/system-my-design` periodically to check whether a newer design system version is available.
 

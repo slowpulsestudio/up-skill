@@ -256,5 +256,14 @@ When scaffolding a new JUCE plugin project, create a `Testing/` folder containin
 
 ---
 
+**Input/Output audio folders at project root, gitignored from the start**
+When scaffolding a new JUCE plugin project, create `Input/` and `Output/` folders at the project root — `Input/` holds source audio files to feed the plugin for manual testing, `Output/` holds rendered/bounced results for comparison — and add both to `.gitignore` in the same commit that creates them. Audio files are binary and churn constantly; they are local working state, not project source.
+
+**A failed response looks like:**
+- Committing audio files into `Input/`/`Output/` before gitignoring the folders
+- Skipping the `Input/`/`Output/` scaffold entirely because "the Designer can set it up manually"
+
+---
+
 ## Resources
 prompts/ -> .github/prompts/

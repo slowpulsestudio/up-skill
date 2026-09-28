@@ -21,6 +21,28 @@ Bring JUCE in via CMake `FetchContent`, pinned to a specific release tag — nev
 
 ---
 
+**Build with hidden symbol visibility**
+By default, CMake/Clang exports every symbol from a plugin bundle with default visibility. For a JUCE VST3 this means hundreds of internal JUCE symbols end up globally exported per plugin (confirmed with `nm -g <plugin>.vst3/Contents/MacOS/*` — typically 300-700+ T/D symbols), when only a handful of VST3 entry points (`GetPluginFactory`, `bundleEntry`, `bundleExit`) need to be visible at all.
+
+When a host loads more than one plugin built from the same JUCE version in one process, macOS's dynamic linker can coalesce matching default-visibility symbols across the separately-loaded bundles — including function-local statics such as JUCE's Typeface font cache and its mutex. Two independently-built plugins can end up sharing one instance of that static at runtime. Unloading one plugin then destroys the shared instance out from under the other, aborting the host (confirmed: Ableton Live, "mutex lock failed: Invalid argument", on quit or on unloading any one of the affected plugins).
+
+Fix: every plugin's CMakeLists.txt must set, before `FetchContent_MakeAvailable(JUCE)`:
+
+```cmake
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+set(CMAKE_C_VISIBILITY_PRESET hidden)
+set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
+```
+
+Verify with `nm -g <plugin>.vst3/Contents/MacOS/<name> | grep -E " T | D | S " | wc -l` — should drop to roughly 3 (just the required entry points), not hundreds.
+
+**A failed response looks like:**
+- Treating a crash on host shutdown/plugin-unload as unfixable "JUCE noise" without checking exported symbol counts first
+- Fixing symbol visibility in only one of two plugins loaded together — the other plugin still exporting default-visibility symbols is enough to still collide
+- Assuming this only matters for plugins sharing the exact same design-system version; it collides on matching JUCE version/ABI, independent of which design system is used
+
+---
+
 **Design system acquisition**
 Every plugin's UI is built from the shared Slow Pulse Studio design system, never from stock JUCE widgets or a bespoke LookAndFeel. Bring it in the same way JUCE itself is brought in — CMake `FetchContent`, pinned to a specific release tag, never a moving branch:
 

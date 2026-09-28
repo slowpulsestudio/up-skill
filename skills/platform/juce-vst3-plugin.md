@@ -84,12 +84,14 @@ target_compile_options(<Target> PRIVATE
 ---
 
 **Tooltips must be applied through a composite control's children**
-JUCE asks only the component directly under the mouse for its tooltip and never walks up to a parent. Design system controls built from child pieces (`sps::Adjustor`'s readout and step buttons, faders, knobs) will show no tooltip over most of their own surface if the tip is set only on the outer component — and it will look like a design system bug rather than a missed wiring step. Set the tooltip recursively on every descendant that is a `SettableTooltipClient`. Note also that `sps::Adjustor` is not a tooltip client at all and needs a subclass that mixes in `juce::SettableTooltipClient`.
+JUCE's tooltip window asks only the single component directly under the mouse for its tip (a `dynamic_cast<TooltipClient*>` on that one component) — it never walks up to a parent looking for one. Several `sps` design system controls are built from child pieces rather than being one component (e.g. `sps::Adjustor`'s numeric readout and its step buttons are separate children); calling `setTooltip` on the outer control only covers whatever background area isn't occupied by a child, which for some controls is almost none of the visible surface. `sps::Adjustor` specifically is not a `juce::SettableTooltipClient` at all, so it has no `setTooltip` to call in the first place — a subclass mixing in `juce::SettableTooltipClient` is needed before a tip can be set on it.
+
+The fix is a small recursive helper: set the tooltip on the control, then walk `getChildComponent(i)` for every child and set the same tooltip wherever the child is itself a `SettableTooltipClient` (`dynamic_cast`, skip silently if not). Apply this to every control on the panel, not just `Adjustor` — knobs, faders and switches are also built from sub-parts in places.
 
 **A failed response looks like:**
-- Calling `setTooltip` on the outer control only, leaving its child pieces silent
-- Testing a tooltip by hovering one spot and assuming the whole control is covered
-- Blaming the design system for a missing tooltip instead of checking whether it was set recursively
+- Calling `setTooltip` once on the outer control and assuming that covers it
+- Testing tooltips by hovering one spot (e.g. the control's edge) and concluding the whole control shows a tip, when the readout or buttons in the middle show nothing
+- Treating a missing tooltip on a design-system component as a bug in the design system rather than in how the tooltip was applied
 
 ---
 

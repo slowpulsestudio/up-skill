@@ -69,6 +69,58 @@ The Steinberg VST3 SDK headers vendored inside JUCE 9's juce_audio_processors_he
 
 ---
 
+**The -include memory workaround must be scoped to C++ translation units**
+The rule above is correct but incomplete: applied unscoped, `-include memory` is also passed to JUCE's C and Objective-C sources, which fail immediately with `fatal error: 'memory' file not found` — a confusing error that looks like a broken toolchain rather than a scoping mistake. Scope it to C++ only:
+
+```cmake
+target_compile_options(<Target> PRIVATE
+    $<$<COMPILE_LANGUAGE:CXX,OBJCXX>:-include;memory>)
+```
+
+**A failed response looks like:**
+- Applying `-include memory` to the whole target instead of scoping it to `CXX,OBJCXX`
+- Concluding the compiler or JUCE checkout is broken when a `.c`/`.m` file can't find a C++ header
+
+---
+
+**Tooltips must be applied through a composite control's children**
+JUCE asks only the component directly under the mouse for its tooltip and never walks up to a parent. Design system controls built from child pieces (`sps::Adjustor`'s readout and step buttons, faders, knobs) will show no tooltip over most of their own surface if the tip is set only on the outer component — and it will look like a design system bug rather than a missed wiring step. Set the tooltip recursively on every descendant that is a `SettableTooltipClient`. Note also that `sps::Adjustor` is not a tooltip client at all and needs a subclass that mixes in `juce::SettableTooltipClient`.
+
+**A failed response looks like:**
+- Calling `setTooltip` on the outer control only, leaving its child pieces silent
+- Testing a tooltip by hovering one spot and assuming the whole control is covered
+- Blaming the design system for a missing tooltip instead of checking whether it was set recursively
+
+---
+
+**A DSP port is verified against the prototype, not against the compiler**
+When porting a tuned prototype to real-time code, build a small offline harness that renders through the shipping code path and compares it numerically against the prototype — pitch, envelope times, per-band energy, peak. "It builds" and "it sounds about right" are not evidence. Keep the harness in the repo as a separate target so the comparison can be re-run after any change to the DSP.
+
+**A failed response looks like:**
+- Reporting a port complete because it compiles and loads
+- Judging a port by ear alone
+- Deleting the comparison harness once it passes
+
+---
+
+**Pre-render per-setting work off the audio thread**
+Where a prototype renders one fixed event per setting and replays it, the real-time form is a pre-rendered buffer, not per-sample synthesis. Render on a background thread into a spare buffer and publish it with a single atomic store; the audio thread only ever reads. Anything expensive and setting-dependent (large additive partial counts, filter design, normalisation passes) belongs there.
+
+**A failed response looks like:**
+- Summing dozens of partials per sample in `processBlock`
+- Rebuilding a wavetable or buffer inside a parameter callback on the audio thread
+
+---
+
+**Host-position scheduling, not a free-running counter**
+Rhythmic triggering derives from the host playhead's PPQ position, and any probabilistic choice hashes the step index with a seed rather than drawing from a running RNG. A bounced render must match what was heard, and replaying a bar must fire the same pattern.
+
+**A failed response looks like:**
+- A sample counter that drifts against the host
+- A `std::random` generator whose sequence depends on how many blocks have been processed
+
+---
+
 **Install location: vendor subfolder, not the bare VST3 root**
 Plugins install to a `Slow Pulse Studio` subfolder inside the system VST3 folder, not directly into `~/Library/Audio/Plug-Ins/VST3/`. Set `VST3_COPY_DIR "$ENV{HOME}/Library/Audio/Plug-Ins/VST3/Slow Pulse Studio"` on `juce_add_plugin(...)` alongside `COPY_PLUGIN_AFTER_BUILD TRUE`. This keeps every plugin from this studio grouped together in the DAW's plugin browser instead of mixed in with every other vendor's plugins.
 

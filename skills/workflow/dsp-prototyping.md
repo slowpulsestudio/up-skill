@@ -11,12 +11,22 @@ When building audio/DSP-heavy functionality (dynamic EQ, envelope followers, fil
 
 ---
 
+**Input/Output audio folders at project root, gitignored from the start**
+When scaffolding prototyping work, create `Input/` and `Output/` folders at the project root by default — `Input/` holds source audio files to test against, `Output/` holds rendered/bounced results — and add both to `.gitignore` in the same commit that creates them. Audio files are binary and churn constantly; they are local working state, not project source.
+
+**A failed response looks like:**
+- Rendering into ad-hoc locations instead of a root-level `Output/` folder
+- Committing audio files into `Input/`/`Output/` before gitignoring the folders
+
+---
+
 **Parameter sweeps over guessing values**
-Render one labeled output file per candidate value of each tunable parameter (holding others at a neutral baseline), rather than guessing a single value and asking the Designer to imagine alternatives. Sweep one parameter at a time first to isolate its effect; combine only after individual ranges are known.
+Render labeled output files covering a range of candidate values, rather than guessing a single value and asking the Designer to imagine alternatives. Randomly sample full sets of parameters together (not one parameter at a time, and not an exhaustive grid search of every combination) and render every candidate into a single flat folder — never split into a folder per parameter — so the Designer can listen straight through in one place.
 
 **A failed response looks like:**
 - Picking one arbitrary value per parameter and asking "does this sound right?" instead of rendering a range to compare
-- Sweeping multiple parameters at once before any single-parameter baseline has been established
+- Splitting sweep renders into a separate folder per parameter instead of one folder the Designer can listen through in sequence
+- Sweeping parameters one at a time in isolation, or exhaustively grid-searching every combination, instead of randomly sampling full parameter sets together
 
 ---
 
@@ -30,7 +40,7 @@ Alongside audio renders, generate before/after spectrograms and a zoomed wavefor
 ---
 
 **Round-based tuning**
-Treat tuning as iterative rounds: Round 1 sweeps the full plausible range per parameter (including extremes) to find sane bounds; Round 2 refines within the range the Designer responded well to. Lock in final values only after the Designer has given explicit feedback on renders, not by guessing "reasonable" defaults upfront.
+Treat tuning as iterative rounds: Round 1 randomly samples full parameter-set combinations across the full plausible range (including extremes) to find sane bounds; Round 2 refines within the range the Designer responded well to. Lock in final values only after the Designer has given explicit feedback on renders, not by guessing "reasonable" defaults upfront.
 
 **A failed response looks like:**
 - Inventing final parameter defaults without an actual round of Designer feedback on real renders
@@ -54,13 +64,3 @@ One-off A/B renders (e.g. comparing two DSP approaches, testing a bug fix) must 
 **A failed response looks like:**
 - Writing a quick comparison render straight to Output/some_test.wav instead of Output/some_test/some_test.wav
 - Leaving the Designer to manually clean up/organize stray files the agent wrote to the Output/ root
-
----
-
-**Random combined-parameter batches for interaction effects**
-After one-parameter-at-a-time sweeps establish each parameter's usable low/high range, render a second batch of combinations by randomly sampling several parameters at once within their discovered ranges (not exhaustively grid-searching every combination). This surfaces interaction effects — e.g. two parameters that sound fine individually but clash or reinforce unexpectedly together — that isolated sweeps cannot reveal. Use both methods together: one-at-a-time sweeps to find sane bounds, random combined batches to confirm those bounds still hold once parameters interact.
-
-**A failed response looks like:**
-- Only ever testing parameters in isolation and never validating combined settings before locking in defaults
-- Exhaustively grid-searching every combination of every parameter instead of random sampling within already-discovered ranges
-- Randomly sampling parameter combinations before any individual-parameter bounds have been established

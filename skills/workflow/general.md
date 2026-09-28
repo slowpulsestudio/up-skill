@@ -198,6 +198,18 @@ When the Designer asks for a "metaprompt", give the entire answer as one single 
 
 ---
 
+**Use absolute paths for any command that creates, deletes or moves files**
+A shell session is stateful across tool calls; there is no guarantee the working directory is the project root by the time a later command runs, especially after any exploratory `cd` into another folder (a dependency, a sibling project, a vendored copy). A near-miss: after `cd`-ing into a vendored dependency's checked-out source (e.g. a CMake FetchContent folder) purely to read it, a later `rm` issued with a relative path ran wherever the shell happened to still be sitting — not back in the project root. It only failed harmlessly by luck, because the relative filenames didn't happen to exist in that directory too.
+
+For any destructive or file-creating command (`rm`, `mv`, `cp -r` over a target, `git clean`, writing generated files), use an absolute path, or explicitly `cd` back to a known location and print/verify the working directory (`pwd`) immediately beforehand, rather than trusting an earlier `cd` to still be in effect. This applies everywhere, not only when working across multiple repos — the same shell/terminal is commonly reused for both project source and its dependencies.
+
+**A failed response looks like:**
+- Running a destructive command with a relative path without first confirming `pwd`, on the assumption that "we were just in the project root a few commands ago"
+- Treating a command that happened to fail harmlessly (e.g. file not found) as proof the working directory was safe, rather than recognising it as luck
+- `cd`-ing into another project or a vendored dependency to inspect it and not returning to the original project root (or switching to absolute paths) before the next command that writes or deletes anything
+
+---
+
 **Stay scoped to the current project — never edit another repo without explicit confirmation**
 The current workspace folder is the only place edits, commits, or pushes may happen by default. This includes the up-skill template repo itself, sibling projects, and any other repo on the same machine. If a fix seems to belong in a different repo (e.g. a downstream project editing up-skill, or vice versa), stop and explicitly ask the Designer for permission first — describe exactly what would change and where. Do not act on a hunch that a fix "obviously belongs" elsewhere.
 

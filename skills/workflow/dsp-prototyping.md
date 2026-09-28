@@ -39,6 +39,34 @@ Alongside audio renders, generate before/after spectrograms and a zoomed wavefor
 
 ---
 
+**A band share cannot show a boost in a band that already dominates**
+Energy expressed as a share of the total saturates: if a band already holds most of the signal, adding more to it barely moves the number, and the control under test reads as inert. Keep two separate measurements — share of total (how the energy is divided) and absolute level within the band (how much is there) — and pick the one that answers the question being asked. This mistake was made twice in one project, on two different controls.
+
+**A failed response looks like:**
+- Concluding a control does nothing from a share metric alone
+- Widening a parameter's range to fix what is actually a measurement fault
+
+---
+
+**Verify the instrument before trusting the reading**
+A measurement that produces an impossible value is a broken instrument, not a finding. Real examples: an envelope smoother whose window was longer than the decay it was measuring, reporting a 40 ms tail as 450 ms; an unbiased autocorrelation that picked the double-period peak and read every note an octave flat; a decay fit extrapolating a 17 second tail from a 0.19 second file. Guard estimators against implausible output and prefer a method with no free parameters (per-period peaks, zero-crossing spacing) over one that needs a smoothing window chosen by hand.
+
+**A failed response looks like:**
+- Adjusting the DSP to satisfy a metric that is itself wrong
+- Reporting a number that cannot physically be true
+- Loosening a failing threshold instead of asking whether the check measures the right thing
+
+---
+
+**Check whether a reference measurement is reliable before designing against it**
+Spectral band energy from a plain FFT is robust. Pitch tracking, glide depth and decay fitting on short, noisy or decaying reference material frequently are not — two versions of the same tracker produced wildly different answers on the same files. State plainly which measurements from a reference are trustworthy and which are not, and do not quote an unreliable one as a design target.
+
+**A failed response looks like:**
+- Quoting a measured glide depth to two decimal places from a tracker that has not been validated
+- Silently re-using a figure after the tool that produced it has been changed
+
+---
+
 **Round-based tuning**
 Treat tuning as iterative rounds: Round 1 randomly samples full parameter-set combinations across the full plausible range (including extremes) to find sane bounds; Round 2 refines within the range the Designer responded well to. Lock in final values only after the Designer has given explicit feedback on renders, not by guessing "reasonable" defaults upfront.
 

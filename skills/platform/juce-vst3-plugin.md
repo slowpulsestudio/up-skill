@@ -218,12 +218,13 @@ Every plugin wears a strip down each side: input trim above its fader on the lef
 ---
 
 **Section membership is authored, not coded**
-Which parameter belongs to INPUT, PERFORMANCE or OUTPUT is declared once in the design system's per-plugin parameter authoring file, and the strips are built from whatever has been put in them. A plugin reads that file rather than carrying its own hardcoded list of names to skip — so adding a control to a section is enough, and nobody has to remember a rule.
+Each plugin declares, in one place in its own source, which of its controls belong to INPUT, PERFORMANCE and OUTPUT, and which Randomise may touch. Randomise derives its scope from that same declaration rather than a second list, so moving a control into a strip excludes it with nothing else to update. The design system supplies the strips, the components and the naming/tooltip convention — it does not define which parameters a plugin has.
 
 Slots fill from the bottom, so a lone parameter lands on the fader rather than the readout above it. An unclaimed slot draws nothing: an empty strip is a visible reminder that a plugin is unfinished, rather than a default quietly standing in for a decision nobody made.
 
 **A failed response looks like:**
-- Hardcoding a list of parameter names to exclude from the grid inside the plugin, instead of reading the authored sections
+- Keeping two separate lists — one for layout, one for Randomise scope — that can disagree with each other
+- Putting a plugin's parameter names into the shared design system
 - Filling an empty slot with a placeholder or sensible default rather than leaving it blank
 - Filling slots from the top, so a single parameter lands on the readout instead of the fader
 

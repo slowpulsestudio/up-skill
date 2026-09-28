@@ -333,6 +333,16 @@ When scaffolding a new JUCE plugin project, create a `Testing/` folder containin
 
 ---
 
+**`.vscode/` is committed, not gitignored**
+Plugin repos from this studio are always private and single-developer, so `.vscode/settings.json` (e.g. `chat.tools.terminal.autoApprove` entries for `cmake` so builds don't stop for approval every time) is shared project configuration, not personal clutter. Commit `.vscode/` so its settings survive a reclone instead of being re-created by hand on every machine. This does not loosen anything else — build output, `build/`, `Testing/`, and any real secret stay out regardless. If a plugin repo already has `.vscode/` in its `.gitignore`, remove that line rather than leaving the two conventions side by side.
+
+**A failed response looks like:**
+- Adding `.vscode/` to `.gitignore` out of habit, or because a public-repo template does it
+- Leaving `.vscode/` untracked and re-creating the same settings by hand after each clone
+- Extending this to a non-plugin project, where the private-repo assumption may not hold
+
+---
+
 **Input/Output audio folders at project root, gitignored from the start**
 When scaffolding a new JUCE plugin project, create `Input/` and `Output/` folders at the project root — `Input/` holds source audio files to feed the plugin for manual testing, `Output/` holds rendered/bounced results for comparison — and add both to `.gitignore` in the same commit that creates them. Audio files are binary and churn constantly; they are local working state, not project source.
 

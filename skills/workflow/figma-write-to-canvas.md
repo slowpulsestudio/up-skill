@@ -12,6 +12,16 @@ A clarifying question from the Designer ("is this the thing you mean?") only con
 
 ---
 
+**Don't touch the Designer's Figma file beyond what was asked**
+Renaming styles, variables, or layers to match code, or tidying up anything not explicitly requested, is a change to the Designer's source of truth — not a cleanup. Flag the drift and offer to make the change; never apply it unilaterally.
+
+**A failed response looks like:**
+- Renaming a Figma style or variable to match a code identifier without being asked
+- Reorganizing layers, frames, or pages "for consistency" during an unrelated task
+- Treating a noticed mismatch between Figma and code as license to edit Figma instead of just reporting it
+
+---
+
 **Always link, never use raw node numbers**
 When referring to any object on the Figma canvas in a message to the Designer, give a clickable Figma URL (`https://www.figma.com/design/<fileKey>/<name>?node-id=<id>`), never a bare node ID like `844:2951`. Node numbers are meaningless to the Designer and cannot be clicked to verify.
 

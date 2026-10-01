@@ -130,7 +130,7 @@ Concatenate them in the order they appear in `.skills`, with a blank line betwee
 
 ## Step 2 — Copy skill-bundled files
 
-After fetching each skill file, scan it for a `## Resources` section. If a skill has no `## Resources` section, skip this step for that skill.
+For each skill, take the exact skill-file content you already fetched from the Step -2 snapshot in Step 1, and scan *that fetched content* for a `## Resources` section — never a workspace search tool (e.g. grep across the current project), and never a re-fetch. This project's workspace has no `skills/` folder to search, so a workspace-scoped search always finds nothing and silently skips bundling even when the fetched skill file has a `## Resources` section. If a skill's fetched content has no `## Resources` section, skip this step for that skill.
 
 The `## Resources` section contains directory copy mappings, one per line, in the format:
 

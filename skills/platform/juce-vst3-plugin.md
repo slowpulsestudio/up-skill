@@ -3,11 +3,44 @@
 ---
 
 **Default target configuration**
-Unless the Designer explicitly asks for more, target VST3 only, macOS only, no Standalone build. `juce_add_plugin(... FORMATS VST3 ...)` — do not add `AU`, `Standalone`, or a Windows/Linux target speculatively.
+Unless the Designer explicitly asks for more, or a specific plugin has a documented technical requirement that prevents it, every Slow Pulse Studio VST3 targets: VST3 only, Apple Silicon/arm64 only (never universal, never Intel/x86_64), macOS 11.0 as the minimum deployment target, Release configuration, and plugin version `0.1.0` for its initial release. `juce_add_plugin(... FORMATS VST3 ...)` — do not add `AU`, `Standalone`, or a Windows/Linux target speculatively. Set the architecture and deployment target explicitly (`CMAKE_OSX_ARCHITECTURES "arm64"`, `CMAKE_OSX_DEPLOYMENT_TARGET "11.0"`) rather than leaving them to the toolchain default — never raise the minimum OS merely because the development machine's SDK happens to be newer. Do not create installer/distribution packaging unless explicitly requested.
 
 **A failed response looks like:**
 - Adding `Standalone`, `AU`, or other formats "for completeness" when only VST3/macOS was asked for
 - Building cross-platform CMake logic for a project that only targets macOS
+- Building a universal binary or an Intel/x86_64 variant instead of arm64-only
+- Raising the macOS deployment target above 11.0 because the dev machine's SDK is newer
+- Treating "targets macOS 11" as equivalent to "targets Apple Silicon" — the build must explicitly produce arm64
+- Creating installer/distribution packaging without being asked
+
+---
+
+**Release artifact policy: the repo state is the release, not a separate build machine**
+A release is produced from a clean, reproducible checkout: configure fresh in Release, with the arm64/macOS 11.0 settings from the rule above set explicitly, build the VST3 bundle, then verify the actual binary — not just the build configuration — before calling it done (e.g. `lipo -info` or `vtool -show-build` on the bundle's binary, confirming arm64-only and the real minimum OS). Only after that does the project's full DSP/state/plugin validation suite run, and only then is the installed `.vst3` confirmed to match what the Release build actually produced.
+
+**A failed response looks like:**
+- Calling a release done because the CMake configuration requested arm64/macOS 11, without checking the actual built binary
+- Skipping the project's validation suite after a release build
+- Treating a Debug-configuration build as a release artifact
+
+---
+
+**Signing, notarization, and distribution packaging are not part of the standard release process**
+Developer ID signing, notarization, stapling, Gatekeeper distribution testing, and installer signing are not required for a Slow Pulse Studio VST3 release and must never be treated as a release blocker. Add any of these only if explicitly requested for a specific plugin.
+
+**A failed response looks like:**
+- Blocking a release on missing notarization/signing when it wasn't asked for
+- Adding signing/notarization steps to a build script "to be safe" without being asked
+
+---
+
+**Deviating from the standard target requires a verified technical reason, not a convenience**
+If a plugin genuinely cannot support macOS 11.0, arm64-only, or VST3-only, do not silently change the target. Identify the specific API, framework, dependency, SDK, or architectural requirement causing the incompatibility, verify it against the actual build/binary rather than a guess, report the required deviation and why, and get an explicit product decision before changing the standard target for that plugin. This baseline applies to every future VST3 project unless the Designer explicitly overrides it for that particular plugin.
+
+**A failed response looks like:**
+- Quietly raising the minimum macOS version or switching to a universal/Intel build without flagging it
+- Changing the target configuration because it was easier, without a demonstrated technical requirement
+- Proceeding with a deviation before getting an explicit go-ahead
 
 ---
 

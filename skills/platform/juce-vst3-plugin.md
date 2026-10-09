@@ -385,5 +385,21 @@ When scaffolding a new JUCE plugin project, create `Input/` and `Output/` folder
 
 ---
 
+**Project documentation scaffold: readme.md, maths.md, testing.md, nomenclature.md**
+When scaffolding a new JUCE plugin project, also create four markdown docs at the project root, committed (not gitignored — this is project documentation, not working state):
+
+- `readme.md` — the concept in plain English, the architecture/mechanism overview, and how to build and validate the plugin. Point to `maths.md` for the actual transfer functions and say plainly that where the two disagree, the code is unfinished. Point to `nomenclature.md` for what each control means.
+- `maths.md` — the plugin's DSP formulas and transfer functions, one heading per mechanism/engine, kept current as the contract the prototype and the real-time port both have to agree with.
+- `testing.md` — this project's own validation record: what layers of testing exist (behavioural prototype checks, a numerical comparison harness, a DSP/state/plugin validation suite), what each layer can and cannot prove, and current known gaps. This is distinct from the shared `workflow/testing.md` skill, which is general-purpose rather than specific to this plugin.
+- `nomenclature.md` — a glossary of every control in glyph + name + plain-English-description format, grouped under thematic subheadings (e.g. `η  ENRICHMENT — how hard the source hits the loop, ±18 dB`), mapping each control's on-screen/metaphor label to what it actually does.
+
+**A failed response looks like:**
+- Skipping these four files because the Designer didn't explicitly ask for docs on this particular project
+- Embedding the glyph glossary inline in `readme.md` instead of giving it its own `nomenclature.md`
+- Letting `maths.md` drift from what the code actually does instead of treating it as the contract
+- Gitignoring any of the four, or leaving `testing.md` unwritten so the only record of what's validated is scattered terminal history
+
+---
+
 ## Resources
 prompts/ -> .github/prompts/

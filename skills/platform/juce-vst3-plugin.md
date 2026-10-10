@@ -394,7 +394,9 @@ Plugin repos from this studio are always private and single-developer, so `.vsco
 - `nomenclature.md` — a glossary of every control in glyph + name + plain-English-description format, grouped under thematic subheadings (e.g. `η  ENRICHMENT — how hard the source hits the loop, ±18 dB`), mapping each control's on-screen/metaphor label to what it actually does.
 
 **A failed response looks like:**
-- Leaving these four files as an inert prose rule depended on an agent remembering to apply it mid-conversation instead of a procedural `/skill-me-up` step
+- Writing real content above or below the `<!-- UP-SKILL SCAFFOLD PLACEHOLDER -->` block instead of deleting it entirely, leaving the placeholder and the real doc stacked in the same file
+- Linking to a remembered filename like `maths.md` or `testing.md` from a different project's convention instead of the literal `dsp-maths.md` / `dsp-testing.md` on disk
+- Leaving a heading with nothing written under it when calling the file finished
 - Embedding the glyph glossary inline in `readme.md` instead of giving it its own `nomenclature.md`
 - Letting `dsp-maths.md` drift from what the code actually does instead of treating it as the contract
 - Gitignoring any of the four, or leaving `dsp-testing.md` unwritten so the only record of what's validated is scattered terminal history

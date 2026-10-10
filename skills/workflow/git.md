@@ -23,10 +23,11 @@ Commit in small, focused increments — one feature or fix per commit, not batch
 ---
 
 **What never gets committed**
-Build output (`dist/`, `build/`), local virtualenvs (`.venv/`), and real secrets never go in a commit. `.env` is gitignored; `.env.example` is a template with blank values only. Verify `.gitignore` covers these before the first commit in a new project.
+Build output (`dist/`, `build/`), local virtualenvs (`.venv/`), macOS Finder's `.DS_Store`, and real secrets never go in a commit. `.env` is gitignored; `.env.example` is a template with blank values only. Verify `.gitignore` covers these before the first commit in a new project.
 
 **A failed response looks like:**
 - Committing `dist/`, `build/`, or `.venv/` because `.gitignore` wasn't checked first
+- Leaving `.DS_Store` untracked and un-gitignored until it accidentally gets committed
 - Committing a real secret value, even accidentally, in an example/template file
 
 ---

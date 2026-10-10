@@ -188,8 +188,11 @@ If `platform/juce-vst3-plugin` is the selected platform skill, scaffold the foll
 
 **Docs:** create the following four files at the project root if they don't already exist — never overwrite a file that's already there. These are committed, not gitignored — they're project documentation, not working state. Use the actual project name in place of `<Project Name>`.
 
+Each template starts with an `<!-- UP-SKILL SCAFFOLD PLACEHOLDER -->` marker comment. When real content is later written into one of these files, delete the entire placeholder block (marker comment and all) rather than writing new content above or below it — a file must never contain both the placeholder and real content at once. When linking between these files, use the literal filenames below (`dsp-maths.md`, `nomenclature.md`) — don't substitute a remembered name like `maths.md` from a different project's convention. Every heading written into these files must have real content under it before the file is considered done; never leave a trailing heading with nothing underneath.
+
 **`readme.md`**
 ```
+<!-- UP-SKILL SCAFFOLD PLACEHOLDER -->
 # <Project Name>
 
 ## <One-line concept>
@@ -204,6 +207,7 @@ where the two disagree, the code is unfinished. Point to
 
 **`dsp-maths.md`**
 ```
+<!-- UP-SKILL SCAFFOLD PLACEHOLDER -->
 # <Project Name> — Mathematical Model
 
 ## 1. Purpose
@@ -216,6 +220,7 @@ solidifies.
 
 **`dsp-testing.md`**
 ```
+<!-- UP-SKILL SCAFFOLD PLACEHOLDER -->
 # <Project Name> — Testing Specification
 
 ## 1. Testing Philosophy
@@ -229,6 +234,7 @@ solidifies.
 
 **`nomenclature.md`**
 ```
+<!-- UP-SKILL SCAFFOLD PLACEHOLDER -->
 Glyphs and transfer functions are in [dsp-maths.md](dsp-maths.md).
 
 <!-- A glossary of every control in glyph + name + plain-English-description

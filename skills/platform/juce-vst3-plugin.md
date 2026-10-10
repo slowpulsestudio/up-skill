@@ -377,7 +377,7 @@ Plugin repos from this studio are always private and single-developer, so `.vsco
 ---
 
 **Input/Output audio folders at project root, gitignored from the start**
-When scaffolding a new JUCE plugin project, create `Input/` and `Output/` folders at the project root — `Input/` holds source audio files to feed the plugin for manual testing, `Output/` holds rendered/bounced results for comparison — and add both to `.gitignore` in the same commit that creates them. Audio files are binary and churn constantly; they are local working state, not project source.
+`/skill-me-up` creates empty `Input/` and `Output/` folders at the project root automatically for every `platform/juce-vst3-plugin` project, and adds both to `.gitignore` in the same commit that creates them — `Input/` holds source audio files to feed the plugin for manual testing, `Output/` holds rendered/bounced results for comparison. Audio files are binary and churn constantly; they are local working state, not project source.
 
 **A failed response looks like:**
 - Committing audio files into `Input/`/`Output/` before gitignoring the folders
@@ -385,19 +385,19 @@ When scaffolding a new JUCE plugin project, create `Input/` and `Output/` folder
 
 ---
 
-**Project documentation scaffold: readme.md, maths.md, testing.md, nomenclature.md**
-When scaffolding a new JUCE plugin project, also create four markdown docs at the project root, committed (not gitignored — this is project documentation, not working state):
+**Project documentation scaffold: readme.md, dsp-maths.md, dsp-testing.md, nomenclature.md**
+`/skill-me-up` creates four markdown docs at the project root automatically, as a template skeleton, for every `platform/juce-vst3-plugin` project — committed (not gitignored — this is project documentation, not working state), filled in with real content as the design solidifies:
 
-- `readme.md` — the concept in plain English, the architecture/mechanism overview, and how to build and validate the plugin. Point to `maths.md` for the actual transfer functions and say plainly that where the two disagree, the code is unfinished. Point to `nomenclature.md` for what each control means.
-- `maths.md` — the plugin's DSP formulas and transfer functions, one heading per mechanism/engine, kept current as the contract the prototype and the real-time port both have to agree with.
-- `testing.md` — this project's own validation record: what layers of testing exist (behavioural prototype checks, a numerical comparison harness, a DSP/state/plugin validation suite), what each layer can and cannot prove, and current known gaps. This is distinct from the shared `workflow/testing.md` skill, which is general-purpose rather than specific to this plugin.
+- `readme.md` — the concept in plain English, the architecture/mechanism overview, and how to build and validate the plugin. Points to `dsp-maths.md` for the actual transfer functions and says plainly that where the two disagree, the code is unfinished. Points to `nomenclature.md` for what each control means.
+- `dsp-maths.md` — the plugin's DSP formulas and transfer functions, one heading per mechanism/engine, kept current as the contract the prototype and the real-time port both have to agree with.
+- `dsp-testing.md` — this project's own validation record: what layers of testing exist (behavioural prototype checks, a numerical comparison harness, a DSP/state/plugin validation suite), what each layer can and cannot prove, and current known gaps. This is distinct from the shared `workflow/testing.md` skill, which is general-purpose rather than specific to this plugin.
 - `nomenclature.md` — a glossary of every control in glyph + name + plain-English-description format, grouped under thematic subheadings (e.g. `η  ENRICHMENT — how hard the source hits the loop, ±18 dB`), mapping each control's on-screen/metaphor label to what it actually does.
 
 **A failed response looks like:**
-- Skipping these four files because the Designer didn't explicitly ask for docs on this particular project
+- Leaving these four files as an inert prose rule depended on an agent remembering to apply it mid-conversation instead of a procedural `/skill-me-up` step
 - Embedding the glyph glossary inline in `readme.md` instead of giving it its own `nomenclature.md`
-- Letting `maths.md` drift from what the code actually does instead of treating it as the contract
-- Gitignoring any of the four, or leaving `testing.md` unwritten so the only record of what's validated is scattered terminal history
+- Letting `dsp-maths.md` drift from what the code actually does instead of treating it as the contract
+- Gitignoring any of the four, or leaving `dsp-testing.md` unwritten so the only record of what's validated is scattered terminal history
 
 ---
 

@@ -21,16 +21,12 @@ Read `.github/prompts/skill-me-up.prompt.md` from the extracted snapshot (`up-sk
 
 Compare it to the current contents of `.github/prompts/skill-me-up.prompt.md` in this project.
 
-- **If they are identical:** continue to the companion-prompt check below.
+- **If they are identical:** continue to Step 0.
 - **If they differ:** tell the user: *"There are updates available for the skill-me-up prompt. Would you like me to update it now? You'll need to run `/skill-me-up` again after."*
   - If yes: overwrite `.github/prompts/skill-me-up.prompt.md` with the fetched version and stop. Do not continue setup.
-  - If no: continue to the companion-prompt check below with the current version.
+  - If no: continue to Step 0 with the current version.
 
-Then check for the companion `/system-my-design` prompt, which is core up-skill tooling (not a per-skill bundled resource) and should exist alongside `skill-me-up.prompt.md` in every project:
-
-- Read `up-skill-main/.github/prompts/system-my-design.prompt.md` from the snapshot.
-- If `.github/prompts/system-my-design.prompt.md` doesn't exist in this project, or exists but differs from the snapshot version, overwrite/create it silently (no need to ask — unlike `skill-me-up.prompt.md` itself, this doesn't require restarting the run).
-- Continue to Step 0.
+`/system-my-design` is not universal tooling — it's a per-skill bundled resource (currently only for `platform/juce-vst3-plugin`) and is delivered by Step 2's normal `## Resources` handling. Do not fetch or install it here.
 
 ## Step 0 — Skills setup
 
@@ -182,6 +178,63 @@ When done, report:
 - Any skills that failed to fetch (404 or network error)
 - Which bundled files were copied (grouped by skill), and any that were skipped due to conflicts
 - Whether `.github/copilot-instructions.md`, `CLAUDE.md`, and `project-specific-agent-instructions.md` were created or already existed
+- If `platform/juce-vst3-plugin` is selected: whether `Input/`, `Output/`, and the four project docs were created or already existed
+
+## Step 4b — VST3 project scaffold (platform/juce-vst3-plugin only)
+
+If `platform/juce-vst3-plugin` is the selected platform skill, scaffold the following now, before the git commit/push question in Step 5, so it's included in that first commit. Skip this step entirely for every other platform.
+
+**Folders:** create empty `Input/` and `Output/` folders at the project root if they don't already exist (`Input/` for source audio test files, `Output/` for rendered/bounced results), and add both to `.gitignore` if not already present — these are local working state, not project source.
+
+**Docs:** create the following four files at the project root if they don't already exist — never overwrite a file that's already there. These are committed, not gitignored — they're project documentation, not working state. Use the actual project name in place of `<Project Name>`.
+
+**`readme.md`**
+```
+# <Project Name>
+
+## <One-line concept>
+
+<!-- The concept in plain English, the architecture/mechanism overview, and
+     how to build and validate the plugin. -->
+
+Point to [dsp-maths.md](dsp-maths.md) for the actual transfer functions —
+where the two disagree, the code is unfinished. Point to
+[nomenclature.md](nomenclature.md) for what each control means.
+```
+
+**`dsp-maths.md`**
+```
+# <Project Name> — Mathematical Model
+
+## 1. Purpose
+
+This document defines the mathematical foundations of <Project Name> — the
+transfer functions and formulas the prototype and the real-time port both
+have to agree with. Add one heading per mechanism/engine as the design
+solidifies.
+```
+
+**`dsp-testing.md`**
+```
+# <Project Name> — Testing Specification
+
+## 1. Testing Philosophy
+
+<!-- What layers of testing exist for this project (behavioural prototype
+     checks, a numerical comparison harness, a DSP/state/plugin validation
+     suite), what each layer can and cannot prove, and current known gaps.
+     Distinct from the shared workflow/testing.md skill, which is
+     general-purpose rather than specific to this plugin. -->
+```
+
+**`nomenclature.md`**
+```
+Glyphs and transfer functions are in [dsp-maths.md](dsp-maths.md).
+
+<!-- A glossary of every control in glyph + name + plain-English-description
+     format, grouped under thematic subheadings, e.g.:
+     η  ENRICHMENT — how hard the source hits the loop, ±18 dB -->
+```
 
 ## Step 5 — Post-setup actions (ask in order, only if applicable)
 

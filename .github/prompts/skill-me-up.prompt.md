@@ -178,7 +178,7 @@ When done, report:
 - Any skills that failed to fetch (404 or network error)
 - Which bundled files were copied (grouped by skill), and any that were skipped due to conflicts
 - Whether `.github/copilot-instructions.md`, `CLAUDE.md`, and `project-specific-agent-instructions.md` were created or already existed
-- If `platform/juce-vst3-plugin` is selected: whether `Input/`, `Output/`, and the four project docs were created or already existed
+- If `platform/juce-vst3-plugin` is selected: whether `Input/`, `Output/`, and the five project docs were created or already existed
 
 ## Step 4b — VST3 project scaffold (platform/juce-vst3-plugin only)
 
@@ -186,7 +186,9 @@ If `platform/juce-vst3-plugin` is the selected platform skill, scaffold the foll
 
 **Folders:** create empty `Input/` and `Output/` folders at the project root if they don't already exist (`Input/` for source audio test files, `Output/` for rendered/bounced results), and add both to `.gitignore` if not already present — these are local working state, not project source.
 
-**Docs:** create the following four files at the project root if they don't already exist — never overwrite a file that's already there. These are committed, not gitignored — they're project documentation, not working state. Use the actual project name in place of `<Project Name>`.
+**Docs:** create the following five files at the project root if they don't already exist — never overwrite a file that's already there. These are committed, not gitignored — they're project documentation, not working state. Use the actual project name in place of `<Project Name>`.
+
+`visualizer.md` is scoped here only because `platform/juce-vst3-plugin` is the only scaffold step that currently exists — the spec it describes (an animated display driven by live app/DSP state) isn't conceptually JUCE-specific, and any project with that kind of display would want it. If a future skill adds its own scaffold step for a non-JUCE platform, move `visualizer.md`'s creation there (or to a shared step) rather than assuming it belongs to JUCE.
 
 Each template starts with an `<!-- UP-SKILL SCAFFOLD PLACEHOLDER -->` marker comment. When real content is later written into one of these files, delete the entire placeholder block (marker comment and all) rather than writing new content above or below it — a file must never contain both the placeholder and real content at once. When linking between these files, use the literal filenames below (`dsp-maths.md`, `nomenclature.md`) — don't substitute a remembered name like `maths.md` from a different project's convention. Every heading written into these files must have real content under it before the file is considered done; never leave a trailing heading with nothing underneath.
 
@@ -240,6 +242,36 @@ Glyphs and transfer functions are in [dsp-maths.md](dsp-maths.md).
 <!-- A glossary of every control in glyph + name + plain-English-description
      format, grouped under thematic subheadings, e.g.:
      η  ENRICHMENT — how hard the source hits the loop, ±18 dB -->
+```
+
+**`visualizer.md`**
+```
+<!-- UP-SKILL SCAFFOLD PLACEHOLDER -->
+# VISUALIZER
+
+The spec for <Project Name>'s animated display.
+
+<!-- Delete this comment as the spec fills in.
+
+     1. SCOPE — is this display specific to this project, or a concept meant to
+        carry to others?
+
+     2. CORE PRINCIPLE — the display draws real state, never a free-running
+        frame counter. Every animated quantity must trace back to a value the
+        app or DSP is actually using. A display fed from a timer looks correct
+        on day one and drifts out of correspondence immediately.
+
+     3. VISUAL LANGUAGE — the art direction, and a table mapping each control
+        or state value to its visual response.
+
+     4. IMPLEMENTATION CONSTRAINTS — threading (audio/worker threads never
+        paint, allocate or lock; data crosses lock-free), measured paint cost
+        rather than assumed, and which design-system tokens supply the colours,
+        line weights and spacing.
+
+     5. REFERENCE IMAGES AND DESIGNS — links to stills and Figma frames.
+
+     6. OPEN QUESTIONS — what is undecided or unmeasured, stated plainly. -->
 ```
 
 ## Step 5 — Post-setup actions (ask in order, only if applicable)

@@ -280,7 +280,7 @@ When the current parameter values no longer match the saved preset they were loa
 
 When a plugin has named presets and is opened fresh (no saved DAW state to restore), initialize the editor to the first preset in the list via the same code path used when the Designer picks a preset from the toolbar (`sps::PresetToolbar::setSelectedPreset (0)` plus loading that preset's values into the plugin's parameters) — never leave the raw `AudioParameterFloat`/etc. defaults from the parameter layout in place. The toolbar must show that first preset selected and non-dirty (no `*`) immediately on open.
 
-That first preset must be a dedicated "Default" preset with neutral/baseline parameter values — not just whichever preset happens to be first alphabetically or by creation order — so the Designer always has a known, unmodified state to return to via the dropdown or cycle buttons.
+That first preset must be a dedicated "Default" preset with neutral/baseline parameter values — not just whichever preset happens to be first alphabetically or by creation order — so the Designer always has a known, unmodified state to return to via the dropdown or cycle buttons. `presets.md` is where this Default preset is documented, listed first, alongside every other named preset.
 
 **A failed response looks like:**
 - Leaving the preset name unchanged (no italics, no `*`) after a parameter has been edited or Randomise pressed
@@ -306,7 +306,7 @@ When a plugin has both save-able presets and boolean mode toggles that represent
 
 A seed/determinism parameter (one that seeds the plugin's own internal RNG or generative trajectory) is not a global mode toggle under this rule, even if it also has its own dedicated regenerate control (e.g. a "New Worm"/"New Pattern" button) — it's part of the creative variation Randomise exists to produce, so it stays in the preset-tunable set and Randomise must still jitter it. Only exclude parameters that are genuinely non-preset workflow settings.
 
-Any control that lives in an Input or Output section of the GUI (e.g. input gain/trim, output gain, dry/wet mix, bypass) is always excluded from presets and from Randomise, the same as a global mode toggle — these are gain-staging/session-level settings the Designer sets for their current mix, not creative content a preset should recall or Randomise should jitter.
+Any control that lives in an Input or Output section of the GUI (e.g. input gain/trim, output gain, dry/wet mix, bypass) is always excluded from presets and from Randomise, the same as a global mode toggle — these are gain-staging/session-level settings the Designer sets for their current mix, not creative content a preset should recall or Randomise should jitter. `presets.md` documents which parameters a preset stores and which excluded parameters (mode toggles, Input/Output section controls) it never stores.
 
 **A failed response looks like:**
 - Bundling a general-purpose mode toggle into the same struct/table as preset-tunable values, causing preset switches to silently change it
@@ -385,13 +385,15 @@ Plugin repos from this studio are always private and single-developer, so `.vsco
 
 ---
 
-**Project documentation scaffold: readme.md, dsp-maths.md, dsp-testing.md, nomenclature.md**
-`/skill-me-up` creates four markdown docs at the project root automatically, as a template skeleton, for every `platform/juce-vst3-plugin` project — committed (not gitignored — this is project documentation, not working state), filled in with real content as the design solidifies:
+**Project documentation scaffold: readme.md, dsp-maths.md, dsp-testing.md, nomenclature.md, presets.md, visualizer.md**
+`/skill-me-up` creates six markdown docs at the project root automatically, as a template skeleton, for every `platform/juce-vst3-plugin` project, following the style rules in `workflow/docs-style`, committed (not gitignored, since this is project documentation rather than working state), filled in with real content as the design solidifies:
 
-- `readme.md` — the concept in plain English, the architecture/mechanism overview, and how to build and validate the plugin. Points to `dsp-maths.md` for the actual transfer functions and says plainly that where the two disagree, the code is unfinished. Points to `nomenclature.md` for what each control means.
-- `dsp-maths.md` — the plugin's DSP formulas and transfer functions, one heading per mechanism/engine, kept current as the contract the prototype and the real-time port both have to agree with.
-- `dsp-testing.md` — this project's own validation record: what layers of testing exist (behavioural prototype checks, a numerical comparison harness, a DSP/state/plugin validation suite), what each layer can and cannot prove, and current known gaps. This is distinct from the shared `workflow/testing.md` skill, which is general-purpose rather than specific to this plugin.
-- `nomenclature.md` — a glossary of every control in glyph + name + plain-English-description format, grouped under thematic subheadings (e.g. `η  ENRICHMENT — how hard the source hits the loop, ±18 dB`), mapping each control's on-screen/metaphor label to what it actually does.
+- `readme.md`: the concept in plain English, the architecture/mechanism overview, and how to build and validate the plugin. Points to `dsp-maths.md` for the actual transfer functions and says plainly that where the two disagree, the code is unfinished. Points to `nomenclature.md` for what each control means, to `presets.md` for the named presets and to `visualizer.md` for the animated display.
+- `dsp-maths.md`: the plugin's DSP formulas and transfer functions, opening with a "Central equations" section of display math near the top, kept current as the contract the prototype and the real-time port both have to agree with. Below that, a padded table of the control maps (Control, Model value, Map).
+- `dsp-testing.md`: this project's own validation record: what layers of testing exist (behavioural prototype checks, a numerical comparison harness, a DSP/state/plugin validation suite), what each layer can and cannot prove and current known gaps. This is distinct from the shared `workflow/testing.md` skill, which is general-purpose rather than specific to this plugin.
+- `nomenclature.md`: a glossary of every control as padded Glyph and Name tables grouped under thematic subheadings, with one meaning bullet per entry ("**NAME:** meaning"), mapping each control's on-screen/metaphor label to what it actually does.
+- `presets.md`: the named presets as a padded table, one row per preset and one right-aligned numeric column per preset-defining control, no prose column. One or two sentences on the idea the preset set follows, which controls a preset stores and which it never stores (the Input and Output section controls), with Default listed first as the neutral baseline. One plain-English bullet per preset underneath the table, in table order ("**Name:** description"). Preset values change after every listening round, which is why they live in their own file rather than in readme.md.
+- `visualizer.md`: the spec for the animated display, built on the principle that every animated quantity traces back to a real DSP value rather than a free-running frame counter. A short padded table maps DSP state to visual state, with a detail bullet per row, plus a section recording implementation constraints (threading, measured paint cost, design-system tokens).
 
 **A failed response looks like:**
 - Writing real content above or below the `<!-- UP-SKILL SCAFFOLD PLACEHOLDER -->` block instead of deleting it entirely, leaving the placeholder and the real doc stacked in the same file
@@ -399,7 +401,11 @@ Plugin repos from this studio are always private and single-developer, so `.vsco
 - Leaving a heading with nothing written under it when calling the file finished
 - Embedding the glyph glossary inline in `readme.md` instead of giving it its own `nomenclature.md`
 - Letting `dsp-maths.md` drift from what the code actually does instead of treating it as the contract
-- Gitignoring any of the four, or leaving `dsp-testing.md` unwritten so the only record of what's validated is scattered terminal history
+- Gitignoring any of the six, or leaving `dsp-testing.md` unwritten so the only record of what's validated is scattered terminal history
+- Placing named presets or per-preset descriptions in `readme.md` or `nomenclature.md` instead of `presets.md`
+- A table that is ragged in the raw file, or that has cells longer than 40 characters, a sentence, LaTeX or a pipe character inside a cell
+- Writing the glyph glossary as a bullet list, or as a table with long meaning cells instead of a short cell plus a meaning bullet underneath
+- A visualizer element that cannot be traced back to a real DSP value
 
 ---
 

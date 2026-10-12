@@ -37,7 +37,7 @@ This always pulls the latest versions from GitHub, so any improvements made to U
 The AI will ask you these as real interactive questions (buttons/checkboxes), not plain text:
 1. What is the project/app name
 2. Which platform this project uses (single-select)
-3. Which workflow skills apply (multi-select checkboxes — `general`, `architecture`, `git`, and `testing` are pre-checked as recommended defaults)
+3. Which workflow skills apply (multi-select checkboxes; `general`, `architecture`, `git`, `testing` and `docs-style` are pre-checked as recommended defaults)
 4. Follow-up questions for specific skills:
    - **`workflow/git`** — GitHub repo URL
    - **`workflow/figma-read-from-mcp`** — Figma file URL
@@ -54,13 +54,14 @@ platform/python-cli
 platform/juce-vst3-plugin
 ```
 
-**Workflow — multi-select checkboxes, `general`/`architecture`/`git`/`testing` pre-checked. Add or remove any others that apply:**
+**Workflow: multi-select checkboxes, `general`/`architecture`/`git`/`testing`/`docs-style` pre-checked. Add or remove any others that apply:**
 
 ```
 workflow/general
 workflow/architecture
 workflow/git
 workflow/testing
+workflow/docs-style
 workflow/figma-read-from-mcp
 workflow/figma-write-to-canvas
 workflow/vercel-publish
@@ -84,6 +85,7 @@ workflow/juce-ui-rendering
 | `workflow/architecture` | General code structure rules — pre-checked by default |
 | `workflow/git` | Source control rules — pre-checked by default |
 | `workflow/testing` | Testing standards — pre-checked by default |
+| `workflow/docs-style` | Writing style rules for project docs; pre-checked by default |
 | `workflow/figma-read-from-mcp` | If the project uses Figma for design (design → code) |
 | `workflow/figma-write-to-canvas` | If the project uses Figma write-to-canvas / code → canvas skills |
 | `workflow/vercel-publish` | If the project deploys to Vercel |

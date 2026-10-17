@@ -117,18 +117,26 @@ Never invert colors between modes — dark mode needs MORE separation between ba
 :root {
   --bg-primary: #FFFFFF; --bg-secondary: #F5F5F7; --bg-tertiary: #E8E8ED;
   --text-primary: #1D1D1F; --text-secondary: #6E6E73;
-  --accent: #007AFF;
+  --accent: #007AFF; --accent-active: #0062CC;
+  --danger: #FF5F57;
   --border: rgba(0,0,0,0.08);
+  --titlebar-bg: rgba(246,246,246,0.72);
 }
 @media (prefers-color-scheme: dark) {
   :root {
     --bg-primary: #1C1C1E; --bg-secondary: #2C2C2E; --bg-tertiary: #3A3A3C;
     --text-primary: #F5F5F7; --text-secondary: #98989D;
-    --accent: #0A84FF;
+    --accent: #0A84FF; --accent-active: #409CFF;
+    --danger: #FF5F57;
     --border: rgba(255,255,255,0.08);
+    --titlebar-bg: rgba(44,44,46,0.72);
   }
 }
 ```
+
+- `--accent-active`: the pressed/active state of accent buttons.
+- `--danger`: the destructive/close colour (same red as the close traffic light).
+- `--titlebar-bg`: the translucent title bar fill, used with the vibrancy blur.
 
 **A failed response looks like:**
 - Generating dark mode by algorithmically inverting the light palette
@@ -162,6 +170,55 @@ box-shadow: 0 0 0 0.5px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.1);
 - A flat, non-blurred sidebar/toolbar background
 - A single flat box-shadow instead of a layered shadow with the `0 0 0 0.5px` edge
 - Blurring the main content area or a modal's own background
+
+---
+
+**Type scale**
+Use only these font sizes:
+- 11px: small labels, hints, secondary metadata
+- 12px: segmented/tab buttons
+- 13px: body text, buttons, inputs, title bar title (title bar title is 600 weight, `--text-secondary` colour)
+- 16px: stepper +/- glyphs
+- 24px: large status icons (e.g. a success checkmark circle)
+- 26px bold: large titles
+
+**A failed response looks like:**
+- Using a font size outside this scale
+
+---
+
+**Motion tokens must be defined in :root, not only referenced.**
+Every stylesheet must declare the motion tokens, not just use them:
+
+```css
+:root {
+  --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+}
+```
+
+All transitions use these tokens instead of literal values like `150ms ease-out`.
+
+**A failed response looks like:**
+- Referencing var(--ease-out) or var(--duration-*) with fallbacks while never defining the tokens
+- Hardcoding transition durations or easing instead of using the tokens
+
+---
+
+**Apply the window shadow.**
+The `.macos-window` shadow must be applied to the app's root window element, not just documented.
+
+**A failed response looks like:**
+- Defining the window shadow in the spec but not applying it to the window
+
+---
+
+**No hardcoded colours outside :root.**
+Every colour in component styles must reference a token. Exceptions are the traffic-light colours (#FEBC2E, #28C840, inactive #CDCDCD). If a component needs a colour with no token, add the token to both light and dark blocks first; for example, white text on accent backgrounds becomes a `--text-on-accent: #FFFFFF` token, and a success green becomes a `--success` token.
+
+**A failed response looks like:**
+- Writing a raw hex or rgba value in a component rule instead of a token
 
 ---
 

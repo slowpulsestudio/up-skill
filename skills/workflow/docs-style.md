@@ -1,6 +1,6 @@
 # Documentation Style Rules
 
-Rules for every human-readable `.md` file in a project: `readme.md`, `dsp-maths.md`, `dsp-testing.md`, `nomenclature.md`, `presets.md`, `visualizer.md` and any other doc meant for a person to read. These rules do not apply to code, maths, quoted source text, `master-skills.md` or the files in `.github/prompts`, all of which are regenerated rather than hand-maintained.
+Rules for every human-readable `.md` file in a project: `readme.md`, `dsp-maths.md`, `dsp-testing.md`, `nomenclature.md`, `presets.md`, `visualizer.md` and any other doc meant for a person to read. These rules do not apply to code, maths, quoted source text, `master-skills.md` or the files in `.claude/skills`, all of which are regenerated rather than hand-maintained.
 
 ---
 
@@ -79,7 +79,7 @@ A document's title is written "# <Project>: <Document title>". A sub-heading is 
 ---
 
 **Scope**
-These rules apply to every human-readable `.md` file meant for a person to read. They do not apply to code, to maths, to quoted source text, to `master-skills.md` or to the files under `.github/prompts`, all of which are regenerated rather than hand-maintained.
+These rules apply to every human-readable `.md` file meant for a person to read. They do not apply to code, to maths, to quoted source text, to `master-skills.md` or to the files under `.claude/skills`, all of which are regenerated rather than hand-maintained.
 
 **A failed response looks like:**
 - Rewriting a code block or a quoted error message to remove its dashes

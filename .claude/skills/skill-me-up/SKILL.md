@@ -1,11 +1,12 @@
 ---
-mode: agent
-description: Rebuild master-skills.md by fetching the latest skill files from the up-skill repo on GitHub, and copy any skill-bundled files into this project.
+name: skill-me-up
+description: Rebuild master-skills.md by fetching the latest skill files from the up-skill repo on GitHub, and copy any skill-bundled files into this project. Only run when the user types /skill-me-up.
+disable-model-invocation: true
 ---
 
 ## Step -2 — Download a fresh repo snapshot
 
-`raw.githubusercontent.com` is served through a CDN with a real ~5 minute cache that a cache-busting query string does **not** bypass — the cache key ignores query strings. The GitHub archive zip download below is not CDN-cached (`Cache-Control: max-age=0, private`) and is always current. So: download this zip once, at the very start of every run, and read every file needed by every later step from this one extracted snapshot. Never fetch individual files from `raw.githubusercontent.com` in this prompt.
+`raw.githubusercontent.com` is served through a CDN with a real ~5 minute cache that a cache-busting query string does **not** bypass — the cache key ignores query strings. The GitHub archive zip download below is not CDN-cached (`Cache-Control: max-age=0, private`) and is always current. So: download this zip once, at the very start of every run, and read every file needed by every later step from this one extracted snapshot. Never fetch individual files from `raw.githubusercontent.com` in this slash command.
 
 There is never a reason to reuse a cached copy of this zip across runs — every run must hit the network fresh. Download it with a tool/method that cannot serve a locally-cached response (e.g. `curl -sL -H 'Cache-Control: no-cache' -H 'Pragma: no-cache'`, not a fetch tool that might return a cached page). If the tool you're using for downloads has its own cache, disable or bypass it for this request.
 
@@ -17,27 +18,27 @@ Extract it to a fresh temp location (do not reuse a temp directory from a previo
 
 ## Step -1 — Self-update check
 
-Read `.github/prompts/skill-me-up.prompt.md` from the extracted snapshot (`up-skill-main/.github/prompts/skill-me-up.prompt.md`).
+Read `.claude/skills/skill-me-up/SKILL.md` from the extracted snapshot (`up-skill-main/.claude/skills/skill-me-up/SKILL.md`).
 
-Compare it to the current contents of `.github/prompts/skill-me-up.prompt.md` in this project.
+Compare it to the current contents of `.claude/skills/skill-me-up/SKILL.md` in this project.
 
 - **If they are identical:** continue to Step 0.
-- **If they differ:** tell the user: *"There are updates available for the skill-me-up prompt. Would you like me to update it now? You'll need to run `/skill-me-up` again after."*
-  - If yes: overwrite `.github/prompts/skill-me-up.prompt.md` with the fetched version and stop. Do not continue setup.
+- **If they differ:** tell the user: *"There are updates available for `/skill-me-up`. Would you like me to update it now? You'll need to run `/skill-me-up` again after."*
+  - If yes: overwrite `.claude/skills/skill-me-up/SKILL.md` with the fetched version and stop. Do not continue setup.
   - If no: continue to Step 0 with the current version.
 
 `/system-my-design` is not universal tooling — it's a per-skill bundled resource (currently only for `platform/juce-vst3-plugin`) and is delivered by Step 2's normal `## Resources` handling. Do not fetch or install it here.
 
 ## Step 0 — Skills setup
 
-Check whether a `.skills` file exists in the root of this project. Whichever branch applies determines the **run type** for the rest of this prompt — remember it for Step 5:
+Check whether a `.skills` file exists in the root of this project. Whichever branch applies determines the **run type** for the rest of this slash command — remember it for Step 5:
 
 - `.skills` already exists → this run is a **refresh** (re-running `/skill-me-up` on an already-set-up project)
 - `.skills` does not exist → this run is the **initial setup**
 
 **If `.skills` exists:** read it. It contains a list of skill names, one per line. Skip blank lines and any line starting with `#`.
 
-**If `.skills` does not exist:** ask the user the following as real interactive questions (buttons/checkboxes via the ask-questions tool), not plain numbered lists in chat text. Ask the platform question and the workflow question separately, waiting for an answer before the next:
+**If `.skills` does not exist:** ask the user the following as real interactive questions (buttons/checkboxes via your interactive question tool), not plain numbered lists in chat text. Ask the platform question and the workflow question separately, waiting for an answer before the next:
 
 1. **Platform** (single-select — pick exactly one):
    - `platform/ios` — Swift iOS app
@@ -147,17 +148,15 @@ Reuse the single Step -2 snapshot for all resource mappings across all skills.
 
 ## Step 3 — Create AI instruction files
 
-Check for the following three files and create them if they don't already exist:
-
-**`.github/copilot-instructions.md`**
-```
-Read master-skills.md and project-specific-agent-instructions.md for your operating instructions.
-```
+Check for the following two files and create them if they don't already exist:
 
 **`CLAUDE.md`**
 ```
-Read master-skills.md and project-specific-agent-instructions.md for your operating instructions.
+@master-skills.md
+@project-specific-agent-instructions.md
 ```
+
+Each `@` line imports that file's full content into every chat automatically. Both Claude and the Copilot harness read `CLAUDE.md`, so do not create `.github/copilot-instructions.md`: an `@` import there resolves from `.github/` and silently loads nothing.
 
 **`project-specific-agent-instructions.md`**
 ```
@@ -178,7 +177,7 @@ When done, report:
 - The total line count of the new `master-skills.md`
 - Any skills that failed to fetch (404 or network error)
 - Which bundled files were copied (grouped by skill), and any that were skipped due to conflicts
-- Whether `.github/copilot-instructions.md`, `CLAUDE.md`, and `project-specific-agent-instructions.md` were created or already existed
+- Whether `CLAUDE.md` and `project-specific-agent-instructions.md` were created or already existed
 - If `platform/juce-vst3-plugin` is selected: whether `Input/`, `Output/` and the six project docs (including `presets.md` and `visualizer.md`) were created or already existed
 
 ## Step 4b — VST3 project scaffold (platform/juce-vst3-plugin only)

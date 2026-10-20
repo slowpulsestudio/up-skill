@@ -1,6 +1,7 @@
 ---
-mode: agent
-description: Configure, build, and install this project's JUCE VST3 plugin.
+name: build-vst3
+description: Configure, build, and install this project's JUCE VST3 plugin. Only run when the user types /build-vst3.
+disable-model-invocation: true
 ---
 
 ## Step 1 — Locate the plugin's CMakeLists.txt
@@ -54,4 +55,4 @@ Say exactly: "Time to test the VST3 in your DAW! (If it was already open, fully 
 
 ## Notes
 
-Never commit or push anything as part of this prompt — it only configures, builds, and installs the plugin.
+Never commit or push anything as part of this slash command — it only configures, builds, and installs the plugin.

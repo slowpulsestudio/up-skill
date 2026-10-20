@@ -1,6 +1,7 @@
 ---
-mode: agent
-description: Check whether this project is using the latest Slow Pulse Studio design system, show what has changed since the version it is pinned to, and update it.
+name: system-my-design
+description: Check whether this project is using the latest Slow Pulse Studio design system, show what has changed since the version it is pinned to, and update it. Only run when the user types /system-my-design.
+disable-model-invocation: true
 ---
 
 ## Step 1 — Find the version this project is pinned to
@@ -48,4 +49,4 @@ If the version was updated, tell the user to run `/build-vst3` — the new desig
 
 ## Notes
 
-Never commit or push anything as part of this prompt. It only reads versions and, with permission, edits a single line.
+Never commit or push anything as part of this slash command. It only reads versions and, with permission, edits a single line.

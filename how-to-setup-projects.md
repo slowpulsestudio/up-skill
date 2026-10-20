@@ -8,12 +8,12 @@ Up-Skill is a library of AI instruction files. When you start a new project, you
 
 ---
 
-## Step 1 — Fetch the initiation prompt
+## Step 1 — Fetch `/skill-me-up`
 
-Open your new project's folder in VS Code (an empty folder is fine) and paste this into the Copilot chat panel:
+Open your new project's folder in VS Code (an empty folder is fine) and paste this into the chat panel (Copilot or Claude):
 
 ```
-Fetch https://raw.githubusercontent.com/slowpulsestudio/up-skill/main/.github/prompts/skill-me-up.prompt.md and save it to .github/prompts/skill-me-up.prompt.md in this project.
+Fetch https://raw.githubusercontent.com/slowpulsestudio/up-skill/main/.claude/skills/skill-me-up/SKILL.md and save it to .claude/skills/skill-me-up/SKILL.md in this project.
 ```
 
 This always pulls the latest version straight from GitHub — no need to clone or copy this repo.
@@ -22,7 +22,7 @@ This always pulls the latest version straight from GitHub — no need to clone o
 
 ## Step 2 — Run "Skill me up"
 
-Open the project in VS Code. In the Copilot chat panel, type:
+Start a new chat, so it picks up the new slash command, and type:
 
 ```
 /skill-me-up
@@ -103,17 +103,17 @@ workflow/juce-ui-rendering
 The agent will now:
 1. Fetch the latest version of each skill and combine them into `master-skills.md`
 2. Copy any bundled files into the project (e.g. a UI component library)
-3. Create `.github/copilot-instructions.md` and `CLAUDE.md`
+3. Create `CLAUDE.md`, which both Claude and Copilot read automatically
 
-That's it. The AI will have created `master-skills.md`, `.github/copilot-instructions.md`, and `CLAUDE.md` automatically.
+That's it. The AI will have created `master-skills.md` and `CLAUDE.md` automatically.
 
 ---
 
 ## Updating later
 
-Whenever Up-Skill is updated with new or improved skills, just run `/skill-me-up` again in Copilot chat. It will re-fetch everything and overwrite `master-skills.md` with the latest version. Bundled files that already exist in your project will not be overwritten — you'll be warned about any conflicts so you can resolve them manually.
+Whenever Up-Skill is updated with new or improved skills, just run `/skill-me-up` again. It will re-fetch everything and overwrite `master-skills.md` with the latest version. Bundled files that already exist in your project will not be overwritten — you'll be warned about any conflicts so you can resolve them manually.
 
-Some skills bundle their own extra slash commands alongside their other resource files — for example, `platform/juce-vst3-plugin` bundles `/adopt-design-system` and `/system-my-design`. These are only installed in projects that selected that skill, the same way as any other bundled file.
+Some skills bundle their own extra slash commands alongside their other resource files — for example, `platform/juce-vst3-plugin` bundles `/build-vst3`, `/adopt-design-system` and `/system-my-design`. These are only installed in projects that selected that skill, the same way as any other bundled file.
 
 ---
 

@@ -29,3 +29,24 @@ starter-main/ -> src/starter/
 The left side is relative to `skill-resources/{skill-name}/`. The right side is the destination in the project root.
 
 When `/skill-me-up` runs, it reads the `## Resources` section, looks up the files in the up-skill repo via the GitHub API, and copies them into the new project at the specified paths. Files that already exist and differ are skipped with a warning.
+
+## Bundling a slash command with a skill
+
+Put each slash command in its own folder as `skill-resources/{skill-name}/skills/{command-name}/SKILL.md`, and map that folder into the project:
+
+```
+## Resources
+skills/ -> .claude/skills/
+```
+
+Start each `SKILL.md` with this header. `name` must match the folder name, and `disable-model-invocation: true` means it only runs when someone types `/{command-name}`:
+
+```
+---
+name: {command-name}
+description: What it does. Only run when the user types /{command-name}.
+disable-model-invocation: true
+---
+```
+
+Both Claude and the Copilot harness read `.claude/skills/`. Do not use `.prompt.md` files: the Copilot harness ignores them.

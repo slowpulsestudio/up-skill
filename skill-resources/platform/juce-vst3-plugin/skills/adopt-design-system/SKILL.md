@@ -1,13 +1,14 @@
 ---
-mode: agent
-description: Connect this JUCE plugin to the Slow Pulse Studio design system for the first time, and rebuild its editor from design system components.
+name: adopt-design-system
+description: Connect this JUCE plugin to the Slow Pulse Studio design system for the first time, and rebuild its editor from design system components. Only run when the user types /adopt-design-system.
+disable-model-invocation: true
 ---
 
 This is a one-time migration with visible consequences — it replaces the plugin's entire user interface. Work through it in order and stop at every checkpoint. Never skip a confirmation.
 
 ## Step 0 — Safety
 
-Check `git status`. If there are uncommitted changes, tell the user to commit or stash them first, and stop. This prompt rewrites the editor; the user needs a clean point to return to.
+Check `git status`. If there are uncommitted changes, tell the user to commit or stash them first, and stop. This slash command rewrites the editor; the user needs a clean point to return to.
 
 Then confirm the plugin builds as it is today by running `/build-vst3`. If it does not build before you start, stop and say so — do not migrate a broken project.
 
@@ -97,4 +98,4 @@ On success, report what changed: how many parameters moved to which components, 
 
 ## Notes
 
-Never commit or push anything as part of this prompt.
+Never commit or push anything as part of this slash command.

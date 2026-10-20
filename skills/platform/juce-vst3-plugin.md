@@ -410,4 +410,4 @@ Plugin repos from this studio are always private and single-developer, so `.vsco
 ---
 
 ## Resources
-prompts/ -> .github/prompts/
+skills/ -> .claude/skills/

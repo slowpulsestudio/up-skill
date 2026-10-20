@@ -41,19 +41,19 @@ Each file should cover **one topic only** and remain reusable across projects.
 
 ## Setup Steps
 
-### 1. Fetch the initiation prompt
+### 1. Fetch `/skill-me-up`
 
-Open your new project's folder in VS Code (an empty folder is fine) and paste this into the Copilot chat panel:
+Open your new project's folder in VS Code (an empty folder is fine) and paste this into the chat panel (Copilot or Claude):
 
 ```
-Fetch https://raw.githubusercontent.com/slowpulsestudio/up-skill/main/.github/prompts/skill-me-up.prompt.md and save it to .github/prompts/skill-me-up.prompt.md in this project.
+Fetch https://raw.githubusercontent.com/slowpulsestudio/up-skill/main/.claude/skills/skill-me-up/SKILL.md and save it to .claude/skills/skill-me-up/SKILL.md in this project.
 ```
 
 This always pulls the latest version straight from GitHub — no need to clone or copy this repo.
 
 ### 2. Run "Skill me up"
 
-In the same Copilot chat panel, run:
+Start a new chat, so it picks up the new slash command, and run:
 
 ```
 /skill-me-up
@@ -102,7 +102,7 @@ For each project:
 2. From `skills/platform/`, pick **exactly one** via a single-select question to match the project's platform (e.g. `ios.md` for an iOS app, `python-mac.md` for a Mac desktop app). Never include more than one platform skill.
 3. Concatenate them, in order, into a single `master-skills.md`.
 4. Append any project-specific instructions.
-5. Point both `CLAUDE.md` and `.github/copilot-instructions.md` at the generated `master-skills.md`.
+5. Create `CLAUDE.md` that imports the generated `master-skills.md` and `project-specific-agent-instructions.md`. Both Claude and the Copilot harness read it.
 
 The AI should consume only the generated file.
 

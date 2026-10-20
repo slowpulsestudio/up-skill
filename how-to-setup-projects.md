@@ -117,4 +117,16 @@ Some skills bundle their own extra slash commands alongside their other resource
 
 ---
 
+## Upgrading a project set up before October 2026
+
+Older projects keep their slash commands in `.github/prompts/`, which the Copilot harness ignores. Open the project in VS Code and paste this into the chat panel (Copilot or Claude), once:
+
+```
+Fetch https://raw.githubusercontent.com/slowpulsestudio/up-skill/main/migrate-to-skills.md and follow its instructions in this project.
+```
+
+It removes the old prompt files, fixes how the rules load, installs the new `/skill-me-up` and rebuilds the skills. Commit or stash any changes first. After that, run `/skill-me-up` as normal.
+
+---
+
 For skill authors, see [how-to-create-skills.md](how-to-create-skills.md).

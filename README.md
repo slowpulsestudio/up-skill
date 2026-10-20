@@ -94,6 +94,16 @@ The AI asks real interactive questions (buttons/checkboxes), not plain text:
 
 See [how-to-setup-projects.md](how-to-setup-projects.md) for the full walkthrough and a skill-by-skill reference table.
 
+## Upgrading an existing project
+
+Projects set up before slash commands moved to `.claude/skills/` still have `.github/prompts/skill-me-up.prompt.md`, which the Copilot harness ignores. Open the project in VS Code and paste this into the chat panel (Copilot or Claude), once:
+
+```
+Fetch https://raw.githubusercontent.com/slowpulsestudio/up-skill/main/migrate-to-skills.md and follow its instructions in this project.
+```
+
+It removes the old prompt files, fixes how the rules load, installs the new `/skill-me-up` and rebuilds the skills. Commit or stash any changes first. After that, run `/skill-me-up` as normal.
+
 ## Usage
 
 For each project:

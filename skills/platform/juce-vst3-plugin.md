@@ -366,12 +366,14 @@ When scaffolding a new JUCE plugin project, create a `Testing/` folder containin
 
 ---
 
-**`.vscode/` is committed, not gitignored**
-Plugin repos from this studio are always private and single-developer, so `.vscode/settings.json` (e.g. `chat.tools.terminal.autoApprove` entries for `cmake` so builds don't stop for approval every time) is shared project configuration, not personal clutter. Commit `.vscode/` so its settings survive a reclone instead of being re-created by hand on every machine. This does not loosen anything else — build output, `build/`, `Testing/`, and any real secret stay out regardless. If a plugin repo already has `.vscode/` in its `.gitignore`, remove that line rather than leaving the two conventions side by side.
+**`.vscode/` and `.claude/settings.json` are committed, not gitignored**
+Plugin repos from this studio are always private and single-developer, so editor and agent settings are shared project configuration, not personal clutter. That covers `.vscode/settings.json` (e.g. `chat.tools.terminal.autoApprove` entries for `cmake`, which only Copilot reads) and `.claude/settings.json` (e.g. `"permissions": { "allow": ["Bash(cmake:*)", "Bash(ctest:*)"] }`, which is what Claude Code reads) — set up whichever matches the harness in use, both if both are used, so builds don't stop for approval every time. Commit them so their settings survive a reclone instead of being re-created by hand on every machine. This does not loosen anything else — build output, `build/`, `Testing/`, and any real secret stay out regardless. If a plugin repo already has `.vscode/` in its `.gitignore`, remove that line rather than leaving the two conventions side by side.
 
 **A failed response looks like:**
 - Adding `.vscode/` to `.gitignore` out of habit, or because a public-repo template does it
-- Leaving `.vscode/` untracked and re-creating the same settings by hand after each clone
+- Leaving `.vscode/` or `.claude/settings.json` untracked and re-creating the same settings by hand after each clone
+- Adding Copilot's `chat.tools.terminal.autoApprove` for a Claude Code user and expecting it to stop the approval prompts — Claude Code only reads `.claude/settings.json`
+- Committing `.claude/settings.local.json` — that file is personal and stays out
 - Extending this to a non-plugin project, where the private-repo assumption may not hold
 
 ---

@@ -52,10 +52,11 @@ All Figma MCP tool calls must go through the remote MCP server (`https://mcp.fig
 ---
 
 **Verify the Figma MCP connection before relying on it**
-Connection is set up once during `/skill-me-up` (Figma's Dev Mode → MCP → Clients → **Get Figma integration** — never manual `mcp.json` edits or "Add MCP Server"). If both `figma-read-from-mcp` and `figma-write-to-canvas` are in use, that setup only happens once. Before doing any Figma MCP work in a session, confirm the connection still works with a real tool call (e.g. `get_metadata` on the file in `.figma-url`) rather than assuming it from a prior setup.
+Connection is set up once during `/skill-me-up` — in Claude Code with `claude mcp add --transport http figma https://mcp.figma.com/mcp` followed by `/mcp` to sign in; in Copilot via Figma's Dev Mode → MCP → Clients → **Get Figma integration**. Never hand-edit an MCP config file, and never use "Add MCP Server". If both `figma-read-from-mcp` and `figma-write-to-canvas` are in use, that setup only happens once. Before doing any Figma MCP work in a session, confirm the connection still works with a real tool call (e.g. `get_metadata` on the file in `.figma-url`) rather than assuming it from a prior setup.
 
 **A failed response looks like:**
-- Giving manual `mcp.json` JSON snippets or "Add MCP Server" command-palette steps instead of pointing back to the Dev Mode → MCP → Clients flow
+- Giving manual `mcp.json` / `.mcp.json` JSON snippets or "Add MCP Server" command-palette steps instead of the setup path for the current harness
+- Sending a Claude Code user through Figma's **Get Figma integration** for VS Code — that only connects Copilot
 - Assuming the connection still works without a real tool call, especially in a new session
 - Re-running the full connection walkthrough when it's already confirmed working
 

@@ -111,12 +111,21 @@ If `workflow/figma-read-from-mcp` or `workflow/figma-write-to-canvas` is in the 
 
 First check whether it's already connected: call `get_metadata` on the file in `.figma-url` (or a lightweight `use_figma` read). If real data comes back, the connection already works — skip the walkthrough below.
 
-If it does not work, walk the user through connecting via Figma's own UI. Never write or edit `mcp.json` by hand, never use VS Code's "Add MCP Server" command, and never consider a non-cloud/local server address:
+If it does not work, connect it using the path for the harness you are running in. Both paths use the remote server (`https://mcp.figma.com/mcp`) — never a non-cloud/local server address — and never write or edit an MCP config file (`mcp.json`, `.mcp.json`, `~/.claude.json`) by hand.
+
+**Claude Code** (CLI, desktop app or the VS Code extension):
+
+1. Run `claude mcp add --transport http figma https://mcp.figma.com/mcp` yourself in the terminal. If it reports that `figma` already exists, skip to step 2.
+2. Tell the user: *"Figma is added. Start a new chat, type `/mcp`, choose **figma** and sign in to Figma in the browser window that opens. Then run `/skill-me-up` again in that chat to finish setup."* The new server only loads in a new session, so stop here — do not continue to Step 1 in this chat.
+
+**GitHub Copilot in VS Code** — walk the user through Figma's own UI. Never use VS Code's "Add MCP Server" command:
 
 1. Open the Figma desktop app (or figma.com), open the target file, and switch to **Dev Mode**.
 2. Open the **MCP** panel and go to **Clients**.
 3. Next to **Visual Studio Code**, click **+** / **Get Figma integration**.
 4. Figma auto-installs the integration, opens VS Code, and completes the connection automatically — no config file, no copy-pasted URL, no command palette steps.
+
+The Figma integration for VS Code only connects Copilot; it does nothing for Claude Code, and `claude mcp add` does nothing for Copilot. If the user works in both, connect both.
 
 After the walkthrough, call `get_metadata` again to confirm the connection now works before continuing to Step 1.
 

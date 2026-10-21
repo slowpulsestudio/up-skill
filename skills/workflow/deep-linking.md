@@ -1,174 +1,51 @@
-# Deep-Linking in Tree Navigation
+# Deep-Linking Rules
 
-A pattern for making hierarchical tree navigation fully URL-addressable, so any node can be linked to directly and the tree will open, expand, and scroll to it correctly on load.
-
----
-
-## Core principle
-
-The selected node is always derived from the URL — never stored in local state. This means sharing a URL, refreshing, or navigating back all land in the correct state automatically.
+Rules for making hierarchical tree navigation fully URL-addressable, so any node can be linked to directly and the tree opens, expands and scrolls to it correctly on load.
 
 ---
 
-## 1. Route as single source of truth
+**The route is the single source of truth for selection**
+Derive the selected node ID from the current route, every render. Never keep a separate `selectedId` or `selectedNode` in local state. Sharing a URL, refreshing and navigating back then all land on the right node with no extra code. A click on a node only navigates; the selection follows from the new route. A root route with no node in it maps to a fixed default node (e.g. the first one).
 
-Derive `selectedId` from the current route. Do not maintain a separate `selectedNode` state variable.
-
-**Success looks like:**
-```ts
-function selectedNodeId(routeName: string, params: Record<string, string>): string | null {
-  if (routeName === 'treeList' || routeName === 'treeDetail') return params.nodeId ?? null;
-  if (routeName === 'treeRoot') return FIRST_NODE_ID; // root route implies first node
-  return null;
-}
-
-export function Tree() {
-  const route = useRoute();
-  const selectedId = selectedNodeId(route.name, route.params);
-  // selectedId is the only source of truth — no useState for selection
-}
-```
-
-**Failure looks like:**
-```ts
-// BAD: selection is local state, disconnected from the URL
-const [selectedId, setSelectedId] = useState<string | null>(null);
-
-const handleClick = (id: string) => {
-  setSelectedId(id);           // only updates local state
-  navigate(`#/tree/${id}`);    // URL updates separately — they can desync
-};
-```
+**A failed response looks like:**
+- Holding the selection in `useState` and updating the URL separately, so the two can drift apart
+- A click handler that sets local selection state as well as navigating
+- A deep link that loads the page but shows nothing selected
 
 ---
 
-## 2. Auto-expand ancestors
+**Expand every ancestor of the selected node**
+Whenever the selected ID changes, including on first render, walk up from the selected node to the root and add every ancestor to the expanded set. Merge them into what is already expanded rather than replacing it. A deep-linked node must always be visible, never hidden inside a collapsed branch.
 
-When `selectedId` changes (including on first render), find all ancestor nodes and add them to the `expanded` set. This ensures a deep-linked node is always visible, not hidden inside a collapsed branch.
-
-**Success looks like:**
-```ts
-const [expanded, setExpanded] = useState<Set<string>>(() => new Set(ALL_NODE_IDS));
-
-useEffect(() => {
-  if (!selectedId) return;
-  const ancestors = getPath(selectedId).map((n) => n.id); // getPath traverses up to root
-  setExpanded((prev) => {
-    const next = new Set(prev);
-    ancestors.forEach((id) => next.add(id));
-    return next;
-  });
-}, [selectedId, getPath]);
-```
-
-**Failure looks like:**
-```ts
-// BAD: expansion is only triggered by user click, not by route
-const toggle = (id: string) => setExpanded(...);
-
-// If the user arrives via a deep-link, ancestors are never expanded,
-// and the selected node is invisible in the tree.
-```
+**A failed response looks like:**
+- Expanding branches only on user clicks, so a node reached by deep link stays hidden
+- Replacing the expanded set on navigation and collapsing branches the user had opened
 
 ---
 
-## 3. Scroll the selected node into view
+**Scroll the selected node into view**
+The tree row scrolls itself into view whenever it becomes selected (e.g. an effect on `isSelected` calling `scrollIntoView({ block: 'nearest' })`). This covers a deep link to a node that starts off-screen.
 
-In the tree node component, scroll to the row once it becomes selected. This handles the case where the node is off-screen on a deep-link arrival.
-
-**Success looks like:**
-```ts
-function TreeNodeView({ node, isSelected }: Props) {
-  const rowRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (isSelected) rowRef.current?.scrollIntoView({ block: 'nearest' });
-  }, [isSelected]);
-
-  return <div ref={rowRef} className={isSelected ? styles.selected : ''}>...</div>;
-}
-```
-
-**Failure looks like:**
-```ts
-// BAD: scrolling on click only — doesn't fire on deep-link arrival
-<div onClick={() => { navigate(...); rowRef.current?.scrollIntoView(); }}>
-```
+**A failed response looks like:**
+- Scrolling only inside a click handler, so nothing scrolls on deep-link arrival
+- A deep link to a node far down the tree that leaves it off-screen
 
 ---
 
-## 4. Stable, deterministic node IDs
+**Node IDs are stable and deterministic**
+Node IDs live in the URL, so they must stay the same across page loads, reloads and navigations. Use IDs from the data source (a database primary key or a fixed slug), or generate them deterministically from fixed data such as the node name. Never derive them from array index, render order or random values.
 
-Node IDs must be stable across page loads, reloads, and navigations — they live in the URL. IDs derived from database primary keys or static slugs are fine. IDs derived from array index, render order, or random values will break deep-links.
-
-**Success looks like:**
-```ts
-// IDs come from the data source (e.g. a slug or DB primary key)
-const nodes = [
-  { id: 'corp-domain',        name: 'corp.example.com' },
-  { id: 'managed-directories', name: 'Managed Directories' },
-  { id: 'users-ou',           name: 'Users' },
-];
-
-// Or generated deterministically from a fixed seed
-function makeNodeId(name: string): string {
-  return name.toLowerCase().replace(/\s+/g, '-');
-}
-```
-
-**Failure looks like:**
-```ts
-// BAD: ID is array index — changes if the data order changes
-const nodes = data.map((item, i) => ({ id: String(i), name: item.name }));
-
-// BAD: ID is random — a new value every render, every reload
-const nodes = data.map((item) => ({ id: crypto.randomUUID(), name: item.name }));
-
-// Sharing `#/tree/2` or `#/tree/f47ac10b` will land on a different node
-// (or no node) after any data change or page reload.
-```
+**A failed response looks like:**
+- Using an array index as the ID, so a link points at a different node once the data order changes
+- Generating IDs with `crypto.randomUUID()` or similar on load, so every link breaks on reload
+- Sharing a link that lands on the wrong node, or no node, after a data change
 
 ---
 
-## 5. Persisted entries must store the full route
+**Saved references store the full route**
+Any feature that stores a node for later (favourites, recents, bookmarks) saves the full route (e.g. `href: '#/tree/users-ou'`) alongside the ID, at the time it is saved. The saved list then renders as plain links, with no need to load and walk the tree to rebuild each URL.
 
-Any feature that stores a reference to a node for later use (favourites, recents, bookmarks) must persist the full hash route alongside the ID — not just the ID. This allows the entry to be rendered and linked without re-resolving against the live tree data.
-
-**Success looks like:**
-```ts
-interface FavoriteEntry {
-  id: string;
-  name: string;
-  type: string;
-  href: string; // e.g. '#/tree/users-ou' — stored at the time of favouriting
-}
-
-// The Favourites page renders a plain anchor; no tree lookup required
-<a href={entry.href}>{entry.name}</a>
-```
-
-**Failure looks like:**
-```ts
-// BAD: only the ID is stored
-interface FavoriteEntry {
-  id: string;
-  name: string;
-}
-
-// The Favourites page now has to load and traverse the full tree
-// just to reconstruct the URL — fails if tree data hasn't loaded yet.
-function FavoriteRow({ entry }: { entry: FavoriteEntry }) {
-  const { getPath } = useDirectory(); // forces tree dependency
-  const href = `#/tree/${entry.id}`;  // works, but fragile if route shape changes
-}
-```
-
----
-
-## Summary checklist
-
-- [ ] `selectedId` is derived from the route, not stored in `useState`
-- [ ] A `useEffect` on `selectedId` expands all ancestor nodes
-- [ ] A `useEffect` on `isSelected` scrolls the row into view
-- [ ] Node IDs are stable across reloads (not index- or random-based)
-- [ ] Persisted entries (favourites, recents) store the full `href`, not just the `id`
+**A failed response looks like:**
+- Storing only the node ID, so the saved list has to load the full tree before it can show a link
+- A saved list that breaks or shows nothing when the tree data hasn't loaded yet
+- Rebuilding saved links from a hard-coded route pattern that breaks when the route shape changes

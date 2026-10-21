@@ -92,6 +92,8 @@ The AI asks real interactive questions (buttons/checkboxes), not plain text:
   workflow/vercel-password
   workflow/image-generation
   workflow/web-scraper
+  workflow/deep-linking
+  workflow/prototyping
   workflow/dsp-prototyping
   workflow/generative-video
   workflow/design-system-gallery

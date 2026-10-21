@@ -69,6 +69,8 @@ workflow/vercel-publish
 workflow/vercel-password
 workflow/image-generation
 workflow/web-scraper
+workflow/deep-linking
+workflow/prototyping
 workflow/dsp-prototyping
 workflow/generative-video
 workflow/design-system-gallery
@@ -94,6 +96,8 @@ workflow/juce-ui-rendering
 | `workflow/vercel-password` | Password gate for Vercel preview deployments |
 | `workflow/image-generation` | If the project calls an AI image-generation API |
 | `workflow/web-scraper` | If the project scrapes data from websites |
+| `workflow/deep-linking` | If the project has tree navigation where every node must be linkable by URL |
+| `workflow/prototyping` | If the project builds prototypes for UX research sessions |
 | `workflow/dsp-prototyping` | If the project involves tuning audio/DSP algorithms before a real-time port |
 | `workflow/generative-video` | If the project renders procedural or generative animation to video files |
 | `workflow/design-system-gallery` | If the project is a component gallery for a shared design system |

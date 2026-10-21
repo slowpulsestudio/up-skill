@@ -55,6 +55,8 @@ Check whether a `.skills` file exists in the root of this project. Whichever bra
    - `workflow/testing` — testing standards (recommended, pre-checked)
    - `workflow/docs-style`: writing style rules for human-readable project docs (recommended, pre-checked)
    - `workflow/web-scraper` — if the project scrapes data from websites
+   - `workflow/deep-linking` — if the project has tree navigation where every node must be linkable by URL
+   - `workflow/prototyping` — if the project builds prototypes for UX research sessions
    - `workflow/figma-read-from-mcp` — if the project uses Figma (design → code direction)
    - `workflow/figma-write-to-canvas` — if the project uses Figma write-to-canvas / code → canvas skills
    - `workflow/vercel-publish` — if the project deploys to Vercel

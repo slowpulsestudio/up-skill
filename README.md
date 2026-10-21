@@ -28,6 +28,7 @@ skills/
         image-generation.md
         web-scraper.md
         dsp-prototyping.md
+        generative-video.md
     platform/
         ios.md
         chrome-extension.md
@@ -89,6 +90,7 @@ The AI asks real interactive questions (buttons/checkboxes), not plain text:
   workflow/image-generation
   workflow/web-scraper
   workflow/dsp-prototyping
+  workflow/generative-video
   workflow/design-system-gallery
   ```
 

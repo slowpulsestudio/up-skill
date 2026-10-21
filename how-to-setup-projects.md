@@ -69,6 +69,7 @@ workflow/vercel-password
 workflow/image-generation
 workflow/web-scraper
 workflow/dsp-prototyping
+workflow/generative-video
 workflow/design-system-gallery
 workflow/juce-ui-rendering
 ```
@@ -93,6 +94,7 @@ workflow/juce-ui-rendering
 | `workflow/image-generation` | If the project calls an AI image-generation API |
 | `workflow/web-scraper` | If the project scrapes data from websites |
 | `workflow/dsp-prototyping` | If the project involves tuning audio/DSP algorithms before a real-time port |
+| `workflow/generative-video` | If the project renders procedural or generative animation to video files |
 | `workflow/design-system-gallery` | If the project is a component gallery for a shared design system |
 | `workflow/juce-ui-rendering` | If the project implements Figma artwork as JUCE painting code (building the design system library itself, not consuming it) |
 

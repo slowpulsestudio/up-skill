@@ -46,7 +46,7 @@ Each file should cover **one topic only** and remain reusable across projects.
 Open your new project's folder in VS Code (an empty folder is fine) and paste this into the chat panel (Copilot or Claude):
 
 ```
-Fetch https://raw.githubusercontent.com/slowpulsestudio/up-skill/main/.claude/skills/skill-me-up/SKILL.md and save it to .claude/skills/skill-me-up/SKILL.md in this project.
+Run `mkdir -p .claude/skills/skill-me-up && curl -sL https://raw.githubusercontent.com/slowpulsestudio/up-skill/main/.claude/skills/skill-me-up/SKILL.md -o .claude/skills/skill-me-up/SKILL.md` in this project. Use curl, not a fetch tool — a fetch tool returns a summary, not the exact file.
 ```
 
 This always pulls the latest version straight from GitHub — no need to clone or copy this repo.
@@ -99,7 +99,7 @@ See [how-to-setup-projects.md](how-to-setup-projects.md) for the full walkthroug
 Projects set up before slash commands moved to `.claude/skills/` still have `.github/prompts/skill-me-up.prompt.md`, which the Copilot harness ignores. Open the project in VS Code and paste this into the chat panel (Copilot or Claude), once:
 
 ```
-Fetch https://raw.githubusercontent.com/slowpulsestudio/up-skill/main/migrate-to-skills.md and follow its instructions in this project.
+Run `curl -sL https://raw.githubusercontent.com/slowpulsestudio/up-skill/main/migrate-to-skills.md` and follow the instructions it prints in this project. Use curl, not a fetch tool — a fetch tool returns a summary, not the exact file.
 ```
 
 It removes the old prompt files, fixes how the rules load, installs the new `/skill-me-up` and rebuilds the skills. Commit or stash any changes first. After that, run `/skill-me-up` as normal.

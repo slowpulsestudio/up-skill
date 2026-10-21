@@ -42,6 +42,7 @@ The AI will ask you these as real interactive questions (buttons/checkboxes), no
    - **`workflow/git`** — GitHub repo URL
    - **`workflow/figma-read-from-mcp`** — Figma file URL
    - **`workflow/image-generation`** — which image generation provider
+   - **`workflow/generative-video`** — Figma link to the reference images, saved to `.figma-references-url`
 
 **Platform — pick one:**
 

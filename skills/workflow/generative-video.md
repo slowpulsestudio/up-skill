@@ -4,6 +4,16 @@ Rules for projects that generate procedural, parameter-driven animation and rend
 
 ---
 
+**Look at the reference images before designing anything**
+Before designing a new look, read the images at the link in `.figma-references-url` through the Figma MCP, save them to a gitignored `References/` folder, and write down what they have in common before writing any shader. If the link is missing or Figma isn't connected, ask for it. Don't design from guesses.
+
+**A failed response looks like:**
+- Designing a look without looking at the reference images
+- Carrying on without the references when the Figma connection fails
+- Committing the downloaded reference images
+
+---
+
 **Pixels on the GPU, control in the host language**
 Frames are drawn with shaders (e.g. GLSL through moderngl in Python), not per-pixel loops. The host language handles parameters, randomness, automation and encoding, and passes values to the shaders. Keep the two apart: rendering code draws a frame from the values it is given, and control code decides what those values are.
 

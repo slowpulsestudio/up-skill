@@ -74,8 +74,11 @@ Check whether a `.skills` file exists in the root of this project. Whichever bra
      - Paste the URL now — save it to `.figma-url` in the project root
      - *"I'll paste it in this chat when I have it"* — reply: *"No problem — paste the Figma URL in this chat whenever you're ready and I'll save it to `.figma-url`."* then continue setup. When the user later pastes a URL starting with `https://www.figma.com/`, write it to `.figma-url`.
    - **`workflow/image-generation`** — *"Which image generation provider does this project use?"* (e.g. OpenAI / DALL·E, Replicate, Stability AI)
+   - **`workflow/generative-video`** — *"What is the Figma link to your reference images?"* Give the user two options:
+     - Paste the link now — save it to `.figma-references-url` in the project root
+     - *"I'll paste it in this chat when I have it"* — reply: *"No problem — paste the Figma link to your reference images in this chat whenever you're ready and I'll save it to `.figma-references-url`."* then continue setup. When the user later pastes a URL starting with `https://www.figma.com/`, write it to `.figma-references-url`.
 
-   Only ask one Figma file URL question even if both `workflow/figma-read-from-mcp` and `workflow/figma-write-to-canvas` were selected.
+   Only ask one Figma file URL question even if both `workflow/figma-read-from-mcp` and `workflow/figma-write-to-canvas` were selected. The reference images question is separate: always ask it when `workflow/generative-video` is selected, and never write its answer to `.figma-url`. If both answers were deferred and the user later pastes a Figma URL, ask which one it is before saving it.
 
    Only ask follow-up questions for skills that were selected. Skip any that weren't.
 
@@ -108,9 +111,9 @@ Do not proceed to the next step until this is resolved.
 
 ## Step 0c — Connect Figma MCP (if applicable)
 
-If `workflow/figma-read-from-mcp` or `workflow/figma-write-to-canvas` is in the skills list, the Figma MCP server must be connected before continuing. If both skills are selected, this only needs to happen once — do not repeat it.
+If `workflow/figma-read-from-mcp`, `workflow/figma-write-to-canvas` or `workflow/generative-video` is in the skills list, the Figma MCP server must be connected before continuing. If more than one of these skills is selected, this only needs to happen once — do not repeat it.
 
-First check whether it's already connected: call `get_metadata` on the file in `.figma-url` (or a lightweight `use_figma` read). If real data comes back, the connection already works — skip the walkthrough below.
+First check whether it's already connected: call `get_metadata` on the file in `.figma-url`, or in `.figma-references-url` if there is no `.figma-url` (or a lightweight `use_figma` read). If real data comes back, the connection already works — skip the walkthrough below.
 
 If it does not work, walk the user through connecting via Figma's own UI. Never write or edit `mcp.json` by hand, never use VS Code's "Add MCP Server" command, and never consider a non-cloud/local server address:
 

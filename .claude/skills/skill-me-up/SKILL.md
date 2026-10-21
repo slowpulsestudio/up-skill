@@ -183,6 +183,7 @@ When done, report:
 - Which bundled files were copied (grouped by skill), and any that were skipped due to conflicts
 - Whether `CLAUDE.md` and `project-specific-agent-instructions.md` were created or already existed
 - If `platform/juce-vst3-plugin` is selected: whether `Input/`, `Output/` and the six project docs (including `presets.md` and `visualizer.md`) were created or already existed
+- If `workflow/generative-video` is selected: whether `Output/` and `References/` were created or already existed, and whether both are in `.gitignore`
 
 ## Step 4b — VST3 project scaffold (platform/juce-vst3-plugin only)
 
@@ -378,6 +379,17 @@ carries no pure black; record it as a known deviation.
 
 <!-- Decisions still to be made, each as a bullet. -->
 ```
+
+## Step 4c — Generative video scaffold (workflow/generative-video only)
+
+If `workflow/generative-video` is in the skills list, scaffold the following now, before the git commit/push question in Step 5, so it's included in that first commit. Skip this step entirely if it isn't selected. This runs on every run, initial setup and refresh alike, so a project that is missing either folder gets it back.
+
+**Folders:** always create empty `Output/` and `References/` folders at the project root if they don't already exist (`Output/` for rendered videos, sidecars, contact sheets and cut lists; `References/` for the reference images downloaded from the link in `.figma-references-url`), and add both to `.gitignore` if not already present. These are local working state, not project source. If `Output/` was already created by Step 4b, don't create it again and don't add a second `.gitignore` entry for it.
+
+**A failed response looks like:**
+- Leaving `References/` to be created later, when the first reference image is downloaded
+- Creating either folder without adding it to `.gitignore` in the same run
+- Adding a duplicate `.gitignore` line for a folder that is already listed
 
 ## Step 5 — Post-setup actions (ask in order, only if applicable)
 

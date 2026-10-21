@@ -19,6 +19,7 @@ skills/
         architecture.md
         testing.md
         git.md
+        docs-style.md
         deep-linking.md
         prototyping.md
         figma-read-from-mcp.md
@@ -29,6 +30,8 @@ skills/
         web-scraper.md
         dsp-prototyping.md
         generative-video.md
+        design-system-gallery.md
+        juce-ui-rendering.md
     platform/
         ios.md
         chrome-extension.md
@@ -92,6 +95,7 @@ The AI asks real interactive questions (buttons/checkboxes), not plain text:
   workflow/dsp-prototyping
   workflow/generative-video
   workflow/design-system-gallery
+  workflow/juce-ui-rendering
   ```
 
 See [how-to-setup-projects.md](how-to-setup-projects.md) for the full walkthrough and a skill-by-skill reference table.

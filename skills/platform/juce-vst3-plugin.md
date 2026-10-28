@@ -1,4 +1,24 @@
+---
+load: on-demand
+description: Rules for this JUCE VST3 plugin. Target configuration (VST3, arm64, macOS 11), release policy, JUCE and the design system via FetchContent, real-time audio safety, parameters, DSP porting and validation. Read before writing, building or changing any plugin code, CMake file or project doc. It points to reference files for CMake and install details, editor UI and presets, and the project scaffold.
+---
+
 # JUCE VST3 Plugin Rules
+
+---
+
+**Reference files**
+This skill has three reference files in its `references/` folder. Read the matching file in full before starting the work it covers, not after:
+- `references/editor-ui.md`: before writing or changing any editor or GUI code, control, tooltip, preset, Randomise behaviour or the input and output strips.
+- `references/project-scaffold.md`: before scaffolding a plugin project, editing `.gitignore` or `.vscode/`, or writing any of `readme.md`, `dsp-maths.md`, `dsp-testing.md`, `nomenclature.md`, `presets.md` or `visualizer.md`.
+- `references/build-troubleshooting.md`: when a build or compile fails, or a rebuilt plugin seems stale in a DAW.
+
+One rule from `references/editor-ui.md` applies to every task, so it is repeated here: every plugin has the `sps::PresetToolbar` preset and Randomise toolbar. If an existing plugin is missing it, read `references/editor-ui.md` and add it as part of whatever task you were given.
+
+**A failed response looks like:**
+- Changing the editor, presets or project docs without first reading the reference file that covers them
+- Reading only the part of a reference file that seems relevant
+- Working on an existing plugin that has no preset toolbar without adding one
 
 ---
 
@@ -114,42 +134,6 @@ Since JUCE is pinned via CMake `FetchContent`, the actual JUCE source is availab
 
 ---
 
-**JUCE 9's juce_audio_processors_headless VST3 module can fail to compile on newer Clang/libc++ with 'shared_ptr' is not a member of 'std'**
-The Steinberg VST3 SDK headers vendored inside JUCE 9's juce_audio_processors_headless module use std::shared_ptr without an explicit #include <memory>. Recent Apple Clang/libc++ releases (Xcode 16+) have stopped transitively pulling in <memory> through other standard headers, so this compiles fine on older toolchains but fails on newer ones with no fix in JUCE's newest release tag (9.0.2 as of writing — verify no newer tag has fixed it before applying this). Since the failing file lives in FetchContent-downloaded, non-persistent vendor source, don't patch it directly — force the include via a compiler flag on the plugin's own target instead: target_compile_options(<TargetName> PRIVATE -include memory)
-
-**A failed response looks like:**
-- Editing the vendored JUCE header directly in build/_deps/juce-src — it gets wiped and re-fetched on the next clean configure
-- Concluding the Designer's own Source/ code or repo is broken/incomplete when the compile error is inside JUCE's own headers before any of their code is even reached
-- Not checking whether a newer JUCE release tag has already fixed this before applying the -include memory workaround
-
----
-
-**The -include memory workaround must be scoped to C++ translation units**
-The rule above is correct but incomplete: applied unscoped, `-include memory` is also passed to JUCE's C and Objective-C sources, which fail immediately with `fatal error: 'memory' file not found` — a confusing error that looks like a broken toolchain rather than a scoping mistake. Scope it to C++ only:
-
-```cmake
-target_compile_options(<Target> PRIVATE
-    $<$<COMPILE_LANGUAGE:CXX,OBJCXX>:-include;memory>)
-```
-
-**A failed response looks like:**
-- Applying `-include memory` to the whole target instead of scoping it to `CXX,OBJCXX`
-- Concluding the compiler or JUCE checkout is broken when a `.c`/`.m` file can't find a C++ header
-
----
-
-**Tooltips must be applied through a composite control's children**
-JUCE's tooltip window asks only the single component directly under the mouse for its tip (a `dynamic_cast<TooltipClient*>` on that one component) — it never walks up to a parent looking for one. Several `sps` design system controls are built from child pieces rather than being one component (e.g. `sps::Adjustor`'s numeric readout and its step buttons are separate children); calling `setTooltip` on the outer control only covers whatever background area isn't occupied by a child, which for some controls is almost none of the visible surface. `sps::Adjustor` specifically is not a `juce::SettableTooltipClient` at all, so it has no `setTooltip` to call in the first place — a subclass mixing in `juce::SettableTooltipClient` is needed before a tip can be set on it.
-
-The fix is a small recursive helper: set the tooltip on the control, then walk `getChildComponent(i)` for every child and set the same tooltip wherever the child is itself a `SettableTooltipClient` (`dynamic_cast`, skip silently if not). Apply this to every control on the panel, not just `Adjustor` — knobs, faders and switches are also built from sub-parts in places.
-
-**A failed response looks like:**
-- Calling `setTooltip` once on the outer control and assuming that covers it
-- Testing tooltips by hovering one spot (e.g. the control's edge) and concluding the whole control shows a tip, when the readout or buttons in the middle show nothing
-- Treating a missing tooltip on a design-system component as a bug in the design system rather than in how the tooltip was applied
-
----
-
 **A DSP port is verified against the prototype, not against the compiler**
 When porting a tuned prototype to real-time code, build a small offline harness that renders through the shipping code path and compares it numerically against the prototype — pitch, envelope times, per-band energy, peak. "It builds" and "it sounds about right" are not evidence. Keep the harness in the repo as a separate target so the comparison can be re-run after any change to the DSP.
 
@@ -196,15 +180,6 @@ Plugins install to a `Slow Pulse Studio` subfolder inside the system VST3 folder
 
 ---
 
-**A full DAW restart may be required to load a rebuilt plugin**
-Overwriting an installed `.vst3` in place and removing/re-adding the plugin instance in the DAW is not always enough to load the new binary — some hosts keep the old plugin module resident in process memory across instance add/remove. If a rebuilt plugin doesn't reflect recent changes after being re-added, fully quit and relaunch the DAW before assuming the build or install step failed.
-
-**A failed response looks like:**
-- Concluding the build/install pipeline is broken because a DAW still shows old behavior after only removing/re-adding the plugin instance
-- Not mentioning a full DAW restart as a troubleshooting step when a rebuilt plugin appears stale in a host
-
----
-
 **Real-time audio safety in `processBlock`**
 `processBlock` runs on the audio thread and must never allocate, lock, log, or do file/network I/O — any of these can cause audible dropouts/glitches in the DAW. Parameter changes must be smoothed (`juce::SmoothedValue`), never applied as a hard jump, to avoid zipper noise/clicks.
 
@@ -224,121 +199,6 @@ Expose all user-facing parameters through a single `AudioProcessorValueTreeState
 
 ---
 
-**Rotary knobs are the default control, not linear sliders**
-For continuous plugin parameters, use a rotary knob (`juce::Slider::RotaryHorizontalVerticalDrag` or equivalent rotary style) as the default control. Only use a linear `juce::Slider` (horizontal or vertical bar) when the Designer explicitly asks for one, or the parameter is inherently linear/positional in a way a knob can't represent (e.g. a playhead/scrub position). Don't default to a linear slider just because it's the JUCE `Slider` default style.
-
-**A failed response looks like:**
-- Adding a horizontal/vertical bar `Slider` for a generic gain/frequency/mix-style parameter without being asked
-- Leaving a `Slider` on its default linear style instead of setting a rotary style
-- Using a linear slider "for now" with intent to swap to a knob later
-
----
-
-**Round displayed parameter values to whole integers**
-Any numeric value shown in the UI (parameter readouts, labels, tooltips) is rounded up to a whole integer by default — no decimal places — unless the Designer explicitly asks for decimal precision on a specific parameter. Round the display text only; keep the underlying parameter value at full float precision internally.
-
-**A failed response looks like:**
-- Displaying a parameter value like `-3.42 dB` or `440.0 Hz` in the UI by default
-- Truncating/flooring instead of rounding
-- Rounding the underlying stored/automated parameter value itself instead of only the displayed text
-
----
-
-**Every control has a hover tooltip using classic industry terminology**
-Every parameter control in the editor (knob, slider, button, toggle) gets a hover tooltip (`juce::Component::setTooltip` or equivalent) explaining what it does, written using the classic, industry-standard term a working audio engineer would recognize (e.g. "Attack", "Release", "Q", "Drive", "Wet/Dry") rather than an invented or marketing-style name. This applies to every parameter, not just the ones that seem non-obvious.
-
-When a control's on-screen label is a whimsical/thematic metaphor rather than a classic industry term (e.g. "Wiggle", "New Worm"), the tooltip opens with a plain-language definition of what that metaphor means before giving the technical/industry-standard explanation — never the technical term alone with no explanation of the metaphor, and never the metaphor's definition omitted in favor of jumping straight to jargon.
-
-**A failed response looks like:**
-- Shipping a knob/slider/button with no tooltip at all
-- Only adding tooltips to a subset of "confusing" parameters instead of every control
-- Using a made-up or branded label in the tooltip instead of the classic industry term (e.g. "Squish" instead of "Ratio")
-- Opening a metaphor-labeled control's tooltip with the technical explanation instead of defining the metaphor first
-
----
-
-**Every VST3 plugin has presets and a Randomise button in a top toolbar**
-Every VST3 plugin ships with a save-able preset system (a `ComboBox` populated from named presets) and a "Randomise" button that jitters the creative/tunable parameters, both placed together in a toolbar strip across the top of the editor — not buried in a submenu or absent entirely. The Randomise button sits immediately to the right of the preset `ComboBox`, not elsewhere in the toolbar. This is a baseline UX expectation for every plugin from this studio, not an opt-in feature to be asked about per-project. Use the shared `sps::PresetToolbar` component from the design system library instead of reimplementing the toolbar from scratch each time. Run `/system-my-design` periodically to check whether a newer design system version is available.
-
-Pressing Randomise deselects any preset entirely — the toolbar shows the literal text "Random" (no italics, no trailing `*`) until the Designer explicitly picks a preset again from the dropdown or cycle buttons, at which point normal preset-name + dirty-state display resumes. `sps::PresetToolbar` has a dedicated `showUnsavedLabel()` method for this — never fake it by clearing the `ComboBox` selection directly.
-
-Randomise only jitters preset-tunable creative parameters — it must never touch any control in an Input or Output section of the GUI (input gain/trim, output gain, dry/wet mix, bypass), per the "Preset-defining values vs. global mode toggles" rule below.
-
-**A failed response looks like:**
-- Shipping a VST3 editor with only the generic parameter list and no preset `ComboBox` or Randomise button
-- Adding presets/randomise but placing them somewhere other than a top toolbar (e.g. buried at the bottom, in a separate tab/page)
-- Placing the Randomise button somewhere other than immediately to the right of the preset `ComboBox`
-- Treating presets or the Randomise button as a nice-to-have the Designer has to explicitly request for each new plugin
-- Reimplementing the toolbar/dirty-state logic from scratch instead of using `sps::PresetToolbar`
-- Leaving the previously-selected preset's name (dirty or not) displayed after Randomise instead of showing "Random"
-- Jittering an Input/Output-section control (input gain, output gain, dry/wet mix, bypass) when Randomise is pressed
-
----
-
-**Preset dirty-state indicator**
-When the current parameter values no longer match the saved preset they were loaded from (the Designer tweaked something, or Randomise was pressed), show the preset name in the `ComboBox` in italics with a trailing `*` (e.g. `Warm Pad*`). Revert to the plain, non-italic name with no `*` the moment the values match a saved preset again (including right after saving). `sps::PresetToolbar` (see above) already implements this via its `isDirty` callback — wire it up rather than reimplementing the italics/`*` logic.
-
-When a plugin has named presets and is opened fresh (no saved DAW state to restore), initialize the editor to the first preset in the list via the same code path used when the Designer picks a preset from the toolbar (`sps::PresetToolbar::setSelectedPreset (0)` plus loading that preset's values into the plugin's parameters) — never leave the raw `AudioParameterFloat`/etc. defaults from the parameter layout in place. The toolbar must show that first preset selected and non-dirty (no `*`) immediately on open.
-
-That first preset must be a dedicated "Default" preset with neutral/baseline parameter values — not just whichever preset happens to be first alphabetically or by creation order — so the Designer always has a known, unmodified state to return to via the dropdown or cycle buttons. `presets.md` is where this Default preset is documented, listed first, alongside every other named preset.
-
-**A failed response looks like:**
-- Leaving the preset name unchanged (no italics, no `*`) after a parameter has been edited or Randomise pressed
-- Leaving the italics/`*` in place after the Designer saves the current values as/over that preset
-- Using a different dirty-state indicator than italics + trailing `*` (e.g. a separate icon, a color change, a modal dialog)
-- Leaving the editor on raw parameter defaults on first open instead of the first named preset
-- Treating an arbitrary/creative preset as the first-in-list default instead of a dedicated neutral "Default" preset
-
----
-
-**Retrofit the preset/Randomise toolbar on any existing plugin missing it**
-The preset+Randomise toolbar and dirty-state indicator rules above are a baseline requirement for every plugin from this studio, not just new ones. If a Designer opens an existing plugin project that predates these rules (or only partially implements them) and asks for unrelated work on it, add the missing toolbar/indicator — using `sps::PresetToolbar` — as part of that same task instead of only mentioning it's missing.
-
-**A failed response looks like:**
-- Noticing the toolbar or dirty-state indicator is missing/incomplete on an existing plugin but only mentioning it instead of adding it
-- Waiting for the Designer to explicitly ask for the toolbar to be retrofitted before adding it
-- Treating these rules as applying only to brand-new plugins, not existing ones opened for other work
-
----
-
-**Preset-defining values vs. global mode toggles**
-When a plugin has both save-able presets and boolean mode toggles that represent a general workflow preference (e.g. a hard/soft character switch, or a static-vs-dynamic processing mode), keep those toggles out of the preset-value struct/table entirely. Presets should only capture the continuous/creative parameters they're meant to tune — switching presets should never silently flip a mode switch the user deliberately set.
-
-A seed/determinism parameter (one that seeds the plugin's own internal RNG or generative trajectory) is not a global mode toggle under this rule, even if it also has its own dedicated regenerate control (e.g. a "New Worm"/"New Pattern" button) — it's part of the creative variation Randomise exists to produce, so it stays in the preset-tunable set and Randomise must still jitter it. Only exclude parameters that are genuinely non-preset workflow settings.
-
-Any control that lives in an Input or Output section of the GUI (e.g. input gain/trim, output gain, dry/wet mix, bypass) is always excluded from presets and from Randomise, the same as a global mode toggle — these are gain-staging/session-level settings the Designer sets for their current mix, not creative content a preset should recall or Randomise should jitter. `presets.md` documents which parameters a preset stores and which excluded parameters (mode toggles, Input/Output section controls) it never stores.
-
-**A failed response looks like:**
-- Bundling a general-purpose mode toggle into the same struct/table as preset-tunable values, causing preset switches to silently change it
-- Forgetting to document which parameters are intentionally excluded from presets, leaving future changes to accidentally include them
-- Excluding a seed/determinism parameter from Randomise because it has its own dedicated regenerate button
-- Including an Input/Output-section control (input gain, output gain, dry/wet mix, bypass) in a preset's saved values or in Randomise's jitter set
-
----
-
-**Input and output belong in the layout, not among the parameters**
-Every plugin wears a strip down each side: input trim above its fader on the left, mix above the output fader on the right. These are not creative parameters — they never appear in the parameter grid, and Randomise never touches them (see the rule above). Every plugin has both strips; this is chassis, not a per-plugin decision. Four of five plugins were missing one before anyone checked, because nothing made their absence visible.
-
-**A failed response looks like:**
-- Placing input trim, mix, or output gain in the main parameter grid alongside creative controls
-- Shipping a plugin with only one of the two strips, or neither
-- Treating the strips as an optional layout choice to raise with the Designer per plugin
-
----
-
-**Section membership is authored, not coded**
-Each plugin declares, in one place in its own source, which of its controls belong to INPUT, PERFORMANCE and OUTPUT, and which Randomise may touch. Randomise derives its scope from that same declaration rather than a second list, so moving a control into a strip excludes it with nothing else to update. The design system supplies the strips, the components and the naming/tooltip convention — it does not define which parameters a plugin has.
-
-Slots fill from the bottom, so a lone parameter lands on the fader rather than the readout above it. An unclaimed slot draws nothing: an empty strip is a visible reminder that a plugin is unfinished, rather than a default quietly standing in for a decision nobody made.
-
-**A failed response looks like:**
-- Keeping two separate lists — one for layout, one for Randomise scope — that can disagree with each other
-- Putting a plugin's parameter names into the shared design system
-- Filling an empty slot with a placeholder or sensible default rather than leaving it blank
-- Filling slots from the top, so a single parameter lands on the readout instead of the fader
-
----
-
 **Validation**
 After building, validate with `pluginval` (JUCE's own automated plugin validator) before considering the plugin "done" — this is the automated check, not a substitute for it. Then load it in a real DAW (rescan the plugin folder) and process real audio as the end-to-end smoke test; a clean `pluginval` pass alone is not sufficient.
 
@@ -353,61 +213,6 @@ When the next step is simply "go test the plugin in your DAW" (no other setup ne
 
 **A failed response looks like:**
 - Turning "go test the plugin in your DAW" into a multi-step checklist instead of just saying "Time to test the VST3 in your DAW!"
-
----
-
-**DAW smoke-test project scaffold, gitignored from the start**
-When scaffolding a new JUCE plugin project, create a `Testing/` folder containing a DAW test project (e.g. an Ableton Live `.als` project) that loads the plugin for manual smoke testing, and add `Testing/` to `.gitignore` in the same commit that creates it. DAW projects auto-generate large, constantly-churning subfolders on every save (Ableton: `Backup/` with timestamped project snapshots, `Samples/` with recorded/bounced audio) — these are local working state, not project source, and produce noisy binary diffs if tracked. Do not commit the `Testing/` folder first and gitignore it later; set this up correctly at project creation time.
-
-**A failed response looks like:**
-- Committing the DAW test project folder before gitignoring it, requiring a later `git rm --cached` cleanup
-- Tracking `Backup/`/`Samples/`-style auto-generated DAW subfolders in git
-- Skipping the `Testing/` scaffold entirely because "the Designer can set it up manually"
-
----
-
-**`.vscode/` and `.claude/settings.json` are committed, not gitignored**
-Plugin repos from this studio are always private and single-developer, so editor and agent settings are shared project configuration, not personal clutter. That covers `.vscode/settings.json` (e.g. `chat.tools.terminal.autoApprove` entries for `cmake`, which only Copilot reads) and `.claude/settings.json` (e.g. `"permissions": { "allow": ["Bash(cmake:*)", "Bash(ctest:*)"] }`, which is what Claude Code reads) — set up whichever matches the harness in use, both if both are used, so builds don't stop for approval every time. Commit them so their settings survive a reclone instead of being re-created by hand on every machine. This does not loosen anything else — build output, `build/`, `Testing/`, and any real secret stay out regardless. If a plugin repo already has `.vscode/` in its `.gitignore`, remove that line rather than leaving the two conventions side by side.
-
-**A failed response looks like:**
-- Adding `.vscode/` to `.gitignore` out of habit, or because a public-repo template does it
-- Leaving `.vscode/` or `.claude/settings.json` untracked and re-creating the same settings by hand after each clone
-- Adding Copilot's `chat.tools.terminal.autoApprove` for a Claude Code user and expecting it to stop the approval prompts — Claude Code only reads `.claude/settings.json`
-- Committing `.claude/settings.local.json` — that file is personal and stays out
-- Extending this to a non-plugin project, where the private-repo assumption may not hold
-
----
-
-**Input/Output audio folders at project root, gitignored from the start**
-`/skill-me-up` creates empty `Input/` and `Output/` folders at the project root automatically for every `platform/juce-vst3-plugin` project, and adds both to `.gitignore` in the same commit that creates them — `Input/` holds source audio files to feed the plugin for manual testing, `Output/` holds rendered/bounced results for comparison. Audio files are binary and churn constantly; they are local working state, not project source.
-
-**A failed response looks like:**
-- Committing audio files into `Input/`/`Output/` before gitignoring the folders
-- Skipping the `Input/`/`Output/` scaffold entirely because "the Designer can set it up manually"
-
----
-
-**Project documentation scaffold: readme.md, dsp-maths.md, dsp-testing.md, nomenclature.md, presets.md, visualizer.md**
-`/skill-me-up` creates six markdown docs at the project root automatically, as a template skeleton, for every `platform/juce-vst3-plugin` project, following the style rules in `workflow/docs-style`, committed (not gitignored, since this is project documentation rather than working state), filled in with real content as the design solidifies:
-
-- `readme.md`: the concept in plain English, the architecture/mechanism overview, and how to build and validate the plugin. Points to `dsp-maths.md` for the actual transfer functions and says plainly that where the two disagree, the code is unfinished. Points to `nomenclature.md` for what each control means, to `presets.md` for the named presets and to `visualizer.md` for the animated display.
-- `dsp-maths.md`: the plugin's DSP formulas and transfer functions, opening with a "Central equations" section of display math near the top, kept current as the contract the prototype and the real-time port both have to agree with. Below that, a padded table of the control maps (Control, Model value, Map).
-- `dsp-testing.md`: this project's own validation record: what layers of testing exist (behavioural prototype checks, a numerical comparison harness, a DSP/state/plugin validation suite), what each layer can and cannot prove and current known gaps. This is distinct from the shared `workflow/testing.md` skill, which is general-purpose rather than specific to this plugin.
-- `nomenclature.md`: a glossary of every control as padded Glyph and Name tables grouped under thematic subheadings, with one meaning bullet per entry ("**NAME:** meaning"), mapping each control's on-screen/metaphor label to what it actually does.
-- `presets.md`: the named presets as a padded table, one row per preset and one right-aligned numeric column per preset-defining control, no prose column. One or two sentences on the idea the preset set follows, which controls a preset stores and which it never stores (the Input and Output section controls), with Default listed first as the neutral baseline. One plain-English bullet per preset underneath the table, in table order ("**Name:** description"). Preset values change after every listening round, which is why they live in their own file rather than in readme.md.
-- `visualizer.md`: the spec for the animated display, built on the principle that every animated quantity traces back to a real DSP value rather than a free-running frame counter. A short padded table maps DSP state to visual state, with a detail bullet per row, plus a section recording implementation constraints (threading, measured paint cost, design-system tokens).
-
-**A failed response looks like:**
-- Writing real content above or below the `<!-- UP-SKILL SCAFFOLD PLACEHOLDER -->` block instead of deleting it entirely, leaving the placeholder and the real doc stacked in the same file
-- Linking to a remembered filename like `maths.md` or `testing.md` from a different project's convention instead of the literal `dsp-maths.md` / `dsp-testing.md` on disk
-- Leaving a heading with nothing written under it when calling the file finished
-- Embedding the glyph glossary inline in `readme.md` instead of giving it its own `nomenclature.md`
-- Letting `dsp-maths.md` drift from what the code actually does instead of treating it as the contract
-- Gitignoring any of the six, or leaving `dsp-testing.md` unwritten so the only record of what's validated is scattered terminal history
-- Placing named presets or per-preset descriptions in `readme.md` or `nomenclature.md` instead of `presets.md`
-- A table that is ragged in the raw file, or that has cells longer than 40 characters, a sentence, LaTeX or a pipe character inside a cell
-- Writing the glyph glossary as a bullet list, or as a table with long meaning cells instead of a short cell plus a meaning bullet underneath
-- A visualizer element that cannot be traced back to a real DSP value
 
 ---
 

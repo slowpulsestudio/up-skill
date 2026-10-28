@@ -1,3 +1,8 @@
+---
+load: on-demand
+description: Rules for this Swift iOS app. Building and running, production standards, Supabase Edge Functions and Xcode project settings. Read before writing, building or changing any app code, Xcode project setting or Edge Function.
+---
+
 # iOS & Xcode Rules
 
 ---

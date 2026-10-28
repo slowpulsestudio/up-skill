@@ -1,3 +1,8 @@
+---
+load: on-demand
+description: Rules for procedural animation rendered to video. Look at the reference images first, GPU pixels with host-language control, off-screen rendering with ffmpeg, sidecars, automation, one preview and render path, encoding, the Output folder, variations and measuring cost. Read before designing, writing or rendering any visual.
+---
+
 # Generative Video Rules
 
 Rules for projects that generate procedural, parameter-driven animation and render it to video files: abstract visuals for social media, music videos, projection content. They do not cover editing existing video, AI video-generation models or live VJ performance. This skill sits on top of a platform skill such as `platform/python-cli` or `platform/python-mac`, which owns the environment, dependency, packaging and build rules.

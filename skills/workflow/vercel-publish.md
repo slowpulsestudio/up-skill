@@ -1,3 +1,8 @@
+---
+load: on-demand
+description: Vercel deployment rules. Connecting the repo, deployments and environment variables. Read before deploying, changing Vercel settings or adding an environment variable.
+---
+
 # Vercel Publish Rules
 
 ---

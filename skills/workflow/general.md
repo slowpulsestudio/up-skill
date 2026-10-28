@@ -1,3 +1,8 @@
+---
+load: always
+description: Core execution rules. Instruction compliance over completion, verification before done, live design sources, task lists, rebuilding, secrets, production standards, self-verification and staying inside the current project.
+---
+
 # General Rules
 
 ---

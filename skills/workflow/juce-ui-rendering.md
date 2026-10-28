@@ -1,3 +1,8 @@
+---
+load: on-demand
+description: Rules for implementing Figma artwork as JUCE painting code. SVG filter limits, mapping assets onto their own canvas, offscreen image strength loss, suppressed notifications, cached static chrome, one shared clock and measuring paint cost. Read before writing or changing any paint(), Drawable or SVG rendering code.
+---
+
 # JUCE UI Rendering Rules
 
 Rules for implementing Figma artwork as JUCE `Component` painting code — vector import, shadows and glows, clipping, and the cost of repainting. Applies to whoever builds the shared design system library, not to plugins that merely consume it.

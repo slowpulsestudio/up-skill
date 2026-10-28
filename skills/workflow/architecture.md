@@ -1,3 +1,8 @@
+---
+load: always
+description: General code structure rules. Single responsibility, extend instead of duplicating, one name per thing, configuration over hardcoding and no speculative abstraction.
+---
+
 # Architecture Rules
 
 ---

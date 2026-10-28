@@ -1,3 +1,8 @@
+---
+load: on-demand
+description: Rules for tree navigation where every node is linkable by URL. The route is the single source of truth for selection, ancestors expand, the selection scrolls into view, node IDs are stable and saved references store the full route. Read before changing routing, tree navigation or selection code.
+---
+
 # Deep-Linking Rules
 
 Rules for making hierarchical tree navigation fully URL-addressable, so any node can be linked to directly and the tree opens, expands and scrolls to it correctly on load.

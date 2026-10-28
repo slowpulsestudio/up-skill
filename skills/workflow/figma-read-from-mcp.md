@@ -1,3 +1,8 @@
+---
+load: on-demand
+description: Rules for reading designs from Figma through MCP (design to code). Verify the connection, Figma is the only source of design values, fetch the full variable set and component specs, read every leaf, interpret sizing modes and run the post-build checklist. Read before implementing or changing any UI from the Figma file in .figma-url.
+---
+
 # Figma MCP Rules
 
 ---

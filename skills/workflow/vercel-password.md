@@ -1,3 +1,8 @@
+---
+load: on-demand
+description: Adds or maintains a password gate on Vercel preview deployments using Edge middleware. Read before adding, changing or debugging the password gate, its middleware or its environment variable.
+---
+
 # Vercel Middleware Password Gate
 
 ## What this skill does

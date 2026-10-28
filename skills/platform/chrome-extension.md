@@ -1,3 +1,8 @@
+---
+load: on-demand
+description: Rules for this Chrome extension. Building and loading, manifest and permissions, Content Security Policy, secrets, storage and the Chrome Web Store. Read before writing or changing any extension code or manifest.json, or preparing a store release.
+---
+
 # Chrome Extension Rules
 
 ---

@@ -1,3 +1,8 @@
+---
+load: on-demand
+description: Writing style for human-readable project docs. No em dashes, no Oxford commas, tables readable in the raw file, glossary tables, headings and checks before reporting done. Read before writing or editing any markdown documentation in this project.
+---
+
 # Documentation Style Rules
 
 Rules for every human-readable `.md` file in a project: `readme.md`, `dsp-maths.md`, `dsp-testing.md`, `nomenclature.md`, `presets.md`, `visualizer.md` and any other doc meant for a person to read. These rules do not apply to code, maths, quoted source text, the Up-Skill section of `AGENTS.md` (between the `UP-SKILL:START` and `UP-SKILL:END` markers) or the files in `.claude/skills`, all of which are regenerated rather than hand-maintained.

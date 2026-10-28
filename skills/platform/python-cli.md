@@ -1,3 +1,8 @@
+---
+load: on-demand
+description: Rules for this Python CLI tool. Environment, secrets, distribution, configuration, cost control for expensive operations, swappable providers, verification and API identifiers. Read before writing or changing any code or dependency.
+---
+
 # Python CLI / Local Tool Rules
 
 ---

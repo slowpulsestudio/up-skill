@@ -1,3 +1,8 @@
+---
+load: on-demand
+description: Rules for writing to Figma (code to canvas). Confirm before deleting or modifying anything, stay on the page in .figma-url, never invent Figma slash commands, pick the right approach, refine on canvas and push tokens back to code. Read before any write to a Figma file, including use_figma and generate_figma_design calls.
+---
+
 # Figma Write to Canvas Rules
 
 ---

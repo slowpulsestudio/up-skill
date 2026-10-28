@@ -1,3 +1,8 @@
+---
+load: on-demand
+description: Rules for this Python web app. Environment, secrets, stack choice, development workflow, the local dev server, UI hygiene, filtering pipelines, git and API identifiers. Read before writing or changing any app code, template or dependency.
+---
+
 # Python Website Rules
 
 ---

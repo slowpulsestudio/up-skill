@@ -2,6 +2,35 @@
 
 ---
 
+## Skill file format
+
+Every skill is one markdown file in `skills/workflow/` or `skills/platform/`, starting with this frontmatter:
+
+```
+---
+load: on-demand
+description: What the skill covers. Read before {the tasks it applies to}.
+---
+```
+
+- `load`: `always` puts the whole skill into every project's `AGENTS.md`, so it is in context on every turn. Keep this for rules that apply to every task (currently `workflow/general` and `workflow/architecture`). Everything else is `on-demand`.
+- `description`: for an on-demand skill this is the only part the agent sees until it decides to read the skill, so it must say when to read it, not just what is in it. Name the actions that trigger it ("Read before any git commit, push, merge..."). If one rule is too important to wait for the agent to open the file, state it in the description too, as `workflow/git` does for pushing. Keep it to one line, avoid a colon followed by a space (it breaks the YAML) and don't start it with a backtick.
+
+## The three levels
+
+1. **Always loaded:** `AGENTS.md` holds every `load: always` skill in full, plus a one-line index of the on-demand skills.
+2. **Loaded when a task matches:** `/skill-me-up` installs each on-demand skill as `.claude/skills/upskill-{category}-{name}/SKILL.md`. The agent reads it when a task matches its description.
+3. **Loaded when the skill says so:** long material that only some of a skill's tasks need goes in `skills/{category}/{name}/references/*.md`, and the skill's body says which file to read before which work. `/skill-me-up` copies these to `.claude/skills/upskill-{category}-{name}/references/`.
+
+Rules for reference files:
+- Refer to them as `references/{file}.md`, the path relative to the installed `SKILL.md`.
+- A reference never points to another reference. Two levels below `AGENTS.md` is the limit.
+- If a rule in a reference must apply to every task, repeat it in one line in the skill body, as `platform/juce-vst3-plugin` does for the preset toolbar.
+- A `load: always` skill can't have references: its body lives in `AGENTS.md`, where `references/` paths don't resolve.
+- Split a skill only when it is long and has whole sections that only some tasks need. Most skills stay as one file.
+
+---
+
 ## Bundling files with a skill
 
 Some skills need to copy actual files into the project (e.g. a starter template or a component library). To bundle files with a skill:

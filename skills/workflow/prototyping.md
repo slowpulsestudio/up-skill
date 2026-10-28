@@ -1,3 +1,8 @@
+---
+load: on-demand
+description: Rules for UX research prototypes. Freeze the prototype on a dated branch before testing, pin component-library imports and leave prototype branches untouched. Read before preparing a prototype for a research session, or changing a prototype branch or its dependencies.
+---
+
 # UX Research Prototyping Rules
 
 Rules for managing prototypes that will be used in UX research sessions. The goal is a stable, unchanging snapshot, not a live development branch.

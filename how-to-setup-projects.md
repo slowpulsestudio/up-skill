@@ -4,7 +4,7 @@
 
 ## What this does
 
-Up-Skill is a library of AI instruction files. When you start a new project, you pick the ones that apply and they're combined into `AGENTS.md`, the one file every AI assistant reads. From that point on the AI knows your rules.
+Up-Skill is a library of AI instruction files. When you start a new project, you pick the ones that apply. Rules that matter for every task go into `AGENTS.md`, the one file every AI assistant reads; the rest are installed as skills the AI reads only when a task needs them. From that point on the AI knows your rules.
 
 ---
 
@@ -108,17 +108,18 @@ workflow/juce-ui-rendering
 ## Done
 
 The agent will now:
-1. Fetch the latest version of each skill and write them into the Up-Skill section at the top of `AGENTS.md`
-2. Copy any bundled files into the project (e.g. a UI component library)
-3. Create `CLAUDE.md` containing just `@AGENTS.md`, so Claude reads the same file as Copilot and every other harness
+1. Fetch the latest version of each skill. The always-loaded ones (`workflow/general`, `workflow/architecture`) go in full into the Up-Skill section at the top of `AGENTS.md`, with a one-line index of the others saying when to read each
+2. Install every other selected skill into `.claude/skills/upskill-{category}-{name}/`, with any reference files it has
+3. Copy any bundled files into the project (e.g. a UI component library)
+4. Create `CLAUDE.md` containing just `@AGENTS.md`, so Claude reads the same file as Copilot and every other harness
 
-That's it. Put any notes about this particular project in `AGENTS.md`, below the line that says `UP-SKILL:END`. `/skill-me-up` never changes anything there.
+That's it. Put any notes about this particular project in `AGENTS.md`, below the line that says `UP-SKILL:END`. `/skill-me-up` never changes anything there. Don't edit the `.claude/skills/upskill-*` folders: every run replaces them.
 
 ---
 
 ## Updating later
 
-Whenever Up-Skill is updated with new or improved skills, just run `/skill-me-up` again. It will re-fetch everything and replace the Up-Skill section of `AGENTS.md` with the latest version, leaving your project notes below it alone. Projects set up before `AGENTS.md` still have `master-skills.md` and `project-specific-agent-instructions.md`: the next run moves your notes into `AGENTS.md`, points `CLAUDE.md` at it and deletes both old files. Bundled files that already exist in your project will not be overwritten — you'll be warned about any conflicts so you can resolve them manually.
+Whenever Up-Skill is updated with new or improved skills, just run `/skill-me-up` again. It will re-fetch everything, replace the Up-Skill section of `AGENTS.md` and reinstall the `.claude/skills/upskill-*` folders with the latest versions, leaving your project notes below the section alone. It asks before deleting the folder of a skill you've removed from `.skills`. Projects set up before `AGENTS.md` still have `master-skills.md` and `project-specific-agent-instructions.md`: the next run moves your notes into `AGENTS.md`, points `CLAUDE.md` at it and deletes both old files. Bundled files that already exist in your project will not be overwritten — you'll be warned about any conflicts so you can resolve them manually.
 
 Some skills bundle their own extra slash commands alongside their other resource files — for example, `platform/juce-vst3-plugin` bundles `/build-vst3`, `/adopt-design-system` and `/system-my-design`. These are only installed in projects that selected that skill, the same way as any other bundled file.
 

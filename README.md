@@ -6,9 +6,13 @@ This repository contains a reusable library of AI instruction files ("skills") t
 
 The skills in this repository are the **source of truth** for AI coding guidance. They are designed to be maintained once and reused everywhere.
 
-Projects should **not** point AI agents directly at individual skill files. Instead, a build step combines the required skills into the project's `AGENTS.md`, the cross-tool instruction file that Copilot, Codex, Cursor, Gemini CLI and most other coding agents read from the project root. The skills are written inline, between markers, with the project's own notes below them. `CLAUDE.md` holds only `@AGENTS.md`, so Claude loads the same file.
+Projects should **not** point AI agents directly at individual skill files in this repository. Instead, `/skill-me-up` builds each project's skills in three levels, so an agent's context only holds what the current task needs:
 
-This approach avoids relying on AI agents to resolve nested imports or follow multiple levels of references, which can produce inconsistent results. Only Claude follows `@` imports, so `AGENTS.md` itself never uses them.
+1. **Always loaded:** the project's `AGENTS.md`, the cross-tool instruction file that Copilot, Codex, Cursor, Gemini CLI and most other coding agents read from the project root. It holds the `load: always` skills in full (`workflow/general` and `workflow/architecture`) and a one-line index of every other selected skill saying when to read it. The project's own notes sit below the generated section. `CLAUDE.md` holds only `@AGENTS.md`, so Claude loads the same file.
+2. **Loaded when a task matches:** every other skill is installed as `.claude/skills/upskill-{category}-{name}/SKILL.md`. Claude and Copilot discover these from their descriptions; other agents find them through the index in `AGENTS.md`.
+3. **Loaded when a skill says so:** long, task-specific sections of a skill live in its `references/` folder and are read only when the skill's body points to them.
+
+Only Claude follows `@` imports, so `AGENTS.md` never uses them. Levels 2 and 3 are plain file reads by path, which every agent can do.
 
 ## Repository Structure
 
@@ -36,12 +40,14 @@ skills/
         ios.md
         chrome-extension.md
         python-mac.md
+        python-mac/references/
         python-website.md
         python-cli.md
         juce-vst3-plugin.md
+        juce-vst3-plugin/references/
 ```
 
-Each file should cover **one topic only** and remain reusable across projects.
+Each file should cover **one topic only** and remain reusable across projects. Each starts with frontmatter giving its `load` level and a `description` of when to read it; see [how-to-create-skills.md](how-to-create-skills.md).
 
 ## Setup Steps
 
@@ -118,11 +124,12 @@ For each project:
 
 1. From `skills/workflow/`, pick via a multi-select checklist; `general.md`, `architecture.md`, `git.md`, `testing.md` and `docs-style.md` are pre-checked as recommended defaults. Add or remove any others that apply.
 2. From `skills/platform/`, pick **exactly one** via a single-select question to match the project's platform (e.g. `ios.md` for an iOS app, `python-mac.md` for a Mac desktop app). Never include more than one platform skill.
-3. Concatenate them, in order, into the marked Up-Skill section at the top of `AGENTS.md`.
-4. Keep project-specific instructions in `AGENTS.md` below that section, where `/skill-me-up` never changes them.
-5. Create `CLAUDE.md` containing just `@AGENTS.md`, so Claude loads the same file every other harness reads.
+3. Write the `load: always` skills in full, plus an index of the rest, into the marked Up-Skill section at the top of `AGENTS.md`.
+4. Install every `load: on-demand` skill, with its `references/` folder, into `.claude/skills/upskill-{category}-{name}/`.
+5. Keep project-specific instructions in `AGENTS.md` below that section, where `/skill-me-up` never changes them.
+6. Create `CLAUDE.md` containing just `@AGENTS.md`, so Claude loads the same file every other harness reads.
 
-The AI should consume only the generated file.
+The AI starts from `AGENTS.md` and reads the installed skills only when a task needs them.
 
 ## Design Principles
 
@@ -130,8 +137,8 @@ The AI should consume only the generated file.
 * Skills are modular and reusable.
 * Shared guidance lives in this repository.
 * Projects contain only project-specific context.
-* AI agents receive a single, flattened instruction file.
-* Never rely on recursive imports or multi-level instruction chains.
+* Only rules that apply to every task are always loaded; everything else loads when a task needs it.
+* Never rely on `@` imports, and never go deeper than three levels: `AGENTS.md`, a skill, one of its reference files.
 
 ## Adding a Skill
 
@@ -145,7 +152,7 @@ When adding a new skill:
 
 ## Updating Skills
 
-Because all projects consume generated instruction files, improvements made here can be propagated to every project simply by rerunning `/skill-me-up` in the project, which rebuilds the Up-Skill section of its `AGENTS.md`.
+Because all projects consume generated instruction files, improvements made here can be propagated to every project simply by rerunning `/skill-me-up` in the project, which rebuilds the Up-Skill section of its `AGENTS.md` and reinstalls its on-demand skills.
 
 This repository is intended to be version-controlled independently and shared across multiple repositories.
 

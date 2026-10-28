@@ -1,3 +1,8 @@
+---
+load: on-demand
+description: Rules for tuning audio or DSP algorithms in a throwaway prototype before the real-time port. Parameter sweeps, visual and measured validation, checking the measuring instrument and reference, round-based tuning and tonal bias. Read before prototyping, tuning, measuring or listening-testing any DSP algorithm.
+---
+
 # DSP Prototyping Rules
 
 ---

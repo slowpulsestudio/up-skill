@@ -1,3 +1,8 @@
+---
+load: on-demand
+description: Rules for scraping websites. Look for a cheaper source before writing an HTML scraper, HTTP client setup and what to do when plain HTTP is blocked. Read before writing or changing any scraping or page-fetching code.
+---
+
 # Web Scraper Rules
 
 ---

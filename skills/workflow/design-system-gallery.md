@@ -1,3 +1,8 @@
+---
+load: on-demand
+description: Rules for a component gallery of a shared design system built from Figma. Every value comes from structured MCP data and never from an image, typeface checks, layout rules, states and variants, reuse of shared components, icon vectors and scaling, and Figma plugin API traps. Read before building, changing or auditing any gallery component or Figma icon.
+---
+
 # Design System Gallery Rules
 
 ---

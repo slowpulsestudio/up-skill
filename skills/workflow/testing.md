@@ -1,3 +1,8 @@
+---
+load: on-demand
+description: Testing standards. Real end-to-end verification, components then the full pipeline, measuring pixels instead of eyeballing screenshots, bisecting, state-transition bugs and loud failures. Read before writing tests, debugging a failure, or reporting any code change as done.
+---
+
 # Testing Rules
 
 ---

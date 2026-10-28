@@ -1,3 +1,8 @@
+---
+load: on-demand
+description: Rules for calling AI image-generation APIs. Provider abstraction, credentials, determinism and caching, continuity between generations, cost control, prompt composition and model validity. Read before writing or changing any image-generation code or prompt.
+---
+
 # Image Generation Rules
 
 ---

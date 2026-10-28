@@ -38,33 +38,24 @@ The new format has no `mode`, `agent`, `model` or `tools` settings. If the origi
 
 If `.github/prompts/` is now empty, delete it.
 
-## Step 3 — Fix how the rules are loaded
+## Step 3 — Remove `.github/copilot-instructions.md`
 
-Older setups put this line in both `CLAUDE.md` and `.github/copilot-instructions.md`:
+Older setups put this line in `.github/copilot-instructions.md`:
 
 ```
 Read master-skills.md and project-specific-agent-instructions.md for your operating instructions.
 ```
 
-That line only asks the AI to go and read the files. Replace it with imports, which load both files into every chat automatically.
-
-**`CLAUDE.md`:** replace that exact line with these two lines, and keep everything else in the file. If the file doesn't exist, create it with just these two lines. If it exists but has neither the old line nor these two lines, add these two lines at the top.
-
-```
-@master-skills.md
-@project-specific-agent-instructions.md
-```
-
-Both the Copilot and Claude harnesses read `CLAUDE.md`.
-
-**`.github/copilot-instructions.md`:**
+Up-Skill now writes everything into `AGENTS.md`, which Copilot reads directly, so this file is no longer needed.
 
 - If it contains only the old line, delete it.
-- If it contains anything else, show the user the extra text and ask whether to move it into `project-specific-agent-instructions.md`. If yes, add it to the end of that file and delete `.github/copilot-instructions.md`. If no, remove only the old line and leave the rest.
+- If it contains anything else, show the user the extra text and ask whether to move it into `project-specific-agent-instructions.md`. If yes, add it to the end of that file and delete `.github/copilot-instructions.md`. If no, remove only the old line and leave the rest. Step 5 then moves `project-specific-agent-instructions.md` into `AGENTS.md`.
 
-Do not add `@` lines to `.github/copilot-instructions.md`. They resolve from `.github/` and silently load nothing.
+Do not add `@` lines to `.github/copilot-instructions.md`. Copilot doesn't follow them.
 
 If `.github/` is now empty, delete it.
+
+Leave `CLAUDE.md`, `master-skills.md` and `project-specific-agent-instructions.md` alone here. Step 5 handles all three.
 
 ## Step 4 — Install the new `/skill-me-up`
 
@@ -78,7 +69,7 @@ Extract it to a new temporary folder. Copy `up-skill-main/.claude/skills/skill-m
 
 ## Step 5 — Rebuild the skills
 
-Read the `.claude/skills/skill-me-up/SKILL.md` you just installed and carry out all of its steps now, in this chat, as if the user had typed `/skill-me-up`. This regenerates `master-skills.md` and installs the slash commands this project's skills include.
+Read the `.claude/skills/skill-me-up/SKILL.md` you just installed and carry out all of its steps now, in this chat, as if the user had typed `/skill-me-up`. This writes the skills into `AGENTS.md`, moves the notes from `project-specific-agent-instructions.md` into it, points `CLAUDE.md` at it, deletes `master-skills.md` and `project-specific-agent-instructions.md`, and installs the slash commands this project's skills include.
 
 When it reaches its git question, ask instead: *"Would you like me to commit and push this Up-Skill migration to GitHub?"* If yes, commit with the message `Migrate Up-Skill slash commands from prompts to skills`.
 
@@ -88,7 +79,7 @@ Tell the user, in a short list:
 
 - Which old files were removed
 - Which of their own prompts were converted, and any settings that were dropped
-- What changed in `CLAUDE.md` and `.github/copilot-instructions.md`
+- What changed in `.github/copilot-instructions.md`, `AGENTS.md` and `CLAUDE.md`
 - Which slash commands are now in `.claude/skills/`
 
 Finish with: *"Start a new chat to use the slash commands. From now on, run `/skill-me-up` to refresh."*

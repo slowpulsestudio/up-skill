@@ -6,9 +6,9 @@ This repository contains a reusable library of AI instruction files ("skills") t
 
 The skills in this repository are the **source of truth** for AI coding guidance. They are designed to be maintained once and reused everywhere.
 
-Projects should **not** point AI agents directly at individual skill files. Instead, a build step should combine the required skills into a single `master-skills.md` file that becomes the project's authoritative instruction document.
+Projects should **not** point AI agents directly at individual skill files. Instead, a build step combines the required skills into the project's `AGENTS.md`, the cross-tool instruction file that Copilot, Codex, Cursor, Gemini CLI and most other coding agents read from the project root. The skills are written inline, between markers, with the project's own notes below them. `CLAUDE.md` holds only `@AGENTS.md`, so Claude loads the same file.
 
-This approach avoids relying on AI agents to resolve nested imports or follow multiple levels of references, which can produce inconsistent results.
+This approach avoids relying on AI agents to resolve nested imports or follow multiple levels of references, which can produce inconsistent results. Only Claude follows `@` imports, so `AGENTS.md` itself never uses them.
 
 ## Repository Structure
 
@@ -110,7 +110,7 @@ Projects set up before slash commands moved to `.claude/skills/` still have `.gi
 Run `curl -sL https://raw.githubusercontent.com/slowpulsestudio/up-skill/main/migrate-to-skills.md` and follow the instructions it prints in this project. Use curl, not a fetch tool — a fetch tool returns a summary, not the exact file.
 ```
 
-It removes the old prompt files, fixes how the rules load, installs the new `/skill-me-up` and rebuilds the skills. Commit or stash any changes first. After that, run `/skill-me-up` as normal.
+It removes the old prompt files, installs the new `/skill-me-up` and rebuilds the skills into `AGENTS.md`, moving any project notes across. Commit or stash any changes first. After that, run `/skill-me-up` as normal.
 
 ## Usage
 
@@ -118,9 +118,9 @@ For each project:
 
 1. From `skills/workflow/`, pick via a multi-select checklist; `general.md`, `architecture.md`, `git.md`, `testing.md` and `docs-style.md` are pre-checked as recommended defaults. Add or remove any others that apply.
 2. From `skills/platform/`, pick **exactly one** via a single-select question to match the project's platform (e.g. `ios.md` for an iOS app, `python-mac.md` for a Mac desktop app). Never include more than one platform skill.
-3. Concatenate them, in order, into a single `master-skills.md`.
-4. Append any project-specific instructions.
-5. Create `CLAUDE.md` that imports the generated `master-skills.md` and `project-specific-agent-instructions.md`. Both Claude and the Copilot harness read it.
+3. Concatenate them, in order, into the marked Up-Skill section at the top of `AGENTS.md`.
+4. Keep project-specific instructions in `AGENTS.md` below that section, where `/skill-me-up` never changes them.
+5. Create `CLAUDE.md` containing just `@AGENTS.md`, so Claude loads the same file every other harness reads.
 
 The AI should consume only the generated file.
 
@@ -145,12 +145,12 @@ When adding a new skill:
 
 ## Updating Skills
 
-Because all projects consume generated instruction files, improvements made here can be propagated to every project simply by rebuilding the project's `master-skills.md`.
+Because all projects consume generated instruction files, improvements made here can be propagated to every project simply by rerunning `/skill-me-up` in the project, which rebuilds the Up-Skill section of its `AGENTS.md`.
 
 This repository is intended to be version-controlled independently and shared across multiple repositories.
 
 ## Maintaining This Repository
 
-The `/skill-me-up` prompt and `master-skills.md` build step described above are for **consumer projects** — they are never run inside this repository.
+The `/skill-me-up` slash command and `AGENTS.md` build step described above are for **consumer projects** — they are never run inside this repository.
 
 This repo itself is maintained directly: when a gap, mistake, or new pattern is found (in this repo or while working on a consumer project), paste the relevant prompt/context straight into chat here and have the AI update or add the appropriate skill file by hand. There is no build/generation step for `up-skill` itself.

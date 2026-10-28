@@ -81,7 +81,7 @@ Rewrite the PluginEditor using the approved mapping. Rules:
 - Do not touch the processor, the DSP, or `createParameterLayout()`. Parameter IDs, ranges and defaults stay exactly as they are — this is a UI change only.
 - Every control is attached to its parameter through the APVTS attachment classes, so automation and host state keep working.
 - `sps::Toggle` is a `juce::Button`, so boolean parameters bind with `AudioProcessorValueTreeState::ButtonAttachment` like any other button — never hand-roll a `juce::ParameterAttachment` for one.
-- Every control gets a hover tooltip using the classic industry term for that parameter, per the tooltip rule in master-skills.md.
+- Every control gets a hover tooltip using the classic industry term for that parameter, per the tooltip rule in AGENTS.md.
 - Displayed values are rounded to whole integers unless that parameter is explicitly meant to show decimals.
 - Wire `sps::PresetToolbar`: `setPresetNames`, `onPresetSelected`, `onRandomise`, and `isDirty`. Call `refreshDisplay()` whenever a tracked parameter changes.
 - Randomise jitters only the creative parameters. It must never move input gain, output gain, wet/dry mix or bypass. Seed parameters ARE included.

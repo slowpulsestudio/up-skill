@@ -46,6 +46,23 @@ To discover pages, frames, and components in a Figma file, use `use_figma` with 
 - Asking the Designer to find and paste node IDs or Figma URLs
 - Using `search_design_system` to find local file variables — it only searches published/shared libraries and returns nothing for local variables
 
+**Providing direct links to Figma nodes**
+When asked for a Figma link to a component or other node, resolve the real node ID in its source file through Figma MCP. A component key, imported node ID, or node ID from another file is not the source node ID.
+
+1. Identify the source file from the library registry or MCP library metadata, then create a Figma session for that file before inspecting it.
+2. Search only the relevant library page. Verify the node's ID and name through MCP.
+3. Build the link from the source file key and verified node ID: `https://www.figma.com/design/<fileKey>/<fileName>?node-id=<nodeId-with-hyphen>`.
+4. If MCP cannot verify a real source node, do not guess or present an unverified link. Explain what information is missing.
+
+A link that opens the file but selects no node is not a valid direct node link.
+
+**A failed response looks like:**
+- Using a component key, imported node ID, or ID from another file as the source node ID
+- Inspecting a library before creating a Figma session for its source file
+- Searching unrelated pages instead of only the relevant library page
+- Returning a link without verifying the node's ID and name through MCP
+- Guessing a node ID or giving a file-only link when MCP cannot verify the source node
+
 ---
 
 **Pull the full variable set before implementing anything**

@@ -23,7 +23,7 @@ One rule from `references/editor-ui.md` applies to every task, so it is repeated
 ---
 
 **Default target configuration**
-Unless the Designer explicitly asks for more, or a specific plugin has a documented technical requirement that prevents it, every Slow Pulse Studio VST3 targets: VST3 only, Apple Silicon/arm64 only (never universal, never Intel/x86_64), macOS 11.0 as the minimum deployment target, Release configuration, and plugin version `0.1.0` for its initial release. `juce_add_plugin(... FORMATS VST3 ...)` — do not add `AU`, `Standalone`, or a Windows/Linux target speculatively. Set the architecture and deployment target explicitly (`CMAKE_OSX_ARCHITECTURES "arm64"`, `CMAKE_OSX_DEPLOYMENT_TARGET "11.0"`) rather than leaving them to the toolchain default — never raise the minimum OS merely because the development machine's SDK happens to be newer. Do not create installer/distribution packaging unless explicitly requested.
+Unless the Designer explicitly asks for more, or a specific plugin has a documented technical requirement that prevents it, every Slow Pulse Studio VST3 targets: VST3 only, Apple Silicon/arm64 only (never universal, never Intel/x86_64), macOS 11.0 as the minimum deployment target, Release configuration, and plugin version `0.1.0` for its initial release. `juce_add_plugin(... FORMATS VST3 ...)` — do not add `AU`, `Standalone`, or a Windows/Linux target speculatively. Set the architecture and deployment target explicitly (`CMAKE_OSX_ARCHITECTURES "arm64"`, `CMAKE_OSX_DEPLOYMENT_TARGET "11.0"`) rather than leaving them to the toolchain default — never raise the minimum OS merely because the development machine's SDK happens to be newer. Do not create installer/distribution packaging unless explicitly requested. This is the default for effects; an instrument keeps these settings and adds the instrument flags and bus layout in `workflow/vst-midi-synth`.
 
 **A failed response looks like:**
 - Adding `Standalone`, `AU`, or other formats "for completeness" when only VST3/macOS was asked for
@@ -154,7 +154,7 @@ Where a prototype renders one fixed event per setting and replays it, the real-t
 ---
 
 **Host-position scheduling, not a free-running counter**
-Rhythmic triggering derives from the host playhead's PPQ position, and any probabilistic choice hashes the step index with a seed rather than drawing from a running RNG. A bounced render must match what was heard, and replaying a bar must fire the same pattern.
+Rhythmic triggering derives from the host playhead's PPQ position, and any probabilistic choice hashes the step index with a seed rather than drawing from a running RNG. A bounced render must match what was heard, and replaying a bar must fire the same pattern. This applies to tempo-synced triggering; for an instrument, MIDI event offsets are the schedule (see `workflow/vst-midi-synth`).
 
 **A failed response looks like:**
 - A sample counter that drifts against the host
@@ -200,7 +200,7 @@ Expose all user-facing parameters through a single `AudioProcessorValueTreeState
 ---
 
 **Validation**
-After building, validate with `pluginval` (JUCE's own automated plugin validator) before considering the plugin "done" — this is the automated check, not a substitute for it. Then load it in a real DAW (rescan the plugin folder) and process real audio as the end-to-end smoke test; a clean `pluginval` pass alone is not sufficient.
+After building, validate with `pluginval` (JUCE's own automated plugin validator) before considering the plugin "done" — this is the automated check, not a substitute for it. Then load it in a real DAW (rescan the plugin folder) and process real audio as the end-to-end smoke test; a clean `pluginval` pass alone is not sufficient. For an instrument, processing real audio means playing a MIDI clip through it (see `workflow/vst-midi-synth`).
 
 **A failed response looks like:**
 - Declaring the plugin done because it compiled, without running `pluginval`

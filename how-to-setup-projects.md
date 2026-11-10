@@ -75,6 +75,7 @@ workflow/dsp-prototyping
 workflow/generative-video
 workflow/design-system-gallery
 workflow/juce-ui-rendering
+workflow/vst-midi-synth
 ```
 
 | Skill | When to include |
@@ -102,6 +103,7 @@ workflow/juce-ui-rendering
 | `workflow/generative-video` | If the project renders procedural or generative animation to video files |
 | `workflow/design-system-gallery` | If the project is a component gallery for a shared design system |
 | `workflow/juce-ui-rendering` | If the project implements Figma artwork as JUCE painting code (building the design system library itself, not consuming it) |
+| `workflow/vst-midi-synth` | If the plugin is a played MIDI instrument (synth) rather than an effect |
 
 ---
 

@@ -107,7 +107,7 @@ Any control that lives in an Input or Output section of the GUI (e.g. input gain
 ---
 
 **Input and output belong in the layout, not among the parameters**
-Every plugin wears a strip down each side: input trim above its fader on the left, mix above the output fader on the right. These are not creative parameters — they never appear in the parameter grid, and Randomise never touches them (see the rule above). Every plugin has both strips; this is chassis, not a per-plugin decision. Four of five plugins were missing one before anyone checked, because nothing made their absence visible.
+Every plugin wears a strip down each side: input trim above its fader on the left, mix above the output fader on the right. These are not creative parameters — they never appear in the parameter grid, and Randomise never touches them (see the rule above). Every plugin has both strips; this is chassis, not a per-plugin decision. Four of five plugins were missing one before anyone checked, because nothing made their absence visible. Both strips apply to effects; an instrument carries the output strip only (see `workflow/vst-midi-synth`).
 
 **A failed response looks like:**
 - Placing input trim, mix, or output gain in the main parameter grid alongside creative controls

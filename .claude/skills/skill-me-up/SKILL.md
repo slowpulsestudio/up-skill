@@ -66,6 +66,7 @@ Check whether a `.skills` file exists in the root of this project. Whichever bra
    - `workflow/generative-video` — if the project renders procedural or generative animation to video files
    - `workflow/design-system-gallery` — if the project is a component gallery for a shared design system
    - `workflow/juce-ui-rendering` — if the project implements Figma artwork as JUCE painting code (building the design system library itself, not consuming it)
+   - `workflow/vst-midi-synth` — if the plugin is a played MIDI instrument (synth) rather than an effect
 
    If no interactive question tool is available, fall back to asking both as plain numbered-list questions in chat, noting `workflow/general`, `workflow/architecture`, `workflow/git`, `workflow/testing` and `workflow/docs-style` as the recommended defaults.
 

@@ -36,6 +36,7 @@ skills/
         generative-video.md
         design-system-gallery.md
         juce-ui-rendering.md
+        vst-midi-synth.md
     platform/
         ios.md
         chrome-extension.md
@@ -104,6 +105,7 @@ The AI asks real interactive questions (buttons/checkboxes), not plain text:
   workflow/generative-video
   workflow/design-system-gallery
   workflow/juce-ui-rendering
+  workflow/vst-midi-synth
   ```
 
 See [how-to-setup-projects.md](how-to-setup-projects.md) for the full walkthrough and a skill-by-skill reference table.
